@@ -1,0 +1,708 @@
+"""Carga y validación de la configuración del experimento.
+
+Todas las decisiones metodológicas viven en ``config/config.yaml`` y se leen a
+través de este módulo. Ninguna otra parte del programa lee el YAML directamente:
+así hay un único punto donde validar y un único punto que auditar.
+
+La configuración se valida al cargarse. Si falta una clave o un valor es
+incoherente (por ejemplo, un corte de validación anterior al de entrenamiento)
+el programa falla aquí, antes de tocar los datos.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+import yaml
+
+# Raíz del repositorio: este archivo vive en <raiz>/src/config.py
+RAIZ = Path(__file__).resolve().parent.parent
+
+RUTA_CONFIG_POR_DEFECTO = RAIZ / "config" / "config.yaml"
+
+
+class ErrorDeConfiguracion(Exception):
+    """La configuración es inválida. Se falla explícitamente, no se adivina."""
+
+
+# ---------------------------------------------------------------------------
+# Utilidades de período
+# ---------------------------------------------------------------------------
+
+def mes_a_periodo(texto: str) -> pd.Period:
+    """'2024-03' -> Period('2024-03', 'M'). Falla explícitamente si no parsea."""
+    try:
+        return pd.Period(str(texto), freq="M")
+    except Exception as exc:  # noqa: BLE001 - se re-lanza con contexto útil
+        raise ErrorDeConfiguracion(
+            f"No se pudo interpretar '{texto}' como un mes con formato AAAA-MM."
+        ) from exc
+
+
+def gestion_de(periodo: pd.Period, mes_inicio: int) -> int:
+    """Gestión fiscal a la que pertenece un mes.
+
+    NOVAPACK cierra en marzo y una gestión se nombra por el año en que CIERRA:
+    la gestión 2018 va de abril-2017 a marzo-2018. Con ``mes_inicio = 4``:
+
+        2017-04 .. 2017-12  -> 2018
+        2018-01 .. 2018-03  -> 2018
+        2018-04            -> 2019
+
+    Se usa para cortar los bloques en frontera de ciclo comercial completo, de
+    modo que ninguna campaña escolar quede partida entre dos bloques.
+    """
+    return periodo.year + 1 if periodo.month >= mes_inicio else periodo.year
+
+
+# ---------------------------------------------------------------------------
+# Estructura tipada
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class ConfigDatos:
+    archivo: Path
+    columnas: dict[str, str]
+    separador: str
+    codificacion: str
+
+
+@dataclass(frozen=True)
+class ConfigPeriodo:
+    mes_inicio_gestion: int
+    inicio: pd.Period
+    fin: pd.Period
+
+
+@dataclass(frozen=True)
+class ConfigParticion:
+    fin_entrenamiento: pd.Period
+    fin_validacion: pd.Period
+
+
+@dataclass(frozen=True)
+class ConfigSeries:
+    devoluciones: str
+    rellenar_ceros_intermedios: bool
+    # Interruptor de cohorte (sensibilidad de la cohorte al origen). Con False
+    # (por defecto) la vida de cada serie va de la primera a la última venta
+    # positiva, como en la corrida publicada. Con True termina en el último mes
+    # del período declarado: los meses posteriores a la última venta existen
+    # como ceros. El nacimiento sigue siendo la primera venta.
+    extender_vida_hasta_fin_periodo: bool = False
+
+
+@dataclass(frozen=True)
+class ConfigEvento:
+    """Evento exógeno cuyo tratamiento en el ajuste está parametrizado."""
+
+    nombre: str
+    desde: pd.Period
+    hasta: pd.Period
+    tratamiento: str  # "copiar_gestion_previa" | "nada"
+
+    def ventana(self) -> pd.PeriodIndex:
+        return pd.period_range(self.desde, self.hasta, freq="M")
+
+
+#: Valores admitidos de ``inclusion.estado_al_origen``.
+ESTADOS_AL_ORIGEN = ("todas", "activa")
+
+
+@dataclass(frozen=True)
+class ConfigInclusion:
+    historial_minimo_meses: int
+    proporcion_maxima_ceros: float
+    volumen_minimo_unidades: float
+    # Interruptores de cohorte. Los valores por defecto reproducen exactamente
+    # la cascada publicada.
+    #   exigir_presencia_prueba: con False el paso 6 de la cascada («presente
+    #       en prueba») no se aplica: la cohorte queda fijada con información
+    #       disponible al origen de la prueba.
+    #   estado_al_origen: "todas" (por defecto) no filtra; "activa" conserva
+    #       sólo las series activas al origen (venta en los seis meses previos
+    #       al primer mes de prueba), con la regla de ``clasificar_estados``.
+    exigir_presencia_prueba: bool = True
+    estado_al_origen: str = "todas"
+
+
+@dataclass(frozen=True)
+class ConfigMultihorizonte:
+    """Evaluación multihorizonte (RN-4, segunda parte): protocolo separado."""
+
+    activo: bool
+    horizonte_maximo: int
+    origenes: str  # "rodantes" | "fijo"
+    reentrenar_lightgbm: bool
+    # V5: el brazo directo también puede re-entrenar por origen (misma
+    # excepción declarada que el recursivo: en operación el modelo global
+    # se re-entrena en cada corrida mensual; árboles congelados del ajuste base).
+    reentrenar_directo: bool = False
+    # Ablación (apagada por defecto): los brazos ESTADÍSTICOS re-estiman sus
+    # parámetros en cada origen con la historia disponible hasta ese origen,
+    # la misma con la que LightGBM se re-entrena. Mide si la asimetría del
+    # protocolo (LightGBM re-aprende por origen, los estadísticos no) influye
+    # en el hallazgo del horizonte. Con False rige la RN-2 tal cual.
+    reestimar_estadisticos: bool = False
+
+
+@dataclass(frozen=True)
+class ConfigPoblacion:
+    """Población objetivo del estudio: categorías incluidas (vacío = todas)."""
+
+    categorias: tuple[str, ...]
+
+
+V2_CLAVES = ("categoria", "precio", "perdidas", "quiebres", "tipo_cambio",
+             "derivadas")
+
+
+@dataclass(frozen=True)
+class ConfigFeatures:
+    rezagos: list[int]
+    ventanas_moviles: list[int]
+    incluir_mes: bool
+    incluir_anio: bool
+    incluir_tendencia: bool
+    categoricas: list[str]
+    v2: dict[str, bool]
+    tc_regimen_fijo: float
+    archivo_quiebres: str | None
+    archivo_tipo_cambio: str | None
+    # V6: calendario comercial declarado (temporadas por categoría + mes de
+    # inicio de clases). None/{} = apagado; las features no existen.
+    calendario: dict | None = None
+
+
+@dataclass(frozen=True)
+class ConfigPruebas:
+    alfa: float
+    alternativa: str
+    metrica_contraste: str
+    shapiro_n_maximo: int
+    semilla: int
+
+
+@dataclass(frozen=True)
+class Config:
+    """Configuración completa, validada y ya tipada."""
+
+    datos: ConfigDatos
+    periodo: ConfigPeriodo
+    particion: ConfigParticion
+    series: ConfigSeries
+    evento: ConfigEvento | None
+    inclusion: ConfigInclusion
+    poblacion: ConfigPoblacion | None
+    multihorizonte: ConfigMultihorizonte | None
+    modelos: dict[str, Any]
+    features: ConfigFeatures
+    pruebas: ConfigPruebas
+    figuras: dict[str, Any]
+    salidas: dict[str, Any]
+
+    ruta_config: Path = field(default=RUTA_CONFIG_POR_DEFECTO)
+    crudo: dict[str, Any] = field(default_factory=dict, repr=False)
+
+    # -- rutas derivadas ----------------------------------------------------
+
+    @property
+    def raiz(self) -> Path:
+        return RAIZ
+
+    @property
+    def ruta_datos(self) -> Path:
+        return RAIZ / self.datos.archivo
+
+    @property
+    def ruta_salidas(self) -> Path:
+        return RAIZ / str(self.salidas["directorio"])
+
+    # -- bloques ------------------------------------------------------------
+
+    @property
+    def inicio_validacion(self) -> pd.Period:
+        return self.particion.fin_entrenamiento + 1
+
+    @property
+    def inicio_prueba(self) -> pd.Period:
+        return self.particion.fin_validacion + 1
+
+    def bloque_de(self, periodo: pd.Period) -> str:
+        """Bloque ('entrenamiento' | 'validacion' | 'prueba') de un mes dado."""
+        if periodo <= self.particion.fin_entrenamiento:
+            return "entrenamiento"
+        if periodo <= self.particion.fin_validacion:
+            return "validacion"
+        return "prueba"
+
+    @property
+    def modelos_activos(self) -> list[str]:
+        return list(self.modelos["activos"])
+
+    @property
+    def modelos_candidatos(self) -> list[str]:
+        """Brazos entre los que el motor elige: todos los activos menos él mismo."""
+        return [m for m in self.modelos_activos if m != "motor"]
+
+    def hash_configuracion(self) -> str:
+        """SHA-256 del contenido efectivo de la configuración (RN-6)."""
+        volcado = json.dumps(self.crudo, sort_keys=True, ensure_ascii=False, default=str)
+        return hashlib.sha256(volcado.encode("utf-8")).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# Carga
+# ---------------------------------------------------------------------------
+
+def _exigir(dic: dict, clave: str, contexto: str) -> Any:
+    if clave not in dic:
+        raise ErrorDeConfiguracion(
+            f"Falta la clave '{clave}' en la sección '{contexto}' de la configuración. "
+            f"Claves presentes: {sorted(dic)}"
+        )
+    return dic[clave]
+
+
+def _booleano(valor: Any, clave: str) -> bool:
+    """Un interruptor tiene que ser un booleano YAML de verdad.
+
+    ``bool("false")`` es True: aceptar un texto encendería el interruptor en
+    silencio justo cuando se lo quiso apagar.
+    """
+    if isinstance(valor, bool):
+        return valor
+    raise ErrorDeConfiguracion(
+        f"{clave} debe ser true o false (booleano YAML, sin comillas); "
+        f"llegó {valor!r}."
+    )
+
+
+def _fusionar_sobre_base(base: dict, encima: dict, ruta: str = "") -> dict:
+    """Copia de ``base`` con las claves de ``encima`` sobrescritas en profundidad.
+
+    Sólo se admiten claves que ya existen en la base: una errata en el archivo
+    derivado crearía una clave nueva que nadie lee, y la corrida saldría
+    idéntica a la base sin que nadie lo note.
+    """
+    resultado = yaml.safe_load(yaml.safe_dump(base))  # copia profunda
+    for clave, valor in encima.items():
+        donde = f"{ruta}.{clave}" if ruta else str(clave)
+        if clave not in resultado:
+            raise ErrorDeConfiguracion(
+                f"El archivo derivado declara '{donde}', que no existe en la "
+                f"configuración base. Sólo se pueden sobrescribir claves "
+                f"existentes. Claves disponibles: {sorted(resultado)}"
+            )
+        if isinstance(valor, dict) and isinstance(resultado[clave], dict):
+            resultado[clave] = _fusionar_sobre_base(resultado[clave], valor, donde)
+        else:
+            resultado[clave] = valor
+    return resultado
+
+
+def _resolver_herencia(crudo: dict, ruta: Path) -> dict:
+    """Aplica ``hereda_de``: el archivo derivado sobrescribe sólo sus claves.
+
+    Las configuraciones de sensibilidad cambian dos o tres decisiones; copiar el
+    archivo base entero sería peor, porque las copias se separan con el tiempo y
+    deja de saberse en qué se diferenciaban las corridas. La configuración
+    EFECTIVA (base más lo sobrescrito) es la que se valida, se hashea y queda en
+    el manifiesto, con el nombre del archivo base en ``_hereda_de``.
+    """
+    if "hereda_de" not in crudo:
+        return crudo
+    ruta_base = Path(str(crudo["hereda_de"]))
+    if not ruta_base.is_absolute():
+        ruta_base = ruta.parent / ruta_base
+    if not ruta_base.exists():
+        raise ErrorDeConfiguracion(
+            f"{ruta.name}: hereda_de apunta a {ruta_base}, que no existe."
+        )
+    with ruta_base.open("r", encoding="utf-8") as fh:
+        base = yaml.safe_load(fh)
+    if not isinstance(base, dict):
+        raise ErrorDeConfiguracion(f"El archivo base {ruta_base} no es un mapeo YAML.")
+    if "hereda_de" in base:
+        raise ErrorDeConfiguracion(
+            f"{ruta_base.name} también declara hereda_de: se admite un solo "
+            f"nivel de herencia, para que la configuración efectiva se lea de "
+            f"un vistazo."
+        )
+    encima = {k: v for k, v in crudo.items() if k != "hereda_de"}
+    efectiva = _fusionar_sobre_base(base, encima)
+    efectiva["_hereda_de"] = ruta_base.name
+    return efectiva
+
+
+def aplicar_anulaciones(crudo: dict, anulaciones: list[str]) -> dict:
+    """Aplica anulaciones puntuales del tipo ``modelos.motor_regla=mae_mas_bias``.
+
+    Sirve para correr ablaciones —cambiar UNA decisión y volver a medir— sin
+    duplicar el archivo de configuración. Duplicarlo sería peor: las dos copias
+    se separan con el tiempo y deja de saberse en qué se diferenciaban las
+    corridas.
+
+    Las anulaciones quedan registradas en el manifiesto junto con el resto de la
+    configuración efectiva, de modo que la trazabilidad de la RN-6 se mantiene:
+    lo que se guarda es la configuración REALMENTE usada, no el archivo base.
+    """
+    resultado = yaml.safe_load(yaml.safe_dump(crudo))  # copia profunda
+    for anulacion in anulaciones:
+        if "=" not in anulacion:
+            raise ErrorDeConfiguracion(
+                f"Anulación mal formada: '{anulacion}'. Se espera clave.subclave=valor."
+            )
+        ruta_clave, valor_texto = anulacion.split("=", 1)
+        claves = ruta_clave.strip().split(".")
+        nodo = resultado
+        for clave in claves[:-1]:
+            if clave not in nodo or not isinstance(nodo[clave], dict):
+                raise ErrorDeConfiguracion(
+                    f"La anulación '{anulacion}' apunta a '{clave}', que no existe "
+                    f"en la configuración. Claves disponibles: {sorted(nodo)}"
+                )
+            nodo = nodo[clave]
+        if claves[-1] not in nodo:
+            raise ErrorDeConfiguracion(
+                f"La anulación '{anulacion}' crearía la clave nueva '{claves[-1]}'. "
+                f"Solo se permite anular claves existentes, para que una errata no "
+                f"pase inadvertida. Claves disponibles: {sorted(nodo)}"
+            )
+        nodo[claves[-1]] = yaml.safe_load(valor_texto)
+    resultado["_anulaciones"] = list(anulaciones)
+    return resultado
+
+
+def cargar_config(
+    ruta: str | Path | None = None, anulaciones: list[str] | None = None
+) -> Config:
+    """Lee, valida y devuelve la configuración del experimento."""
+    ruta = Path(ruta) if ruta is not None else RUTA_CONFIG_POR_DEFECTO
+    if not ruta.is_absolute():
+        ruta = RAIZ / ruta
+    if not ruta.exists():
+        raise ErrorDeConfiguracion(f"No existe el archivo de configuración: {ruta}")
+
+    with ruta.open("r", encoding="utf-8") as fh:
+        crudo = yaml.safe_load(fh)
+
+    if not isinstance(crudo, dict):
+        raise ErrorDeConfiguracion(f"El archivo {ruta} no contiene un mapeo YAML válido.")
+
+    crudo = _resolver_herencia(crudo, ruta)
+
+    if anulaciones:
+        crudo = aplicar_anulaciones(crudo, anulaciones)
+
+    for seccion in (
+        "datos", "periodo", "particion", "series", "inclusion",
+        "modelos", "features", "pruebas", "figuras", "salidas",
+    ):
+        _exigir(crudo, seccion, "raíz")
+
+    d = crudo["datos"]
+    datos = ConfigDatos(
+        archivo=Path(_exigir(d, "archivo", "datos")),
+        columnas=dict(_exigir(d, "columnas", "datos")),
+        separador=d.get("separador", ","),
+        codificacion=d.get("codificacion", "utf-8"),
+    )
+    for canonica in ("fecha", "sku", "canal", "regional", "cantidad"):
+        if canonica not in datos.columnas:
+            raise ErrorDeConfiguracion(
+                f"datos.columnas debe mapear la columna canónica '{canonica}'. "
+                f"Mapeadas: {sorted(datos.columnas)}"
+            )
+
+    p = crudo["periodo"]
+    periodo = ConfigPeriodo(
+        mes_inicio_gestion=int(_exigir(p, "mes_inicio_gestion", "periodo")),
+        inicio=mes_a_periodo(_exigir(p, "inicio", "periodo")),
+        fin=mes_a_periodo(_exigir(p, "fin", "periodo")),
+    )
+    if not 1 <= periodo.mes_inicio_gestion <= 12:
+        raise ErrorDeConfiguracion(
+            f"periodo.mes_inicio_gestion debe estar entre 1 y 12; "
+            f"llegó {periodo.mes_inicio_gestion}."
+        )
+    if periodo.inicio >= periodo.fin:
+        raise ErrorDeConfiguracion(
+            f"periodo.inicio ({periodo.inicio}) debe ser anterior a "
+            f"periodo.fin ({periodo.fin})."
+        )
+
+    pa = crudo["particion"]
+    particion = ConfigParticion(
+        fin_entrenamiento=mes_a_periodo(_exigir(pa, "fin_entrenamiento", "particion")),
+        fin_validacion=mes_a_periodo(_exigir(pa, "fin_validacion", "particion")),
+    )
+
+    # RN-2: el orden de los bloques es la restricción más grave del experimento.
+    # Se verifica aquí y además hay una prueba dedicada en tests/test_particion.py.
+    if not (periodo.inicio
+            <= particion.fin_entrenamiento
+            < particion.fin_validacion
+            < periodo.fin):
+        raise ErrorDeConfiguracion(
+            "Los cortes deben cumplir "
+            "periodo.inicio <= fin_entrenamiento < fin_validacion < periodo.fin. "
+            f"Llegó inicio={periodo.inicio}, fin_entrenamiento={particion.fin_entrenamiento}, "
+            f"fin_validacion={particion.fin_validacion}, fin={periodo.fin}."
+        )
+
+    s = crudo["series"]
+    devoluciones = str(_exigir(s, "devoluciones", "series")).lower()
+    if devoluciones not in ("descartar", "netear"):
+        raise ErrorDeConfiguracion(
+            f"series.devoluciones debe ser 'descartar' o 'netear'; llegó '{devoluciones}'."
+        )
+    series = ConfigSeries(
+        devoluciones=devoluciones,
+        rellenar_ceros_intermedios=bool(s.get("rellenar_ceros_intermedios", True)),
+        extender_vida_hasta_fin_periodo=_booleano(
+            s.get("extender_vida_hasta_fin_periodo", False),
+            "series.extender_vida_hasta_fin_periodo",
+        ),
+    )
+    if series.extender_vida_hasta_fin_periodo and not series.rellenar_ceros_intermedios:
+        raise ErrorDeConfiguracion(
+            "series.extender_vida_hasta_fin_periodo requiere "
+            "rellenar_ceros_intermedios: true. Sin relleno el panel son sólo los "
+            "meses observados y extender la vida con ceros no tendría sentido."
+        )
+
+    evento = None
+    if crudo.get("evento_exogeno"):
+        ev = crudo["evento_exogeno"]
+        evento = ConfigEvento(
+            nombre=str(_exigir(ev, "nombre", "evento_exogeno")),
+            desde=mes_a_periodo(_exigir(ev, "desde", "evento_exogeno")),
+            hasta=mes_a_periodo(_exigir(ev, "hasta", "evento_exogeno")),
+            tratamiento=str(_exigir(ev, "tratamiento", "evento_exogeno")).lower(),
+        )
+        if evento.desde > evento.hasta:
+            raise ErrorDeConfiguracion(
+                f"evento_exogeno: desde ({evento.desde}) posterior a hasta ({evento.hasta})."
+            )
+        if evento.tratamiento not in ("copiar_gestion_previa", "nada"):
+            raise ErrorDeConfiguracion(
+                f"evento_exogeno.tratamiento debe ser 'copiar_gestion_previa' o "
+                f"'nada'; llegó '{evento.tratamiento}'."
+            )
+        # La ventana debe caer ÍNTEGRA dentro del entrenamiento: si tocara
+        # validación o prueba, la evaluación se haría sobre datos corregidos y
+        # los resultados quedarían fabricados (RN-1).
+        if evento.hasta > particion.fin_entrenamiento:
+            raise ErrorDeConfiguracion(
+                f"evento_exogeno: la ventana termina en {evento.hasta}, dentro de "
+                f"validación/prueba (entrenamiento cierra en "
+                f"{particion.fin_entrenamiento}). La evaluación no puede tocar "
+                f"datos corregidos."
+            )
+        if evento.desde < periodo.inicio:
+            raise ErrorDeConfiguracion(
+                f"evento_exogeno: la ventana empieza en {evento.desde}, antes del "
+                f"período declarado ({periodo.inicio})."
+            )
+
+    poblacion = None
+    if crudo.get("poblacion") is not None:
+        p_obj = crudo["poblacion"]
+        categorias = p_obj.get("categorias") or []
+        if not isinstance(categorias, list):
+            raise ErrorDeConfiguracion(
+                "poblacion.categorias debe ser una lista de nombres de "
+                f"categoría (o vacía = todas); llegó {type(categorias).__name__}."
+            )
+        poblacion = ConfigPoblacion(
+            categorias=tuple(str(c).strip() for c in categorias if str(c).strip())
+        )
+        if poblacion.categorias and "categoria" not in datos.columnas:
+            raise ErrorDeConfiguracion(
+                "poblacion.categorias está declarada pero datos.columnas no "
+                "mapea la columna 'categoria': el snapshot tiene que traer la "
+                "categoría para poder acotar la población (re-extraer con "
+                "columna_categoria en extraccion.local.yaml)."
+            )
+
+    multihorizonte = None
+    if crudo.get("multihorizonte"):
+        m = crudo["multihorizonte"]
+        multihorizonte = ConfigMultihorizonte(
+            activo=bool(m.get("activo", True)),
+            horizonte_maximo=int(_exigir(m, "horizonte_maximo", "multihorizonte")),
+            origenes=str(_exigir(m, "origenes", "multihorizonte")).lower(),
+            reentrenar_lightgbm=bool(m.get("reentrenar_lightgbm", True)),
+            reentrenar_directo=bool(m.get("reentrenar_directo", False)),
+            reestimar_estadisticos=bool(m.get("reestimar_estadisticos", False)),
+        )
+        if multihorizonte.horizonte_maximo < 1:
+            raise ErrorDeConfiguracion(
+                f"multihorizonte.horizonte_maximo debe ser >= 1; "
+                f"llegó {multihorizonte.horizonte_maximo}."
+            )
+        if multihorizonte.origenes not in ("rodantes", "fijo"):
+            raise ErrorDeConfiguracion(
+                f"multihorizonte.origenes debe ser 'rodantes' o 'fijo'; "
+                f"llegó '{multihorizonte.origenes}'."
+            )
+        # El primer origen es el cierre de validación: con un horizonte que no
+        # alcanza ni un mes de prueba, la evaluación no tendría nada que medir.
+        if particion.fin_validacion + 1 > periodo.fin:
+            raise ErrorDeConfiguracion(
+                "multihorizonte: no hay meses de prueba después del cierre de "
+                "validación; no hay nada que evaluar."
+            )
+
+    i = crudo["inclusion"]
+    inclusion = ConfigInclusion(
+        historial_minimo_meses=int(_exigir(i, "historial_minimo_meses", "inclusion")),
+        proporcion_maxima_ceros=float(_exigir(i, "proporcion_maxima_ceros", "inclusion")),
+        volumen_minimo_unidades=float(_exigir(i, "volumen_minimo_unidades", "inclusion")),
+        exigir_presencia_prueba=_booleano(
+            i.get("exigir_presencia_prueba", True),
+            "inclusion.exigir_presencia_prueba",
+        ),
+        estado_al_origen=str(i.get("estado_al_origen", "todas")).lower(),
+    )
+    if inclusion.estado_al_origen not in ESTADOS_AL_ORIGEN:
+        raise ErrorDeConfiguracion(
+            f"inclusion.estado_al_origen debe ser uno de {ESTADOS_AL_ORIGEN}; "
+            f"llegó '{inclusion.estado_al_origen}'."
+        )
+    if not 0.0 <= inclusion.proporcion_maxima_ceros <= 1.0:
+        raise ErrorDeConfiguracion(
+            "inclusion.proporcion_maxima_ceros es una proporción entre 0 y 1; "
+            f"llegó {inclusion.proporcion_maxima_ceros}."
+        )
+
+    f = crudo["features"]
+    v2_crudo = f.get("v2") or {}
+    desconocidas = sorted(set(v2_crudo) - set(V2_CLAVES))
+    if desconocidas:
+        raise ErrorDeConfiguracion(
+            f"features.v2 tiene claves desconocidas: {desconocidas}. "
+            f"Válidas: {sorted(V2_CLAVES)} (un error tipográfico apagaría un "
+            f"grupo de features en silencio)."
+        )
+    features = ConfigFeatures(
+        rezagos=[int(x) for x in _exigir(f, "rezagos", "features")],
+        ventanas_moviles=[int(x) for x in _exigir(f, "ventanas_moviles", "features")],
+        incluir_mes=bool(f.get("incluir_mes", True)),
+        incluir_anio=bool(f.get("incluir_anio", True)),
+        incluir_tendencia=bool(f.get("incluir_tendencia", True)),
+        categoricas=[str(x) for x in f.get("categoricas", [])],
+        v2={clave: bool(v2_crudo.get(clave, False)) for clave in V2_CLAVES},
+        tc_regimen_fijo=float(f.get("tc_regimen_fijo", 6.96)),
+        archivo_quiebres=(str(f["archivo_quiebres"])
+                          if f.get("archivo_quiebres") else None),
+        archivo_tipo_cambio=(str(f["archivo_tipo_cambio"])
+                             if f.get("archivo_tipo_cambio") else None),
+        calendario=(dict(f["calendario"]) if f.get("calendario") else None),
+    )
+    if features.calendario:
+        inicio = features.calendario.get("inicio_clases_mes", 2)
+        if not (isinstance(inicio, int) and 1 <= inicio <= 12):
+            raise ErrorDeConfiguracion(
+                "features.calendario.inicio_clases_mes debe ser un mes 1..12; "
+                f"llegó {inicio!r}."
+            )
+        for categoria_t, meses_t in (
+            features.calendario.get("temporadas", {}) or {}
+        ).items():
+            meses_malos = [m for m in meses_t if int(m) < 1 or int(m) > 12]
+            if meses_malos:
+                raise ErrorDeConfiguracion(
+                    f"features.calendario.temporadas['{categoria_t}'] tiene "
+                    f"meses fuera de 1..12: {meses_malos}."
+                )
+    if min(features.rezagos) < 1:
+        raise ErrorDeConfiguracion(
+            "Todos los rezagos deben ser >= 1: un rezago 0 sería el propio valor "
+            "que se quiere predecir (fuga temporal, RN-3)."
+        )
+    if features.tc_regimen_fijo <= 0:
+        raise ErrorDeConfiguracion(
+            f"features.tc_regimen_fijo debe ser positivo; "
+            f"llegó {features.tc_regimen_fijo}."
+        )
+
+    pr = crudo["pruebas"]
+    pruebas = ConfigPruebas(
+        alfa=float(pr.get("alfa", 0.05)),
+        alternativa=str(pr.get("alternativa", "less")),
+        metrica_contraste=str(pr.get("metrica_contraste", "mae")),
+        shapiro_n_maximo=int(pr.get("shapiro_n_maximo", 5000)),
+        semilla=int(pr.get("semilla", 0)),
+    )
+    if pruebas.alternativa not in ("less", "greater", "two-sided"):
+        raise ErrorDeConfiguracion(
+            f"pruebas.alternativa debe ser 'less', 'greater' o 'two-sided'; "
+            f"llegó '{pruebas.alternativa}'."
+        )
+
+    modelos = dict(crudo["modelos"])
+    activos = list(_exigir(modelos, "activos", "modelos"))
+    if "motor" not in activos:
+        raise ErrorDeConfiguracion("La lista modelos.activos debe incluir 'motor'.")
+    for clave in ("benchmark_promedio_movil", "benchmark_naive"):
+        referencia = _exigir(modelos, clave, "modelos")
+        if referencia not in activos:
+            raise ErrorDeConfiguracion(
+                f"modelos.{clave} = '{referencia}' no está en modelos.activos: {activos}"
+            )
+    regla = modelos.get("motor_regla", "mae")
+    if regla not in ("mae", "mae_mas_bias"):
+        raise ErrorDeConfiguracion(
+            f"modelos.motor_regla debe ser 'mae' o 'mae_mas_bias'; llegó '{regla}'."
+        )
+    seleccion = modelos.get("motor_seleccion", "un_paso")
+    if seleccion not in ("un_paso", "multihorizonte"):
+        raise ErrorDeConfiguracion(
+            f"modelos.motor_seleccion debe ser 'un_paso' o 'multihorizonte'; "
+            f"llegó '{seleccion}'."
+        )
+    if seleccion == "multihorizonte" and multihorizonte is None:
+        raise ErrorDeConfiguracion(
+            "modelos.motor_seleccion='multihorizonte' requiere la sección "
+            "'multihorizonte' de la configuración (define el horizonte y el "
+            "re-entrenamiento del brazo global)."
+        )
+    if "mezcla_h" in activos and multihorizonte is None:
+        raise ErrorDeConfiguracion(
+            "El brazo 'mezcla_h' pesa por horizonte sobre el abanico de "
+            "validación: requiere la sección 'multihorizonte' de la "
+            "configuración."
+        )
+    if "mezcla_conmutada" in activos:
+        mezclador_crudo = modelos.get("mezclador", {}) or {}
+        if not mezclador_crudo.get("candidatos_quiebre"):
+            raise ErrorDeConfiguracion(
+                "El brazo 'mezcla_conmutada' requiere modelos.mezclador."
+                "candidatos_quiebre: el conjunto diverso del quiebre es una "
+                "decisión declarada."
+            )
+
+    return Config(
+        datos=datos,
+        periodo=periodo,
+        particion=particion,
+        series=series,
+        evento=evento,
+        inclusion=inclusion,
+        poblacion=poblacion,
+        multihorizonte=multihorizonte,
+        modelos=modelos,
+        features=features,
+        pruebas=pruebas,
+        figuras=dict(crudo["figuras"]),
+        salidas=dict(crudo["salidas"]),
+        ruta_config=ruta,
+        crudo=crudo,
+    )

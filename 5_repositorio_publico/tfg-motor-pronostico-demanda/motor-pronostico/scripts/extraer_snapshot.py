@@ -1,0 +1,623 @@
+"""Extracción y congelado del histórico de ventas de NOVAPACK S.A.
+
+Este script se ejecuta UNA sola vez, fuera del pipeline. Su producto es un
+archivo CSV inmutable en ``datos/crudo/`` acompañado de su SHA-256. A partir de
+ahí el experimento no vuelve a hablar con la base de datos: corre siempre contra
+el mismo snapshot congelado.
+
+Por qué congelar y no leer en vivo
+----------------------------------
+La base de origen se recarga a diario. Si el pipeline leyera en vivo, dos
+ejecuciones del mismo código en días distintos darían números distintos y la
+RN-5 (reproducibilidad) sería imposible de sostener ante el tribunal. El
+snapshot fecha el corte y lo vuelve verificable: cualquiera que reciba el
+archivo puede recalcular el hash y comprobar que es el mismo que produjo los
+números del documento.
+
+Dónde vive el esquema de origen
+-------------------------------
+En ``config/extraccion.local.yaml``, que NO se versiona. Este archivo no
+contiene ningún nombre de esquema, tabla ni columna de la empresa: el código de
+la tesis se publica y el esquema interno está cubierto por el acuerdo de
+confidencialidad igual que los datos. Ver ``config/extraccion.ejemplo.yaml``.
+
+Qué se extrae
+-------------
+Registros de venta mensual por SKU, canal y regional, para el período declarado
+en ``config/config.yaml``.
+
+Se extraen SOLO los meses con venta distinta de cero. Los meses en cero
+intermedios los reconstruye ``src/series.py`` a partir de la primera y la última
+venta de cada serie, que es exactamente lo que exige la RF-3: un mes anterior al
+lanzamiento del producto no es demanda cero, es ausencia de producto, y por
+tanto no puede venir precargado desde el origen.
+
+Seudonimización
+---------------
+``errores_por_serie.csv`` se adjunta como anexo del documento académico, de modo
+que los códigos de producto reales quedarían publicados. Por defecto los SKU se
+reemplazan por identificadores estables (``SKU-0001``, ``SKU-0002``, …) y la
+tabla de correspondencia se guarda aparte, en ``datos/crudo/`` — que está en
+``.gitignore``. La seudonimización es determinista: el mismo código real recibe
+siempre el mismo identificador, así que el snapshot sigue siendo reproducible.
+
+Alcance de la seudonimización, para no prometer de más: los identificadores se
+asignan siguiendo el orden alfabético de los códigos reales, de modo que evitan
+publicar el maestro de productos pero **no son anonimato criptográfico**. Quien
+ya tenga el catálogo de la empresa podría reconstruir la correspondencia. Para el
+uso previsto —un anexo académico— es suficiente; si hiciera falta más, habría que
+permutar con una semilla secreta.
+
+Uso
+---
+    cp config/extraccion.ejemplo.yaml config/extraccion.local.yaml
+    # completar config/extraccion.local.yaml con el esquema real
+    export TFG_DB_HOST=... TFG_DB_PORT=... TFG_DB_NAME=...
+    export TFG_DB_USER=... TFG_DB_PASSWORD=...
+    python scripts/extraer_snapshot.py [--sin-seudonimizar]
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+import os
+import re
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import yaml
+
+RAIZ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAIZ))
+
+from src.config import cargar_config, gestion_de, mes_a_periodo  # noqa: E402
+
+RUTA_ORIGEN = RAIZ / "config" / "extraccion.local.yaml"
+RUTA_PLANTILLA = RAIZ / "config" / "extraccion.ejemplo.yaml"
+
+ROLES = ("anio", "mes", "sku", "canal", "regional", "cantidad")
+
+# Identificadores SQL admitidos. La configuración la escribe el propio autor, no
+# un tercero, pero un nombre de tabla se interpola en la consulta y no se puede
+# parametrizar como un valor: validarlo cuesta una línea y cierra la puerta.
+PATRON_IDENTIFICADOR = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?$")
+# Columnas de fuentes auxiliares: pueden traer espacios (se citan SIEMPRE entre
+# comillas dobles en el SQL generado), pero nunca comillas ni caracteres de
+# control — eso sería inyección, venga de donde venga.
+PATRON_COLUMNA_CITADA = re.compile(r"^[A-Za-z_][A-Za-z0-9_ ]*$")
+
+
+def _citar(columna: str) -> str:
+    """Cita una columna auxiliar para el SQL generado."""
+    return '"' + columna + '"'
+
+
+class ErrorDeExtraccion(Exception):
+    """La configuración de la extracción es inválida o falta."""
+
+
+def cargar_origen(ruta: Path = RUTA_ORIGEN) -> dict:
+    """Lee y valida ``config/extraccion.local.yaml``."""
+    if not ruta.exists():
+        raise ErrorDeExtraccion(
+            f"Falta {ruta.relative_to(RAIZ)}.\n"
+            f"Copiá la plantilla y completala con el esquema real:\n"
+            f"    cp {RUTA_PLANTILLA.relative_to(RAIZ)} {ruta.relative_to(RAIZ)}\n"
+            f"Ese archivo no se versiona: el esquema interno de la empresa está "
+            f"cubierto por el acuerdo de confidencialidad igual que los datos."
+        )
+
+    contenido = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
+    origen = contenido.get("origen")
+    if not isinstance(origen, dict):
+        raise ErrorDeExtraccion(f"{ruta.name} no tiene una sección 'origen'.")
+
+    tabla = str(origen.get("tabla", "")).strip()
+    if not PATRON_IDENTIFICADOR.match(tabla):
+        raise ErrorDeExtraccion(
+            f"origen.tabla = '{tabla}' no es un identificador SQL válido "
+            f"(esquema.tabla, solo letras, dígitos y guion bajo)."
+        )
+
+    columnas = origen.get("columnas") or {}
+    faltantes = [rol for rol in ROLES if rol not in columnas]
+    if faltantes:
+        raise ErrorDeExtraccion(
+            f"Faltan columnas en origen.columnas: {faltantes}. "
+            f"Declaradas: {sorted(columnas)}"
+        )
+    for rol, nombre in columnas.items():
+        if not PATRON_IDENTIFICADOR.match(str(nombre)):
+            raise ErrorDeExtraccion(
+                f"origen.columnas.{rol} = '{nombre}' no es un identificador válido."
+            )
+
+    control = origen.get("columna_de_control")
+    if control is not None and not PATRON_IDENTIFICADOR.match(str(control)):
+        raise ErrorDeExtraccion(
+            f"origen.columna_de_control = '{control}' no es un identificador válido."
+        )
+
+    costo = origen.get("columna_costo")
+    if costo is not None and not PATRON_IDENTIFICADOR.match(str(costo)):
+        raise ErrorDeExtraccion(
+            f"origen.columna_costo = '{costo}' no es un identificador válido."
+        )
+
+    categoria = origen.get("columna_categoria")
+    if categoria is not None and not PATRON_IDENTIFICADOR.match(str(categoria)):
+        raise ErrorDeExtraccion(
+            f"origen.columna_categoria = '{categoria}' no es un identificador válido."
+        )
+
+    # Columnas opcionales de la MISMA tabla: precio mensual y venta perdida.
+    # Habilitan las features exógenas del brazo de aprendizaje automático.
+    extras = {}
+    for clave in ("columna_precio", "columna_perdidas"):
+        valor = origen.get(clave)
+        if valor is not None and not PATRON_IDENTIFICADOR.match(str(valor)):
+            raise ErrorDeExtraccion(
+                f"origen.{clave} = '{valor}' no es un identificador válido."
+            )
+        extras[clave] = str(valor) if valor else None
+
+    # Fuentes auxiliares opcionales: inventario semanal (quiebres de stock) y
+    # tipo de cambio mensual. Cada una es una consulta más de la extracción y
+    # produce su propio archivo junto al snapshot.
+    def _fuente(nombre: str, roles: tuple[str, ...]) -> dict | None:
+        seccion = origen.get(nombre)
+        if not seccion:
+            return None
+        tabla_f = str(seccion.get("tabla", "")).strip()
+        if not PATRON_IDENTIFICADOR.match(tabla_f):
+            raise ErrorDeExtraccion(
+                f"{nombre}.tabla = '{tabla_f}' no es un identificador válido."
+            )
+        columnas_f = seccion.get("columnas") or {}
+        faltan = [rol for rol in roles if rol not in columnas_f]
+        if faltan:
+            raise ErrorDeExtraccion(
+                f"Faltan columnas en {nombre}.columnas: {faltan}."
+            )
+        for rol, col in columnas_f.items():
+            if not PATRON_COLUMNA_CITADA.match(str(col)):
+                raise ErrorDeExtraccion(
+                    f"{nombre}.columnas.{rol} = '{col}' no es una columna válida."
+                )
+        return {"tabla": tabla_f,
+                "columnas": {rol: str(columnas_f[rol]) for rol in roles}}
+
+    return {
+        "tabla": tabla,
+        "columnas": {rol: str(columnas[rol]) for rol in ROLES},
+        "columna_costo": str(costo) if costo else None,
+        "columna_categoria": str(categoria) if categoria else None,
+        "columna_precio": extras["columna_precio"],
+        "columna_perdidas": extras["columna_perdidas"],
+        "inventario": _fuente("inventario", ("sku", "regional", "fecha", "cantidad")),
+        "tipo_cambio": _fuente("tipo_cambio", ("fecha", "tc")),
+        "columna_de_control": str(control) if control else None,
+        "anio_de_corte_del_control": int(origen.get("anio_de_corte_del_control", 2020)),
+    }
+
+
+def construir_consultas(origen: dict) -> tuple[str, str]:
+    """Arma la consulta de extracción y la de controles previos."""
+    c = origen["columnas"]
+    tabla = origen["tabla"]
+    control = origen["columna_de_control"]
+    corte = origen["anio_de_corte_del_control"]
+
+    # El costo unitario viaja en la misma consulta (es constante por serie en
+    # la fuente; se toma el primer valor no nulo). Habilita el error
+    # VALORIZADO: entre SKUs las unidades difieren y la única agregación con
+    # sentido físico es en dinero.
+    columna_costo = (
+        f"t.{origen['columna_costo']}" if origen["columna_costo"] else "NULL"
+    )
+    # La categoría habilita la POBLACIÓN OBJETIVO del estudio (config.yaml,
+    # sección `poblacion`): un grupo representativo de categorías con
+    # comportamiento conocido. Son nombres genéricos del rubro papelero, no
+    # identifican a la empresa; se declaran tal cual.
+    columna_categoria = (
+        f"t.{origen['columna_categoria']}" if origen["columna_categoria"] else "NULL"
+    )
+    columna_precio = (
+        f"t.{origen['columna_precio']}" if origen["columna_precio"] else "NULL"
+    )
+    columna_perdidas = (
+        f"t.{origen['columna_perdidas']}" if origen["columna_perdidas"] else "NULL"
+    )
+
+    consulta = f"""
+SELECT
+    (t.{c['anio']} * 100 + t.{c['mes']}) AS periodo,
+    t.{c['sku']}                          AS sku,
+    t.{c['canal']}                        AS canal,
+    t.{c['regional']}                     AS regional,
+    t.{c['cantidad']}                     AS cantidad,
+    {columna_costo}                       AS costo,
+    {columna_categoria}                   AS categoria,
+    {columna_precio}                      AS precio,
+    {columna_perdidas}                    AS perdidas
+FROM {tabla} AS t
+WHERE (t.{c['anio']} * 100 + t.{c['mes']}) BETWEEN %(desde)s AND %(hasta)s
+  AND t.{c['cantidad']} IS NOT NULL
+  AND t.{c['cantidad']} <> 0
+ORDER BY t.{c['sku']}, t.{c['regional']}, t.{c['canal']}, t.{c['anio']}, t.{c['mes']}
+"""
+
+    lineas_control = [
+        "COUNT(*)                                                   AS filas_totales",
+        f"COUNT(*) FILTER (WHERE t.{c['cantidad']} <> 0)             AS filas_con_venta",
+        f"COUNT(*) FILTER (WHERE t.{c['cantidad']} <  0)             AS filas_negativas",
+        f"COUNT(*) FILTER (WHERE t.{c['cantidad']} IS NULL)          AS filas_nulas",
+        f"COUNT(DISTINCT t.{c['sku']})                               AS skus",
+        f"COUNT(DISTINCT t.{c['regional']})                          AS regionales",
+        f"COUNT(DISTINCT t.{c['canal']})                             AS canales",
+        f"COUNT(DISTINCT (t.{c['sku']} || '|' || t.{c['regional']} || '|' || t.{c['canal']}))"
+        "                                                            AS combinaciones",
+    ]
+    if control:
+        lineas_control += [
+            f"SUM(t.{control}) FILTER (WHERE t.{c['anio']} <  {corte})"
+            f"                                                        AS control_antes",
+            f"SUM(t.{control}) FILTER (WHERE t.{c['anio']} >= {corte})"
+            f"                                                        AS control_desde",
+        ]
+
+    consulta_control = (
+        "SELECT\n    " + ",\n    ".join(lineas_control) + f"\nFROM {tabla} AS t\n"
+        f"WHERE (t.{c['anio']} * 100 + t.{c['mes']}) BETWEEN %(desde)s AND %(hasta)s"
+    )
+    return consulta, consulta_control
+
+
+def _periodo_entero(texto: str) -> int:
+    """'2017-04' -> 201704."""
+    p = mes_a_periodo(texto)
+    return p.year * 100 + p.month
+
+
+def _fecha_iso(periodo_entero: int) -> str:
+    """201704 -> '2017-04-01'."""
+    return f"{periodo_entero // 100:04d}-{periodo_entero % 100:02d}-01"
+
+
+def _conexion():
+    """Abre la conexión leyendo credenciales del entorno. Nunca del código."""
+    try:
+        import psycopg2
+    except ImportError as exc:  # pragma: no cover - entorno sin la dependencia
+        raise SystemExit(
+            "Falta psycopg2. Instalá las dependencias de extracción:\n"
+            "    pip install -r requirements-extraccion.txt"
+        ) from exc
+
+    faltantes = [v for v in ("TFG_DB_HOST", "TFG_DB_NAME", "TFG_DB_USER", "TFG_DB_PASSWORD")
+                 if not os.environ.get(v)]
+    if faltantes:
+        raise SystemExit(
+            "Faltan variables de entorno con las credenciales: "
+            + ", ".join(faltantes)
+            + "\nNo se hardcodean en el repositorio a propósito."
+        )
+
+    return psycopg2.connect(
+        host=os.environ["TFG_DB_HOST"],
+        port=int(os.environ.get("TFG_DB_PORT", "5432")),
+        dbname=os.environ["TFG_DB_NAME"],
+        user=os.environ["TFG_DB_USER"],
+        password=os.environ["TFG_DB_PASSWORD"],
+        connect_timeout=30,
+    )
+
+
+def _sha256(ruta: Path) -> str:
+    h = hashlib.sha256()
+    with ruta.open("rb") as fh:
+        for bloque in iter(lambda: fh.read(1 << 20), b""):
+            h.update(bloque)
+    return h.hexdigest()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--sin-seudonimizar", action="store_true",
+        help="Escribe los códigos de SKU reales. Solo para uso interno; el "
+             "archivo resultante no puede adjuntarse al documento académico.",
+    )
+    parser.add_argument("--config", default=None, help="Ruta a config.yaml")
+    parser.add_argument("--origen", default=None, help="Ruta a extraccion.local.yaml")
+    args = parser.parse_args()
+
+    cfg = cargar_config(args.config)
+    origen = cargar_origen(Path(args.origen) if args.origen else RUTA_ORIGEN)
+    consulta, consulta_control = construir_consultas(origen)
+
+    desde = _periodo_entero(str(cfg.crudo["periodo"]["inicio"]))
+    hasta = _periodo_entero(str(cfg.crudo["periodo"]["fin"]))
+
+    destino = cfg.ruta_datos
+    destino.parent.mkdir(parents=True, exist_ok=True)
+
+    print(f"Origen  : declarado en {RUTA_ORIGEN.name} (fuera del repositorio)")
+    print(f"Período : {desde} .. {hasta}")
+    print(f"Destino : {destino}")
+
+    conexion = _conexion()
+    try:
+        with conexion.cursor() as cur:
+            cur.execute(consulta_control, {"desde": desde, "hasta": hasta})
+            columnas_control = [c[0] for c in cur.description]
+            control = dict(zip(columnas_control, cur.fetchone()))
+
+        print("\nControles sobre el origen (antes de filtrar):")
+        for clave, valor in control.items():
+            print(f"  {clave:<20} {valor}")
+
+        if control.get("filas_negativas"):
+            print(
+                f"\n  AVISO: {control['filas_negativas']} filas con cantidad negativa "
+                f"(devoluciones). Se extraen tal cual; el tratamiento lo decide "
+                f"series.devoluciones en config.yaml."
+            )
+
+        antes, desde_corte = control.get("control_antes"), control.get("control_desde")
+        if antes is not None and desde_corte is not None:
+            corte = origen["anio_de_corte_del_control"]
+            if not antes and desde_corte:
+                print(
+                    f"\n  CONTROL DE INTEGRIDAD: la columna de control es 0 antes de "
+                    f"{corte} y {desde_corte:,.0f} desde {corte}. Confirma que esa "
+                    f"medida CAMBIA de definición a mitad del período y que no puede "
+                    f"usarse como variable objetivo."
+                )
+
+        # Cursor del lado del servidor: la consulta devuelve cientos de miles de
+        # filas y no tiene sentido materializarlas todas en memoria.
+        seudonimos: dict[str, str] = {}
+        costos: dict[tuple[str, str, str], float] = {}
+        filas_escritas = 0
+        negativas = 0
+        suma = 0.0
+        periodo_min: int | None = None
+        periodo_max: int | None = None
+
+        con_categoria = origen["columna_categoria"] is not None
+        con_precio = origen["columna_precio"] is not None
+        con_perdidas = origen["columna_perdidas"] is not None
+        categorias_vistas: set[str] = set()
+
+        def _numero(valor) -> str:
+            if valor is None:
+                return ""
+            return f"{float(valor):.6f}".rstrip("0").rstrip(".")
+
+        with conexion.cursor(name="tfg_snapshot") as cur:
+            cur.itersize = 50_000
+            cur.execute(consulta, {"desde": desde, "hasta": hasta})
+
+            with destino.open("w", encoding="utf-8", newline="") as fh:
+                escritor = csv.writer(fh, delimiter=cfg.datos.separador,
+                                      lineterminator="\n")
+                encabezado = ["fecha", "sku", "canal", "regional", "cantidad"]
+                if con_categoria:
+                    encabezado.append("categoria")
+                if con_precio:
+                    encabezado.append("precio")
+                if con_perdidas:
+                    encabezado.append("perdidas")
+                escritor.writerow(encabezado)
+
+                for (periodo, sku, canal, regional, cantidad, costo, categoria,
+                     precio, perdidas) in cur:
+                    if not args.sin_seudonimizar:
+                        if sku not in seudonimos:
+                            seudonimos[sku] = f"SKU-{len(seudonimos) + 1:04d}"
+                        sku_salida = seudonimos[sku]
+                    else:
+                        sku_salida = sku
+
+                    fila = [
+                        _fecha_iso(int(periodo)),
+                        sku_salida,
+                        canal,
+                        regional,
+                        # repr corto y estable: evita notación científica y
+                        # diferencias de redondeo entre corridas.
+                        _numero(cantidad),
+                    ]
+                    if con_categoria:
+                        fila.append(categoria)
+                        if categoria is not None:
+                            categorias_vistas.add(str(categoria))
+                    if con_precio:
+                        fila.append(_numero(precio))
+                    if con_perdidas:
+                        fila.append(_numero(perdidas))
+                    escritor.writerow(fila)
+                    # Costo: constante por serie en la fuente; se toma el primer
+                    # valor no nulo y positivo.
+                    clave = (sku_salida, str(canal), str(regional))
+                    if costo is not None and float(costo) > 0 and clave not in costos:
+                        costos[clave] = float(costo)
+                    filas_escritas += 1
+                    suma += float(cantidad)
+                    if float(cantidad) < 0:
+                        negativas += 1
+                    periodo_min = periodo if periodo_min is None else min(periodo_min, periodo)
+                    periodo_max = periodo if periodo_max is None else max(periodo_max, periodo)
+    finally:
+        conexion.close()
+
+    if filas_escritas == 0:
+        raise SystemExit(
+            "La consulta no devolvió ninguna fila. No se escribe un archivo vacío: "
+            "revisá el período y la tabla de origen."
+        )
+
+    # Maestro de costos unitarios por serie: junto al snapshot, nunca se
+    # versiona (el costo es información sensible de la empresa). Habilita las
+    # métricas VALORIZADAS, la única agregación con sentido físico entre SKUs.
+    ruta_costos = None
+    if origen["columna_costo"] and costos:
+        ruta_costos = destino.parent / "costos.csv"
+        with ruta_costos.open("w", encoding="utf-8", newline="") as fh:
+            escritor = csv.writer(fh, lineterminator="\n")
+            escritor.writerow(["sku", "canal", "regional", "costo_unitario"])
+            for (sku_s, canal_s, regional_s), valor in sorted(costos.items()):
+                escritor.writerow([
+                    sku_s, canal_s, regional_s,
+                    f"{valor:.6f}".rstrip("0").rstrip("."),
+                ])
+        print(f"Costos unitarios -> {ruta_costos} ({len(costos):,} series con costo)")
+
+    # --- Fuentes auxiliares: quiebres de stock y tipo de cambio --------------
+    # Se extraen DESPUÉS del bucle principal porque reutilizan el mapa de
+    # seudónimos (mismo SKU real -> mismo seudónimo en todos los archivos).
+    ruta_quiebres = None
+    filas_quiebres = 0
+    if origen["inventario"]:
+        inv = origen["inventario"]
+        ci = {rol: _citar(col) for rol, col in inv["columnas"].items()}
+        consulta_inv = f"""
+SELECT
+    t.{ci['sku']}                                              AS sku,
+    t.{ci['regional']}                                         AS regional,
+    (EXTRACT(YEAR FROM t.{ci['fecha']}) * 100
+     + EXTRACT(MONTH FROM t.{ci['fecha']}))::int               AS periodo,
+    COUNT(*)                                                   AS semanas_medidas,
+    COUNT(*) FILTER (WHERE t.{ci['cantidad']} <= 0)            AS semanas_en_cero
+FROM {inv['tabla']} AS t
+WHERE (EXTRACT(YEAR FROM t.{ci['fecha']}) * 100
+       + EXTRACT(MONTH FROM t.{ci['fecha']})) BETWEEN %(desde)s AND %(hasta)s
+GROUP BY 1, 2, 3
+ORDER BY 1, 2, 3
+"""
+        conexion = _conexion()
+        try:
+            with conexion.cursor(name="tfg_quiebres") as cur:
+                cur.itersize = 50_000
+                cur.execute(consulta_inv, {"desde": desde, "hasta": hasta})
+                ruta_quiebres = destino.parent / "quiebres.csv"
+                with ruta_quiebres.open("w", encoding="utf-8", newline="") as fh:
+                    escritor = csv.writer(fh, lineterminator="\n")
+                    escritor.writerow(["fecha", "sku", "regional",
+                                       "semanas_medidas", "semanas_en_cero"])
+                    for sku, regional, periodo, medidas, en_cero in cur:
+                        if not args.sin_seudonimizar:
+                            # Solo SKUs que existen en las ventas: el inventario
+                            # cubre TODO el catálogo y el resto no tiene serie.
+                            if sku not in seudonimos:
+                                continue
+                            sku_salida = seudonimos[sku]
+                        else:
+                            sku_salida = sku
+                        escritor.writerow([
+                            _fecha_iso(int(periodo)), sku_salida, regional,
+                            int(medidas), int(en_cero),
+                        ])
+                        filas_quiebres += 1
+        finally:
+            conexion.close()
+        print(f"Quiebres de stock -> {ruta_quiebres} ({filas_quiebres:,} filas "
+              f"sku-regional-mes; la fuente empieza en 2022 — antes es NaN "
+              f"declarado)")
+
+    ruta_tc = None
+    filas_tc = 0
+    if origen["tipo_cambio"]:
+        tcf = origen["tipo_cambio"]
+        ct = {rol: _citar(col) for rol, col in tcf["columnas"].items()}
+        consulta_tc = f"""
+SELECT
+    (EXTRACT(YEAR FROM t.{ct['fecha']}) * 100
+     + EXTRACT(MONTH FROM t.{ct['fecha']}))::int AS periodo,
+    t.{ct['tc']}                                 AS tc
+FROM {tcf['tabla']} AS t
+WHERE (EXTRACT(YEAR FROM t.{ct['fecha']}) * 100
+       + EXTRACT(MONTH FROM t.{ct['fecha']})) BETWEEN %(desde)s AND %(hasta)s
+ORDER BY 1
+"""
+        conexion = _conexion()
+        try:
+            with conexion.cursor() as cur:
+                cur.execute(consulta_tc, {"desde": desde, "hasta": hasta})
+                ruta_tc = destino.parent / "tipo_cambio.csv"
+                with ruta_tc.open("w", encoding="utf-8", newline="") as fh:
+                    escritor = csv.writer(fh, lineterminator="\n")
+                    escritor.writerow(["fecha", "tc"])
+                    for periodo, tc in cur:
+                        escritor.writerow([_fecha_iso(int(periodo)), _numero(tc)])
+                        filas_tc += 1
+        finally:
+            conexion.close()
+        print(f"Tipo de cambio -> {ruta_tc} ({filas_tc:,} meses; los meses "
+              f"anteriores al primero corresponden al régimen fijo declarado "
+              f"en config.yaml)")
+
+    # Tabla de correspondencia: se guarda aparte y nunca se versiona.
+    if seudonimos:
+        ruta_mapeo = destino.parent / "mapeo_sku.csv"
+        with ruta_mapeo.open("w", encoding="utf-8", newline="") as fh:
+            escritor = csv.writer(fh, lineterminator="\n")
+            escritor.writerow(["sku_real", "sku_seudonimo"])
+            for real, seudo in seudonimos.items():
+                escritor.writerow([real, seudo])
+        print(f"\nCorrespondencia de SKU -> {ruta_mapeo} ({len(seudonimos)} códigos)")
+
+    digest = _sha256(destino)
+    manifiesto = {
+        "extraido_en": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        # El nombre de la tabla y el de la base NO se registran aquí: este
+        # archivo vive junto al snapshot, que puede compartirse. Lo que hace
+        # verificable la extracción es el hash, no el origen.
+        "periodo_solicitado": {"desde": desde, "hasta": hasta},
+        "periodo_observado": {"desde": periodo_min, "hasta": periodo_max},
+        "gestiones": {
+            "desde": gestion_de(mes_a_periodo(str(cfg.crudo["periodo"]["inicio"])),
+                                cfg.periodo.mes_inicio_gestion),
+            "hasta": gestion_de(mes_a_periodo(str(cfg.crudo["periodo"]["fin"])),
+                                cfg.periodo.mes_inicio_gestion),
+        },
+        "filas_escritas": filas_escritas,
+        "filas_negativas": negativas,
+        "suma_cantidad": round(suma, 6),
+        "categorias_distintas": sorted(categorias_vistas) if con_categoria else None,
+        "skus_distintos": len(seudonimos) if seudonimos else None,
+        "series_con_costo": len(costos) if origen["columna_costo"] else None,
+        "sha256_costos": _sha256(ruta_costos) if ruta_costos else None,
+        "con_precio": con_precio,
+        "con_perdidas": con_perdidas,
+        "filas_quiebres": filas_quiebres if ruta_quiebres else None,
+        "sha256_quiebres": _sha256(ruta_quiebres) if ruta_quiebres else None,
+        "meses_tipo_cambio": filas_tc if ruta_tc else None,
+        "sha256_tipo_cambio": _sha256(ruta_tc) if ruta_tc else None,
+        "seudonimizado": not args.sin_seudonimizar,
+        "controles_origen": {
+            k: (float(v) if isinstance(v, (int, float)) and v is not None else v)
+            for k, v in control.items()
+        },
+        "archivo": str(destino.relative_to(RAIZ)),
+        "sha256": digest,
+    }
+    ruta_manifiesto = destino.parent / "manifiesto_extraccion.json"
+    ruta_manifiesto.write_text(
+        json.dumps(manifiesto, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+    print(f"\nFilas escritas : {filas_escritas:,}")
+    print(f"SHA-256        : {digest}")
+    print(f"Manifiesto     : {ruta_manifiesto}")
+    print("\nSnapshot congelado. El pipeline no vuelve a consultar la base de datos.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

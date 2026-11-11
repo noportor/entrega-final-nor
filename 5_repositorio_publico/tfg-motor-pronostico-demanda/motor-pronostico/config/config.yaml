@@ -1,0 +1,424 @@
+# =============================================================================
+# Motor de pronóstico de demanda — NOVAPACK S.A.
+# Configuración única del experimento. Todo lo que sigue se fija ANTES de mirar
+# resultados (§10 del REQUERIMIENTOS: «Ajustar parámetros mirando el conjunto de
+# prueba» está prohibido).
+#
+# Cada valor aquí es una decisión metodológica que se declara en la memoria.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. Datos de entrada
+# -----------------------------------------------------------------------------
+datos:
+  # Ruta del archivo crudo. Se resuelve relativa a la raíz del repositorio.
+  # datos/crudo/ está en .gitignore desde el primer commit (Anexo 2 — acuerdo de
+  # confidencialidad).
+  archivo: "datos/crudo/ventas_novapack.csv"
+
+  # Mapeo de nombres reales de columna -> nombres canónicos del programa.
+  # RF-1: los nombres NO se asumen, se declaran.
+  columnas:
+    fecha: "fecha"
+    sku: "sku"
+    canal: "canal"
+    regional: "regional"
+    cantidad: "cantidad"
+    categoria: "categoria"
+    precio: "precio"
+    perdidas: "perdidas"
+
+  # Separador y codificación del CSV (se ignoran si el archivo es .xlsx).
+  separador: ","
+  codificacion: "utf-8"
+
+# -----------------------------------------------------------------------------
+# 2. Ventana temporal — gestiones fiscales de NOVAPACK (abril → marzo)
+# -----------------------------------------------------------------------------
+# La empresa cierra en marzo. Una gestión se nombra por el año en que CIERRA:
+# la gestión 2018 va de abril-2017 a marzo-2018.
+#
+# Se usan las 9 gestiones completas disponibles: 2018 … 2026.
+# La gestión 2026 (abr-2025 → mar-2026) es la última CERRADA al momento del
+# análisis, y es el bloque de prueba.
+periodo:
+  mes_inicio_gestion: 4          # abril
+  inicio: "2017-04"              # inicio de la gestión 2018
+  fin: "2026-03"                 # cierre de la gestión 2026
+
+# -----------------------------------------------------------------------------
+# 2b. Población objetivo (decisión 2026-08-07)
+# -----------------------------------------------------------------------------
+# El estudio se acota a un grupo REPRESENTATIVO de categorías con comportamiento
+# comercial conocido: analizar el portafolio completo agrega ruido de series sin
+# patrón interpretable y diluye la lectura de los resultados. El grupo combina
+# los dos regímenes de demanda del negocio, verificados en los datos:
+#
+#   recurrentes : Categoría K (41 % del valor anual en nov–feb), Categoría J,
+#                 Categoría I (34 % ≈ distribución plana)
+#   estacionales: Categoría E (75 % nov–feb),
+#                 Categoría D (89 % nov–feb; 39 % del año en su mes pico)
+#
+# Cobertura: 684 SKUs, 4.406 series, 72,4 % del valor del negocio.
+# Las categorías se declaran por su seudónimo (Categoría A … L): la captura
+# trae el nombre real y src/carga.py lo traduce al cargar con una tabla local,
+# datos/crudo/mapeo_categoria.csv, fuera del repositorio como el mapeo de SKU
+# (plantilla: config/mapeo_categoria.ejemplo.csv).
+#
+# ABLACIÓN (portafolio completo): --anular poblacion.categorias=[]
+# Las corridas previas sobre el portafolio completo se conservan como evidencia
+# de que las conclusiones no dependen de este recorte.
+poblacion:
+  categorias:
+    - "Categoría K"
+    - "Categoría J"
+    - "Categoría I"
+    - "Categoría E"
+    - "Categoría D"
+
+# -----------------------------------------------------------------------------
+# 3. Partición en tres bloques (RN-2)
+# -----------------------------------------------------------------------------
+# Los cortes caen en frontera de gestión fiscal, no en frontera de año
+# calendario: así cada bloque es un número entero de ciclos comerciales
+# completos y ningún bloque parte una campaña escolar por la mitad.
+#
+#   entrenamiento  gestiones 2018–2024   abr-2017 … mar-2024   84 meses
+#   validación     gestión   2025        abr-2024 … mar-2025   12 meses
+#   prueba         gestión   2026        abr-2025 … mar-2026   12 meses
+#
+# La selección por serie que hace el motor SOLO puede mirar validación.
+particion:
+  fin_entrenamiento: "2024-03"   # último mes incluido en entrenamiento
+  fin_validacion: "2025-03"      # último mes incluido en validación
+  # el resto (hasta periodo.fin) es prueba
+
+# -----------------------------------------------------------------------------
+# 4. Construcción de las series (RF-3)
+# -----------------------------------------------------------------------------
+series:
+  # Tratamiento de cantidades negativas (devoluciones).
+  #   descartar : se eliminan las filas negativas y se reporta cuántas eran
+  #   netear    : se suman algebraicamente contra la venta del mismo mes
+  devoluciones: "descartar"
+
+  # Los meses sin registro se completan con cero SOLO entre la primera y la
+  # última venta de cada serie. Un mes anterior al lanzamiento del producto no
+  # es demanda cero: es ausencia de producto.
+  rellenar_ceros_intermedios: true
+
+  # Interruptor de cohorte (sensibilidad «cohorte al origen»). Con false, la
+  # corrida publicada: la vida de la serie termina en su última venta. Con true
+  # termina en el último mes del período (periodo.fin), con ceros después de la
+  # última venta; el nacimiento sigue siendo la primera venta.
+  # Ver config/config_sensibilidad_a.yaml y config_sensibilidad_b.yaml.
+  extender_vida_hasta_fin_periodo: false
+
+# -----------------------------------------------------------------------------
+# 4b. Evento exógeno — COVID-19
+# -----------------------------------------------------------------------------
+# La pandemia golpeó las ventas entre marzo-2020 y febrero-2021 (piso: abril
+# 2020, −88 % valorizado; 181 series activas se apagaron por completo en el
+# confinamiento). El período cae ÍNTEGRO dentro del bloque de entrenamiento:
+# validación y prueba están limpias.
+#
+# Tratamiento base: `copiar_gestion_previa` — cada mes de la ventana se
+# reemplaza, PARA EL AJUSTE, por el mismo mes del año anterior. No es una
+# decisión del investigador: es la PRÁCTICA DOCUMENTADA de Planificación de la
+# empresa durante el evento (se copió la historia de la gestión pasada), y el
+# benchmark debe ser el método real (§10). La serie observada sigue siendo la
+# fuente de verdad: la evaluación jamás toca datos corregidos (la ventana no
+# alcanza validación ni prueba, y el pipeline lo verifica).
+#
+#   copiar_gestion_previa : práctica de la empresa (base)
+#   nada                  : historia cruda (ablación de sensibilidad)
+evento_exogeno:
+  nombre: "covid19"
+  desde: "2020-03"
+  hasta: "2021-02"
+  tratamiento: "copiar_gestion_previa"
+
+# -----------------------------------------------------------------------------
+# 5. Criterios de inclusión y exclusión
+# -----------------------------------------------------------------------------
+# Se miden SOBRE EL BLOQUE DE ENTRENAMIENTO exclusivamente. Medirlos sobre la
+# historia completa filtraría series usando información de validación y prueba,
+# que es la forma más silenciosa de contaminar la muestra.
+#
+# El desglose «cuántas series excluyó cada criterio» va literalmente al apartado
+# «Criterios de inclusión y exclusión» de la tesis, y el N resultante es el
+# tamaño de la muestra.
+inclusion:
+  historial_minimo_meses: 36     # meses entre primera y última venta, en train
+  proporcion_maxima_ceros: 0.70  # sobre la vida observada de la serie, en train
+  volumen_minimo_unidades: 50    # acumulado en train
+
+  # Interruptores de cohorte (sensibilidad «cohorte al origen»). Los valores de
+  # abajo son los de la corrida publicada y reproducen su cascada bit a bit.
+  #   exigir_presencia_prueba: true exige presencia en el bloque de prueba
+  #     (paso 6 de la cascada, que usa información de prueba); false no aplica
+  #     el paso 6 y lo declara en la cascada.
+  #   estado_al_origen: "todas" no filtra; "activa" conserva sólo las series
+  #     activas al origen de la prueba (venta en los seis meses previos al primer
+  #     mes de prueba, regla de clasificar_estados en src/particion.py).
+  exigir_presencia_prueba: true
+  estado_al_origen: "todas"
+
+# -----------------------------------------------------------------------------
+# 6. Modelos
+# -----------------------------------------------------------------------------
+# Los seis primeros son los métodos que NOVAPACK usa hoy (confirmado con
+# Planificación). Los tres siguientes son los clásicos estadísticos incorporados
+# por recomendación de la dirección del trabajo. LightGBM es el brazo de
+# aprendizaje automático y el motor es la propuesta.
+modelos:
+  activos:
+    - naive_m1          # método actual — línea base estándar
+    - naive_m1_gf
+    - ma_2              # método actual — promedio móvil bimestral
+    - ma_2_gf
+    - ma_12             # método actual — promedio móvil anual
+    - ma_12_gf
+    - exp_smooth_opt    # clásico — suavizado exponencial simple, alfa optimizado
+    - holt_winters      # clásico — nivel + tendencia + estacionalidad (m=12)
+    - croston           # clásico — demanda intermitente
+    - lightgbm          # aprendizaje automático
+    - motor             # la propuesta: selección por serie
+
+  # Brazo que representa al «promedio móvil que usa la empresa» en el contraste
+  # confirmatorio de la hipótesis. Se fija ANTES de ver resultados (RF-8).
+  benchmark_promedio_movil: "ma_12"
+  benchmark_naive: "naive_m1"
+
+  # Suavizado exponencial simple: rejilla de alfa explorada sobre entrenamiento.
+  exp_smooth:
+    alfa_min: 0.05
+    alfa_max: 0.95
+    alfa_paso: 0.05
+
+  # Holt-Winters aditivo con estacionalidad mensual.
+  # La rejilla es 6 × 4 × 4 = 96 combinaciones. Cada combinación se evalúa sobre
+  # TODAS las series a la vez (recursión vectorizada), y cada serie se queda con
+  # la combinación de menor SSE en entrenamiento.
+  holt_winters:
+    periodo_estacional: 12
+    alfa_rejilla: [0.1, 0.2, 0.3, 0.5, 0.7, 0.9]
+    beta_rejilla: [0.0, 0.05, 0.1, 0.2]
+    gamma_rejilla: [0.0, 0.05, 0.1, 0.2]
+
+  # Croston clásico (Croston, 1972).
+  croston:
+    alfa_rejilla: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
+
+  # LightGBM — modelo global sobre todas las series.
+  #
+  # Hiperparámetros DECLARADOS desde la búsqueda determinista (Optuna TPE,
+  # semilla 20260408, 60 ensayos, fold interno = gestión 2024, criterio =
+  # D interna valorizada; tabla completa en salidas_tuning/, corrida
+  # 2026-08-07 sobre snapshot 5d1190ff con las features v2).
+  #
+  # La hipótesis pre-registrada del sesgo SE CONFIRMÓ en el fold interno:
+  # regression_l1 optimiza la mediana condicional y en demanda con cola
+  # derecha sub-pronostica estructuralmente (bias interno −13,6 %); el
+  # objetivo TWEEDIE (diseñado para demanda con ceros y cola derecha) lo
+  # elimina (bias interno +0,2 %) con el mismo error absoluto. D interna:
+  # l1 = 73,3 · l2 = 79,8 · tweedie = 59,7.
+  #
+  # El piso v1 se reproduce por ablación: --anular de objective/learning_rate/
+  # num_leaves/min_data_in_leaf/feature_fraction/bagging_fraction/lambda_l2 a
+  # los valores previos (objective=regression_l1, lr=0.05, leaves=63,
+  # min_data=40, ff=0.8, bf=0.8, l2=1.0) + features.v2.* en false.
+  lightgbm:
+    objective: "tweedie"
+    tweedie_variance_power: 1.464977652919245
+    metric: "tweedie"
+    learning_rate: 0.05310654167584386
+    num_leaves: 137
+    min_data_in_leaf: 61
+    feature_fraction: 0.5778124801487501
+    bagging_fraction: 0.870285300844084
+    bagging_freq: 1
+    lambda_l2: 24.468189902436567
+    num_boost_round: 3000
+    early_stopping_rounds: 100
+    # Reproducibilidad exacta (RN-5): un solo hilo y modo determinista.
+    seed: 20260406
+    num_threads: 1
+    deterministic: true
+    force_row_wise: true
+    verbosity: -1
+
+  # Regla de selección del motor. Se decide mirando SOLO validación (RN-2).
+  #   mae             : argmin del MAE en validación
+  #   mae_mas_bias    : argmin de MAE + |Bias| (la regla declarada del estudio)
+  #
+  # CONSISTENCIA DE LA INVESTIGACIÓN: la métrica de decisión del estudio es
+  # D = WMAPE_val + |Bias_val| (captura el objetivo del pronóstico: errar poco
+  # Y sin sesgo sistemático). El motor selecciona por su análogo por-serie
+  # (mae + |bias|), que ordena idéntico que la versión valorizada dentro de
+  # cada serie, y el contraste estadístico se parea sobre esa misma métrica.
+  # Es además la regla que el documento declara (§3.2.1).
+  motor_regla: "mae_mas_bias"
+
+  # VENTANA de selección del motor (qué error compara para elegir por serie):
+  #   un_paso       : error a un paso sobre validación — el protocolo declarado
+  #                   del estudio (RN-4 principal).
+  #   multihorizonte: error multihorizonte sobre validación — proyección
+  #                   recursiva desde el cierre de entrenamiento (h=1..12),
+  #                   la MISMA mecánica con la que después se lo evalúa: la
+  #                   de un backtest a horizonte.
+  # ABLACIÓN PRE-REGISTRADA (2026-08-07, antes de ver su resultado): la corrida
+  # base mostró que el motor con selección a un paso cae de 1.º a 4.º en la
+  # curva D(h) — eligió modelos planos que colapsan al horizonte largo. La
+  # pregunta que esta ablación responde: ¿la caída es del CONCEPTO de selección
+  # por serie, o de la VENTANA con que selecciona?
+  #   --anular modelos.motor_seleccion=multihorizonte
+  motor_seleccion: "un_paso"
+
+# -----------------------------------------------------------------------------
+# 7. Features (RF-5)
+# -----------------------------------------------------------------------------
+features:
+  rezagos: [1, 2, 3, 6, 12]
+  ventanas_moviles: [3, 6, 12]   # media y desviación sobre valores desplazados
+  incluir_mes: true
+  incluir_anio: true
+  incluir_tendencia: true
+  categoricas: ["sku", "canal", "regional"]
+
+  # --- Features v2 (decisión 2026-08-07) -------------------------------------
+  # El brazo de aprendizaje automático deja de ser el piso declarado: gana la
+  # visibilidad que los clásicos no tienen. TODAS son causales (rezagadas: solo
+  # información anterior al mes predicho, RN-3) y cada grupo es anulable por
+  # ablación (--anular features.v2.X=false; el conjunto en false = el piso v1).
+  #
+  #   categoria   : la categoría comercial como categórica del modelo global —
+  #                 con una población de dos regímenes (recurrente/estacional),
+  #                 separa comportamientos que el SKU solo insinúa.
+  #   precio      : precio mensual rezagado + variación % (100 % de cobertura).
+  #   perdidas    : venta perdida rezagada + suma móvil 12 (demanda
+  #                 insatisfecha reciente; 0 antes de 2020 por definición de la
+  #                 fuente — declarado).
+  #   quiebres    : % de semanas con stock en cero, rezagado + móvil 3 (separa
+  #                 «mes bajo por oferta» de «mes bajo por demanda»). La fuente
+  #                 empieza en 2022-04: antes es NaN, y «no hay historia» es
+  #                 información, no un dato que falte.
+  #   tipo_cambio : TC mensual rezagado + variación % (régimen variable desde
+  #                 2022; antes, el fijo documentado de abajo).
+  #   derivadas   : recencia de venta, % ceros móvil, media histórica del mismo
+  #                 mes calendario, razón interanual, momentum, mín/máx móvil.
+  v2:
+    categoria: true
+    precio: true
+    perdidas: true
+    quiebres: true
+    tipo_cambio: true
+    derivadas: true
+
+  # Régimen cambiario fijo documentado (Bs/USD) para los meses anteriores al
+  # primer dato de la fuente de tipo de cambio (Bolivia mantuvo 6,96 hasta la
+  # transición al régimen variable).
+  tc_regimen_fijo: 6.96
+
+  # Fuentes exógenas auxiliares (viven junto al snapshot; nunca se versionan).
+  archivo_quiebres: "datos/crudo/quiebres.csv"
+  archivo_tipo_cambio: "datos/crudo/tipo_cambio.csv"
+
+# -----------------------------------------------------------------------------
+# 7b. Evaluación multihorizonte (RN-4, segunda parte)
+# -----------------------------------------------------------------------------
+# El protocolo principal evalúa a UN paso (caso h=1). Pero el objetivo operativo
+# del pronóstico es el horizonte de PLANIFICACIÓN, que en la empresa supera
+# el año, y a ese horizonte un modelo que proyecta línea recta ignora la
+# campaña escolar. La RN-4 exige que esta
+# evaluación se aplique POR IGUAL a todos los modelos y se reporte POR SEPARADO
+# — este bloque hace exactamente eso.
+#
+#   origenes: "rodantes" — cada mes del bloque de prueba es un origen (la
+#             operación real re-pronostica todo el horizonte cada mes);
+#             "fijo" — un solo origen al cierre de validación (ablación).
+#   horizonte_maximo: 12 — el horizonte de planificación es mayor, pero el
+#             histórico cierra en mar-2026: h=12 es el máximo medible con
+#             realidad contra la que comparar. Se declara en la memoria.
+#   reentrenar_lightgbm: en operación el modelo global se re-entrena en cada
+#             corrida mensual (política del diseño); aquí se replica, con el número de
+#             árboles CONGELADO del ajuste base (la parada temprana no se
+#             repite: re-mirar validación en cada origen sería re-optimizar).
+multihorizonte:
+  activo: true
+  horizonte_maximo: 12
+  origenes: "rodantes"
+  reentrenar_lightgbm: true
+  # Ablación (apagada): los brazos estadísticos re-estiman sus parámetros en
+  # cada origen con la historia hasta el origen, igual que LightGBM re-entrena.
+  reestimar_estadisticos: false
+
+# -----------------------------------------------------------------------------
+# 7c. Ajuste de hiperparámetros del brazo de aprendizaje automático
+# -----------------------------------------------------------------------------
+# Lo consume scripts/ajustar_lightgbm.py (NO el pipeline): la búsqueda corre
+# UNA vez, sus artefactos quedan en salidas_tuning/, y los hiperparámetros
+# ganadores se DECLARAN a mano en modelos.lightgbm con un comentario que cita
+# la corrida. Así el pipeline sigue siendo rápido y todo queda trazable.
+#
+# Reproducibilidad (RN-5): Optuna TPE con semilla fija y ejecución secuencial —
+# la secuencia de ensayos es determinista. El espacio se declara acá (el mismo
+# principio que la rejilla de alfa del SES, a otra escala) y la tabla completa
+# de ensayos es un artefacto: el tribunal ve el camino, no solo al ganador.
+#
+# FOLD INTERNO: entrena con gestiones 2018-2023 y evalúa la gestión 2024 (el
+# último año de ENTRENAMIENTO). La validación real queda intacta para el motor
+# (RN-2) y la prueba jamás se toca. Criterio: D interna valorizada.
+#
+# La hipótesis principal que la búsqueda arbitra: el objetivo de entrenamiento.
+# regression_l1 optimiza la MEDIANA condicional y en demanda con cola derecha
+# sub-pronostica estructuralmente (el Bias de -33 % del piso v1); tweedie está
+# diseñado para demanda con ceros y cola derecha.
+lightgbm_tuning:
+  semilla: 20260408
+  n_trials: 60
+  fold_desde: "2023-04"          # gestión 2024 como validación interna
+  fold_hasta: "2024-03"
+  num_boost_round: 3000
+  early_stopping_rounds: 100
+  espacio:
+    objective: ["regression_l1", "regression_l2", "tweedie"]
+    tweedie_variance_power: [1.1, 1.6]     # solo aplica si objective=tweedie
+    learning_rate: [0.02, 0.12]            # escala logarítmica
+    num_leaves: [15, 255]                  # escala logarítmica, entero
+    min_data_in_leaf: [10, 200]            # escala logarítmica, entero
+    feature_fraction: [0.5, 1.0]
+    bagging_fraction: [0.5, 1.0]
+    lambda_l2: [0.0, 30.0]
+
+# -----------------------------------------------------------------------------
+# 8. Pruebas estadísticas (RF-8)
+# -----------------------------------------------------------------------------
+pruebas:
+  alfa: 0.05
+  # Wilcoxon unilateral: la hipótesis alternativa es que el modelo propuesto
+  # tiene MENOS error que el de referencia.
+  alternativa: "less"
+  # Métrica sobre la que se hacen los contrastes pareados por serie.
+  # `error_compuesto_unidades` = mae + |bias| por serie: el análogo por-serie
+  # de la métrica de decisión D (mismo orden que su versión valorizada dentro
+  # de cada serie). Consistencia: se contrasta con lo mismo que se decide.
+  metrica_contraste: "error_compuesto_unidades"
+  # Shapiro-Wilk pierde sentido y satura por encima de este N; se submuestrea
+  # con semilla fija y se declara en el informe.
+  shapiro_n_maximo: 5000
+  semilla: 20260406
+
+# -----------------------------------------------------------------------------
+# 9. Figuras (RF-9)
+# -----------------------------------------------------------------------------
+figuras:
+  dpi: 300
+  escala_grises: true
+  formato: "png"
+
+# -----------------------------------------------------------------------------
+# 10. Salidas
+# -----------------------------------------------------------------------------
+salidas:
+  directorio: "salidas"

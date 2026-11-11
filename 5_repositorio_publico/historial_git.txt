@@ -1,0 +1,2211 @@
+HISTORIAL DE COMMITS DEL REPOSITORIO PÚBLICO DEL TRABAJO FINAL DE GRADO
+
+Repositorio: https://github.com/noportor/tfg-motor-pronostico-demanda
+Rama: master, la única publicada. Último commit: f799b5635feb471953618b2023296c7cc0213e4b
+Commits: 73, del 2026-08-06 al 2026-10-22. Los más recientes van primero.
+Commits de referencia: 472b891, el de las corridas; 17893d4, el que revisó la empresa; f799b56, el estado actual.
+Es el registro que da git log sobre la rama publicada, sin los correos de los autores.
+
+Para repetirlo en un clon del repositorio:
+  git log --date=short --format='%h  %ad  %s' origin/master        (parte 1)
+  git log --stat --date=iso origin/master                           (parte 2; agrega los correos)
+
+======================================================================================================
+PARTE 1. UN RENGLÓN POR COMMIT: identificador, fecha y asunto
+======================================================================================================
+
+f799b56  2026-10-22  documentación: correspondencia de rótulos con la Tabla 34 nueva del documento final (Tablas 35 a 48)
+0d552eb  2026-10-21  documentación: anexos citados con el número del documento final y correspondencia de rótulos
+17893d4  2026-10-19  resultados: tablas, figuras y auditoría regeneradas con las corridas sobre 472b891 (mismas cifras del cuerpo; la extensión repetida con las categorías seudonimizadas)
+472b891  2026-10-19  redacción: «conjunto» de modelos candidatos en salidas, rótulos y comentarios
+4a784ce  2026-10-19  configuración y pruebas: categorías por su seudónimo
+4b98507  2026-10-19  confidencialidad: las categorías se seudonimizan al cargar con una tabla local, como los SKU
+773ede4  2026-10-15  sensibilidad: tablas regeneradas con las tres corridas sobre el commit del seudónimo restaurado (mismas cifras; cambian commits, duraciones y sellos)
+43ceeb4  2026-10-15  seudónimo: la empresa vuelve a llamarse NOVAPACK S.A., como en el título registrado del trabajo (la facultad no admite cambiar el título); el archivo de ventas pasa a ventas_novapack.csv
+75d369c  2026-10-15  figuras: los casos representativos rotulan las ventas observadas y el eje en unidades; scripts/figura_casos.py regenera la Figura 13 desde las salidas publicadas
+8910919  2026-10-15  contraste: incertidumbre agrupada por SKU para la extensión exploratoria (Tabla H4, mezclas frente al promedio móvil, al ingenuo y al motor validado en las dos gestiones)
+4c534cf  2026-10-15  multihorizonte: el docstring no cifra el horizonte de planificación
+2cdc824  2026-10-15  sensibilidad: tablas regeneradas con las tres corridas sobre el historial reescrito (mismas cifras; cambian commits, duraciones y sellos)
+44c8b1d  2026-10-14  sensibilidad: la variante B repetida con el árbol limpio (mismas cifras; cambian su commit, duración y sello)
+137f81c  2026-10-14  sensibilidad: tabla de la cohorte fijada al origen frente a la publicada, por estado comercial y venta en prueba
+0d7ab34  2026-10-14  confidencialidad: la suite falla si se versiona un documento ofimático o comprimido; README al día
+dd3271a  2026-10-14  contraste: incertidumbre del contraste agrupada por SKU y por bloques temporales
+54fd0ab  2026-10-14  explicación: las contribuciones TreeSHAP se declaran en la escala logarítmica del modelo, no en unidades
+4873297  2026-10-14  manifiesto: sella con SHA-256 todos los archivos de la captura, no sólo el de ventas
+e7e9f36  2026-10-14  cohorte: interruptores para fijar la elegibilidad al origen de la prueba y extender la vida de las series, con las configuraciones de sensibilidad A y B
+a930c9f  2026-10-14  scripts: tablas de hiperparámetros, estados del Anexo N, benchmarks del Anexo P y figura del microservicio
+554f618  2026-10-14  docker: statsmodels y patsy fijados a las versiones de la imagen publicada
+32538e6  2026-10-14  títulos: el título definitivo del TFG en los README y en el paquete
+0cbd82e  2026-10-14  resultados: tablas de ensayos de la búsqueda de hiperparámetros
+8f341d6  2026-10-14  confidencialidad: los identificadores concretos de la empresa salen de la prueba pública
+7032481  2026-10-14  lightgbm: los docstrings declaran el objetivo Tweedie calibrado
+dbfe8c3  2026-10-14  saneamiento: el código describe la práctica vigente de Planificación, no un sistema automatizado de la empresa
+eecd6ed  2026-09-05  multihorizonte: ablacion reestimar_estadisticos (parametros por origen)
+5d6f98c  2026-09-05  anexo H: contraste tambien contra el promedio movil de 12 meses con factor de crecimiento
+4e3ac8d  2026-08-31  figuras: proceso propuesto, arquitectura del motor y reparto de la selección
+5a48f45  2026-08-31  figuras: sensibilidad al régimen de la extensión (Figura 17 del documento)
+0e1b4a3  2026-08-31  figuras: F1 en orden de gestión y F2 marca solo la gestión del confinamiento
+453a387  2026-08-27  fix(figuras): las notas explicativas salen de la imagen — APA las quiere debajo de la figura, en el documento
+29faa25  2026-08-25  fix(figuras): pie de la figura de horizonte sin raya y formateador de valores faltantes en n/d
+0371c98  2026-08-23  fix(visor): la Exploracion ML2 adopta la corrida limpia V9 como canonica — narrativa de la fuga de seleccion (cap. 6), nhits/tft con veredicto honesto y claims de significancia precisados por tamano de efecto
+a9c03b6  2026-08-23  chore(ml2): corrida V9 — configs de TFT y N-HiTS elegidas por validacion (HPO V3) en ambas gestiones
+c66f630  2026-08-21  feat(explicacion): TreeSHAP dirigido al pico, Pareto del valor y error por mes — paso 9b, figuras F14–F16 y rótulos de paneles (a)/(b)
+a98f1fc  2026-08-21  docs(readme): carta de presentación del TFG — correspondencia con el documento, reproducibilidad y confidencialidad
+cd00534  2026-08-12  feat(contraste): el contraste corre sobre la matriz que publica, y el anexo la reproduce
+1cb998e  2026-08-09  feat(visor): vista Exploración ML2 — la narrativa de las once corridas
+c541145  2026-08-09  feat(ml2): V8 — mezcla_conmutada: la conmutación por régimen, medida en ambos años
+96bed6f  2026-08-09  feat(ml2): V7 — el conjunto anti-régimen, medido en los dos años de prueba
+1bae3a0  2026-08-09  docs(ml2): auditoría adversarial de la V6 — tres interpretaciones corregidas
+1353c7e  2026-08-09  feat(ml2): V6 — el calendario comercial declarado como feature
+9775196  2026-08-09  feat(ml2): corrida de blindaje — el protocolo desplazado un año (prueba g2025)
+5347496  2026-08-09  feat(ml2): V5 — el asalto al horizonte: mezcla_h + directo re-entrenado
+5984430  2026-08-09  feat(ml2): V4 — el mezclador: combinar en vez de seleccionar + LightGBM directo
+b33e476  2026-08-09  feat(ml2): V3 — HPO propio por red, Chronos por categoría, históricas en TFT
+91f0e89  2026-08-08  feat(ml2): V2 — Tweedie en las redes, exógenas en TFT, Chronos calibrado, motor multihorizonte
+8841997  2026-08-08  feat(ml2): brazos neuronales y fundacional — la corrida exploratoria post-documento
+b696c1c  2026-08-08  chore: documento/privado/ fuera del repositorio
+c1d5293  2026-08-08  feat(figuras): catalogo listo para el documento + redibujo en segundos
+16e8075  2026-08-08  feat(estratos): la D partida por regimen y tipo de categoria — el ultimo pendiente del mapa
+9c00093  2026-08-08  feat(series): la evidencia serie por serie — persistencia, vista y figura de casos
+c92d949  2026-08-08  feat(figuras): catalogo F1-F12 del documento — cada figura con UN trabajo
+aaec3b0  2026-08-07  feat(ml): features v2 + hiperparametros tweedie — el brazo ML deja de ser el piso
+35967dc  2026-08-07  feat(muestra): poblacion objetivo + estados declarativos + sensibilidad de umbrales
+28f76c8  2026-08-07  feat(unidad): etapa unidad_analisis — la evidencia de la serie SKU-canal-regional
+cfa1fa6  2026-08-07  feat(motor): ablacion pre-registrada — ventana de seleccion multihorizonte
+171c88c  2026-08-07  feat(multihorizonte): evaluacion con origenes rodantes — la RN-4 completa
+f3ea620  2026-08-07  feat(evento): tratamiento COVID-19 parametrizado — la practica de la empresa
+6597937  2026-08-07  feat(metricas): suite valorizada por costo y metrica de decision D
+4297d7c  2026-08-07  feat(visor): SPA React reemplaza al tablero Streamlit
+d841b83  2026-08-07  fix(tablero): sobrevive a crashes nativos y las interacciones son fluidas
+e6d4e39  2026-08-07  fix(tablero): las paginas se pasan relativas al script principal
+4144374  2026-08-07  fix(confidencialidad): 0.0.0.0 y loopback no son IPs internas
+f96c8ac  2026-08-07  feat(tablero): visor del flujo completo + dashboard de resultados
+f681d6b  2026-08-07  docs: como autenticar contra este repo sin romper otras cuentas de la maquina
+231cdf1  2026-08-07  chore: excepcion declarada para la ubicacion publica y finales de linea LF
+dcf5d60  2026-08-07  refactor: el repositorio pasa a ser el del TFG completo, no solo el codigo
+32a1ecf  2026-08-07  feat(confidencialidad): saca el esquema interno del codigo y automatiza el control
+a7d5c70  2026-08-06  fix(manifiesto): registra el commit sin depender del binario de git
+96b2004  2026-08-06  docs(pruebas): explicita por que el motor no puede ganar en solitario
+11ba7b5  2026-08-06  feat: motor de pronóstico de demanda INNOVA — análisis cuantitativo del TFG
+
+======================================================================================================
+PARTE 2. CADA COMMIT COMPLETO: identificador, autor, fecha, mensaje y archivos que cambió
+======================================================================================================
+
+commit f799b5635feb471953618b2023296c7cc0213e4b
+Autor: noportor
+Fecha: 2026-10-22 10:32:30 -0400
+
+    documentación: correspondencia de rótulos con la Tabla 34 nueva del documento final (Tablas 35 a 48)
+
+ README.md                                        | 4 ++--
+ motor-pronostico/scripts/figura_microservicio.py | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 0d552eba354b401b2e4cb61748231c37459f1eff
+Autor: noportor
+Fecha: 2026-10-21 13:32:13 -0400
+
+    documentación: anexos citados con el número del documento final y correspondencia de rótulos
+
+    El documento final numera los anexos (Anexo 1 a Anexo 18, como pide la plantilla
+    del programa) en lugar de rotularlos con letras, y numera de corrido las tablas y
+    figuras de los anexos. Los léeme, comentarios y docstrings citaban los anexos con
+    letra (B, G, H, K, L, N, P): pasan al número que les corresponde (2, 7, 8, 11, 12,
+    14, 16). El léeme principal agrega la correspondencia completa de anexos y de los
+    rótulos de tablas y figuras que conservan los archivos de resultados y los scripts
+    (Tabla H3 es la 20, H4 la 21, K1 la 25, L3 la 28, N1 a N4 las 30 a 33, O1 la 34,
+    P2 y P3 las 43 y 44; Figura K1 es la 15).
+
+    Sin cambios en código ejecutable, nombres de archivo, resultados sellados por el
+    manifiesto ni aserciones de pruebas: la corrida publicada sigue siendo la de 17893d4.
+
+ README.md                                              | 23 +++++++++++++++++++++--
+ documento/README.md                                    |  2 +-
+ motor-pronostico/.dockerignore                         |  2 +-
+ motor-pronostico/.gitignore                            |  2 +-
+ motor-pronostico/README.md                             | 10 +++++-----
+ motor-pronostico/REQUERIMIENTOS.md                     |  4 ++--
+ motor-pronostico/config/config.yaml                    |  2 +-
+ motor-pronostico/config/extraccion.ejemplo.yaml        |  2 +-
+ motor-pronostico/main.py                               |  2 +-
+ motor-pronostico/scripts/anexo_h_contraste.py          |  2 +-
+ motor-pronostico/scripts/anexo_n_estados.py            |  7 ++++---
+ motor-pronostico/scripts/anexo_p_benchmarks.py         |  3 ++-
+ motor-pronostico/scripts/figura_microservicio.py       |  2 +-
+ motor-pronostico/scripts/incertidumbre_agrupada.py     |  7 ++++---
+ motor-pronostico/scripts/incertidumbre_extension.py    |  3 ++-
+ motor-pronostico/scripts/sensibilidad_cohorte.py       |  7 ++++---
+ motor-pronostico/scripts/tabla_hiperparametros.py      |  4 ++--
+ motor-pronostico/src/modelos/fundacional.py            |  2 +-
+ motor-pronostico/tests/test_confidencialidad.py        |  6 +++---
+ motor-pronostico/tests/test_incertidumbre_agrupada.py  |  2 +-
+ motor-pronostico/tests/test_incertidumbre_extension.py |  2 +-
+ motor-pronostico/tests/test_sensibilidad_cohorte.py    |  2 +-
+ motor-pronostico/visor/nginx.conf                      |  2 +-
+ 23 files changed, 62 insertions(+), 38 deletions(-)
+
+commit 17893d4d39d9255657356307d97c34e543b41689
+Autor: noportor
+Fecha: 2026-10-19 23:45:55 -0400
+
+    resultados: tablas, figuras y auditoría regeneradas con las corridas sobre 472b891 (mismas cifras del cuerpo; la extensión repetida con las categorías seudonimizadas)
+
+ motor-pronostico/docs/auditoria_ml2_v6.md                              |  62 ++++++++++++++-------------
+ motor-pronostico/resultados/figuras/figura13_casos.png                 | Bin 0 -> 325637 bytes
+ motor-pronostico/resultados/tablas/anexo_n.md                          |   2 +-
+ motor-pronostico/resultados/tablas/anexo_n_resumen.json                |   4 +-
+ motor-pronostico/resultados/tablas/anexo_p.md                          |  38 ++++++++---------
+ motor-pronostico/resultados/tablas/anexo_p_p2.csv                      |  20 ++++-----
+ motor-pronostico/resultados/tablas/anexo_p_p3.csv                      |  14 +++----
+ motor-pronostico/resultados/tablas/anexo_p_resumen.json                |  62 +++++++++++++--------------
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.md  |   2 +-
+ motor-pronostico/resultados/tablas/tabla_H4_incertidumbre_extension.md |  92 ++++++++++++++++++++---------------------
+ motor-pronostico/resultados/tablas/tabla_K1_resumen.json               |  24 +++++------
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.csv   |   6 +--
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.md    |   2 +-
+ motor-pronostico/scripts/anexo_p_benchmarks.py                         |   6 +--
+ 14 files changed, 170 insertions(+), 164 deletions(-)
+
+commit 472b891eca2998e3ec55a8a49511032be388bf96
+Autor: noportor
+Fecha: 2026-10-19 12:20:49 -0400
+
+    redacción: «conjunto» de modelos candidatos en salidas, rótulos y comentarios
+
+    El término anterior era una metáfora inadecuada para el conjunto de modelos
+    candidatos que combina el mezclador. Cambian las descripciones de salida de
+    main.py, los rótulos de la Figura 14 y de la Tabla H4, los textos del anexo P,
+    los mensajes y docstrings del mezclador, los comentarios de las configuraciones
+    ML2 y de las pruebas, y la prosa del visor. Las claves de configuración y los
+    identificadores de código con el término anterior se conservan; el contenido de
+    las configuraciones no cambia (sólo comentarios).
+
+ motor-pronostico/config/config_ml2_blindaje.yaml     |  2 +-
+ motor-pronostico/config/config_ml2_v2.yaml           |  2 +-
+ motor-pronostico/config/config_ml2_v4.yaml           |  6 +++---
+ motor-pronostico/config/config_ml2_v5.yaml           |  8 ++++----
+ motor-pronostico/config/config_ml2_v6.yaml           |  4 ++--
+ motor-pronostico/config/config_ml2_v7.yaml           | 18 +++++++++---------
+ motor-pronostico/config/config_ml2_v7_blindaje.yaml  | 10 +++++-----
+ motor-pronostico/config/config_ml2_v8.yaml           | 12 ++++++------
+ motor-pronostico/config/config_ml2_v8_blindaje.yaml  | 12 ++++++------
+ motor-pronostico/config/config_ml2_v9.yaml           | 12 ++++++------
+ motor-pronostico/config/config_ml2_v9_blindaje.yaml  | 12 ++++++------
+ motor-pronostico/main.py                             |  8 ++++----
+ motor-pronostico/scripts/anexo_p_benchmarks.py       | 12 ++++++------
+ motor-pronostico/scripts/figura_extension_regimen.py |  6 +++---
+ motor-pronostico/scripts/incertidumbre_extension.py  |  8 ++++----
+ motor-pronostico/src/config.py                       |  2 +-
+ motor-pronostico/src/modelos/mezclador.py            | 40 ++++++++++++++++++++--------------------
+ motor-pronostico/src/multihorizonte.py               |  2 +-
+ motor-pronostico/tests/test_ml2_brazos.py            |  8 ++++----
+ motor-pronostico/visor/src/vistas/Exploracion.tsx    | 38 +++++++++++++++++++-------------------
+ 20 files changed, 111 insertions(+), 111 deletions(-)
+
+commit 4a784cebb42481739d0ae1e78e4501763f09acbd
+Autor: noportor
+Fecha: 2026-10-19 11:41:46 -0400
+
+    configuración y pruebas: categorías por su seudónimo
+
+    config.yaml (lista y comentario, mismas cifras) y las 14 config_ml2_*.yaml
+    declaran la población y el calendario de la V6 con las categorías D, E, I, J
+    y K; los títulos de la Figura 13 pasan a «Estacional de campaña (categoría D)»
+    y «Recurrente (categoría I)», y la comparación usa los seudónimos. Las pruebas
+    usan datos sintéticos con los seudónimos. Frente a lo sellado por los
+    manifiestos de la extensión, config_ml2_v9.yaml y config_ml2_v9_blindaje.yaml
+    difieren sólo en poblacion.categorias.
+
+ motor-pronostico/config/config.yaml        | 6 ++++--
+ motor-pronostico/config/config_ml2_v6.yaml | 6 +++---
+ motor-pronostico/main.py                   | 6 ++++--
+ motor-pronostico/tests/test_pipeline.py    | 7 ++++---
+ 4 files changed, 15 insertions(+), 10 deletions(-)
+
+commit 4b98507bc103664f8db5e62eb112bd110bf7c40d
+Autor: noportor
+Fecha: 2026-10-19 11:41:45 -0400
+
+    confidencialidad: las categorías se seudonimizan al cargar con una tabla local, como los SKU
+
+    La captura conserva el nombre real de cada categoría (y con él el SHA-256 que
+    sellan las corridas); src/carga.py lo reemplaza por su seudónimo con
+    datos/crudo/mapeo_categoria.csv, fuera del repositorio, antes de cualquier otro
+    uso. Una categoría sin fila en la tabla, una tabla con seudónimos repetidos o
+    una tabla que no conserva el orden alfabético de los nombres reales detiene la
+    carga; sin la tabla la columna pasa tal cual. Con el orden conservado, los
+    códigos de la columna categórica son los mismos que con los nombres reales y
+    las corridas reproducen las cifras publicadas. El manifiesto sella la tabla
+    como auxiliar leído y el flujo registra su SHA-256, nunca su contenido.
+    Plantilla versionada en config/mapeo_categoria.ejemplo.csv, prueba nueva y
+    scripts/figura_casos.py rotula con el seudónimo los insumos de corridas previas.
+
+ motor-pronostico/README.md                          |  15 ++++--
+ motor-pronostico/REQUERIMIENTOS.md                  |   1 +
+ motor-pronostico/config/mapeo_categoria.ejemplo.csv |  13 +++++
+ motor-pronostico/main.py                            |   7 +++
+ motor-pronostico/scripts/figura_casos.py            |  25 ++++++++-
+ motor-pronostico/src/carga.py                       | 118 +++++++++++++++++++++++++++++++++++++++--
+ motor-pronostico/src/reporte.py                     |  10 +++-
+ motor-pronostico/tests/test_mapeo_categoria.py      | 173 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 352 insertions(+), 10 deletions(-)
+
+commit 773ede4002af4dac90a23cfea5a9ddd1057b47d1
+Autor: noportor
+Fecha: 2026-10-15 13:18:22 -0400
+
+    sensibilidad: tablas regeneradas con las tres corridas sobre el commit del seudónimo restaurado (mismas cifras; cambian commits, duraciones y sellos)
+
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.md  |  2 +-
+ motor-pronostico/resultados/tablas/tabla_H4_incertidumbre_extension.md |  2 +-
+ motor-pronostico/resultados/tablas/tabla_K1_resumen.json               | 24 ++++++++++++------------
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.csv   |  6 +++---
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.md    |  2 +-
+ 5 files changed, 18 insertions(+), 18 deletions(-)
+
+commit 43ceeb4ea1cc7544b0f28fe2e1bc058753029b3c
+Autor: noportor
+Fecha: 2026-10-15 11:15:17 -0400
+
+    seudónimo: la empresa vuelve a llamarse NOVAPACK S.A., como en el título registrado del trabajo (la facultad no admite cambiar el título); el archivo de ventas pasa a ventas_novapack.csv
+
+ README.md                                           | 2 +-
+ motor-pronostico/.gitignore                         | 2 +-
+ motor-pronostico/README.md                          | 6 +++---
+ motor-pronostico/REQUERIMIENTOS.md                  | 6 +++---
+ motor-pronostico/config/config.yaml                 | 8 ++++----
+ motor-pronostico/config/config_ml2.yaml             | 2 +-
+ motor-pronostico/config/config_ml2_blindaje.yaml    | 2 +-
+ motor-pronostico/config/config_ml2_v2.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v3.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v4.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v5.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v6.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v7.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v7_blindaje.yaml | 2 +-
+ motor-pronostico/config/config_ml2_v8.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v8_blindaje.yaml | 2 +-
+ motor-pronostico/config/config_ml2_v9.yaml          | 2 +-
+ motor-pronostico/config/config_ml2_v9_blindaje.yaml | 2 +-
+ motor-pronostico/config/extraccion.ejemplo.yaml     | 2 +-
+ motor-pronostico/main.py                            | 4 ++--
+ motor-pronostico/scripts/extraer_snapshot.py        | 2 +-
+ motor-pronostico/src/__init__.py                    | 4 ++--
+ motor-pronostico/src/config.py                      | 2 +-
+ motor-pronostico/src/inspeccion.py                  | 2 +-
+ motor-pronostico/src/modelos/croston.py             | 2 +-
+ motor-pronostico/src/modelos/fundacional.py         | 2 +-
+ motor-pronostico/src/modelos/naive.py               | 2 +-
+ motor-pronostico/src/modelos/promedio_movil.py      | 2 +-
+ motor-pronostico/src/multihorizonte.py              | 2 +-
+ motor-pronostico/src/particion.py                   | 2 +-
+ motor-pronostico/src/series.py                      | 2 +-
+ motor-pronostico/visor/index.html                   | 2 +-
+ motor-pronostico/visor/src/App.tsx                  | 2 +-
+ 33 files changed, 42 insertions(+), 42 deletions(-)
+
+commit 75d369cdf95fba76967ac17816922c711990a704
+Autor: noportor
+Fecha: 2026-10-15 10:49:38 -0400
+
+    figuras: los casos representativos rotulan las ventas observadas y el eje en unidades; scripts/figura_casos.py regenera la Figura 13 desde las salidas publicadas
+
+ motor-pronostico/scripts/figura_casos.py | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/figuras.py          |  6 ++++--
+ 2 files changed, 72 insertions(+), 2 deletions(-)
+
+commit 89109198c6cea9e905c1d9a258ed03284c65ad6c
+Autor: noportor
+Fecha: 2026-10-15 09:03:42 -0400
+
+    contraste: incertidumbre agrupada por SKU para la extensión exploratoria (Tabla H4, mezclas frente al promedio móvil, al ingenuo y al motor validado en las dos gestiones)
+
+ motor-pronostico/resultados/tablas/tabla_H4_incertidumbre_extension.csv | 157 +++++++++++++
+ motor-pronostico/resultados/tablas/tabla_H4_incertidumbre_extension.md  | 126 +++++++++++
+ motor-pronostico/scripts/incertidumbre_agrupada.py                      |  36 ++-
+ motor-pronostico/scripts/incertidumbre_extension.py                     | 473 ++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_incertidumbre_extension.py                  | 313 ++++++++++++++++++++++++++
+ 5 files changed, 1097 insertions(+), 8 deletions(-)
+
+commit 4c534cfb079379a51f5067deec128e53302930f2
+Autor: noportor
+Fecha: 2026-10-15 02:13:28 -0400
+
+    multihorizonte: el docstring no cifra el horizonte de planificación
+
+ motor-pronostico/src/multihorizonte.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2cdc8242f11bfac39090b1374cc5574d95832f30
+Autor: noportor
+Fecha: 2026-10-15 01:23:55 -0400
+
+    sensibilidad: tablas regeneradas con las tres corridas sobre el historial reescrito (mismas cifras; cambian commits, duraciones y sellos)
+
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.md |  2 +-
+ motor-pronostico/resultados/tablas/tabla_K1_resumen.json              | 20 ++++++++++----------
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.csv  |  6 +++---
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.md   |  2 +-
+ 4 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 44c8b1d4015b257f43d156320dabb6612804d159
+Autor: noportor
+Fecha: 2026-10-14 22:02:30 -0400
+
+    sensibilidad: la variante B repetida con el árbol limpio (mismas cifras; cambian su commit, duración y sello)
+
+ motor-pronostico/resultados/tablas/tabla_K1_resumen.json             | 13 +++++--------
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.csv |  2 +-
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.md  |  2 +-
+ 3 files changed, 7 insertions(+), 10 deletions(-)
+
+commit 137f81cf225c0028d42be4e4026aea6eeaacc461
+Autor: noportor
+Fecha: 2026-10-14 21:20:47 -0400
+
+    sensibilidad: tabla de la cohorte fijada al origen frente a la publicada, por estado comercial y venta en prueba
+
+    El script lee la corrida publicada y las dos variantes (cohorte al origen; sólo activas al origen), verifica cada archivo contra el manifiesto de su corrida, vuelve a calcular la D de los once modelos y escribe sólo agregados: tamaño, series con costo, cobertura, D por modelo, desglose de la variante A por estado al origen y por venta en prueba, aporte de las series sin venta en prueba y cruce con los quiebres registrados. Prueba con directorios sintéticos. La Tabla H3 vuelve a generarse para que su control de hash apunte a la corrida publicada vigente; sus cifras no cambian.
+
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.md |   2 +-
+ motor-pronostico/resultados/tablas/tabla_K1_aporte_sin_venta.csv      |  12 +
+ motor-pronostico/resultados/tablas/tabla_K1_desglose_variante_a.csv   |  14 +
+ motor-pronostico/resultados/tablas/tabla_K1_resumen.json              | 304 +++++++++++++++++++
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.csv  |   4 +
+ motor-pronostico/resultados/tablas/tabla_K1_sensibilidad_cohorte.md   |  62 ++++
+ motor-pronostico/scripts/sensibilidad_cohorte.py                      | 691 ++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_sensibilidad_cohorte.py                   | 315 +++++++++++++++++++
+ 8 files changed, 1403 insertions(+), 1 deletion(-)
+
+commit 0d7ab341ab0ed9c642afabd757585b8003b86cdf
+Autor: noportor
+Fecha: 2026-10-14 18:54:57 -0400
+
+    confidencialidad: la suite falla si se versiona un documento ofimático o comprimido; README al día
+
+    El control no puede inspeccionar binarios, así que prohíbe versionarlos; los README describen las configuraciones de sensibilidad y los auxiliares sellados en el manifiesto.
+
+ README.md                                       |  5 +++--
+ documento/README.md                             |  9 ++++++---
+ motor-pronostico/README.md                      | 11 ++++++++++-
+ motor-pronostico/tests/test_confidencialidad.py | 35 ++++++++++++++++++++++++++++++++++-
+ 4 files changed, 53 insertions(+), 7 deletions(-)
+
+commit dd3271ad99c1c3986fc59008f264104eb84ebc37
+Autor: noportor
+Fecha: 2026-10-14 18:54:56 -0400
+
+    contraste: incertidumbre del contraste agrupada por SKU y por bloques temporales
+
+    Bootstrap por conglomerados de SKU (2.000 remuestreos, semilla declarada, intervalos percentiles al 95 %) de las diferencias pareadas por serie y de la D valorizada del portafolio, más una variante por bloques móviles de tres meses, calculado desde la matriz de contraste publicada sin reentrenar; la Tabla H3 sale del script y la prueba usa un panel sintético.
+
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.csv |  31 +++
+ motor-pronostico/resultados/tablas/tabla_H3_incertidumbre_agrupada.md  |  37 +++
+ motor-pronostico/scripts/incertidumbre_agrupada.py                     | 619 +++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_incertidumbre_agrupada.py                  | 166 +++++++++++
+ 4 files changed, 853 insertions(+)
+
+commit 54fd0ab32ed00118483d6447211dcd169598238c
+Autor: noportor
+Fecha: 2026-10-14 18:54:56 -0400
+
+    explicación: las contribuciones TreeSHAP se declaran en la escala logarítmica del modelo, no en unidades
+
+    Con el objetivo Tweedie, pred_contrib devuelve contribuciones en el puntaje crudo: valor base más suma es el logaritmo de la predicción y cada contribución c es un factor exp(c). Docstrings, decisión en el registro de flujo, eje y rótulos de la figura de contribuciones corregidos; script que redibuja la figura desde el CSV publicado; pruebas con un modelo Tweedie sintético que verifican la aditividad en el puntaje crudo y el enlace exponencial.
+
+ motor-pronostico/resultados/figuras/figura06_contribuciones.png | Bin 0 -> 196080 bytes
+ motor-pronostico/scripts/figura_contribuciones.py               |  72 ++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/explicacion.py                             |  17 ++++++--
+ motor-pronostico/src/figuras.py                                 |  34 ++++++++++++----
+ motor-pronostico/src/modelos/lightgbm_modelo.py                 |  27 +++++++++++--
+ motor-pronostico/tests/test_explicacion.py                      | 102 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 238 insertions(+), 14 deletions(-)
+
+commit 4873297c4b8902fda4e2965e489a21004f93801f
+Autor: noportor
+Fecha: 2026-10-14 18:54:55 -0400
+
+    manifiesto: sella con SHA-256 todos los archivos de la captura, no sólo el de ventas
+
+    Cada auxiliar de datos/crudo (costos, quiebres, tipo de cambio, mapeo y manifiesto de extracción) queda en datos.auxiliares con nombre, bytes, hash y si la corrida lo leyó. Pruebas de los auxiliares sellados y de los interruptores de cohorte en el registro de flujo.
+
+ motor-pronostico/src/reporte.py         | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 138 insertions(+)
+
+commit e7e9f36f9dad5e2e84a06354e24f0737dde0d290
+Autor: noportor
+Fecha: 2026-10-14 18:54:54 -0400
+
+    cohorte: interruptores para fijar la elegibilidad al origen de la prueba y extender la vida de las series, con las configuraciones de sensibilidad A y B
+
+    Los valores por defecto reproducen la cascada publicada bit a bit (verificado con la captura). Con exigir_presencia_prueba en false no se aplica el paso 6; con extender_vida_hasta_fin_periodo en true cada serie termina en el último mes del período con ceros después de su última venta; estado_al_origen en activa conserva sólo las series activas según clasificar_estados. Las configuraciones de sensibilidad heredan de config.yaml y sobrescriben sólo esas claves y el directorio de salidas; el flujo y el informe de cohorte declaran cada interruptor. El comentario de cobertura de config.yaml queda con las cifras del documento (684 SKU, 4.406 series, 72,4 %).
+
+ motor-pronostico/config/config.yaml                  |  20 ++-
+ motor-pronostico/config/config_sensibilidad_a.yaml   |  28 +++++
+ motor-pronostico/config/config_sensibilidad_b.yaml   |  30 +++++
+ motor-pronostico/main.py                             |  27 +++-
+ motor-pronostico/src/config.py                       | 113 +++++++++++++++++
+ motor-pronostico/src/particion.py                    | 216 +++++++++++++++++++++++++++-----
+ motor-pronostico/src/series.py                       |  26 ++++
+ motor-pronostico/tests/test_cohorte_interruptores.py | 400 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 826 insertions(+), 34 deletions(-)
+
+commit a930c9f0c8c1b7a5a954a2a8e5bd018723f416f4
+Autor: noportor
+Fecha: 2026-10-14 15:59:06 -0400
+
+    scripts: tablas de hiperparámetros, estados del Anexo N, benchmarks del Anexo P y figura del microservicio
+
+    Cuatro scripts nuevos, deterministas y sin datos crudos, que producen las
+    tablas de los anexos de la memoria desde las salidas publicadas y la tabla
+    de ensayos versionada, y el diagrama del microservicio propuesto. Las
+    tablas producidas quedan versionadas en resultados/tablas/.
+
+ motor-pronostico/resultados/tablas/anexo_n.md            |  50 ++++++
+ motor-pronostico/resultados/tablas/anexo_n_molde.csv     |  16 ++
+ motor-pronostico/resultados/tablas/anexo_n_n2.csv        |  10 ++
+ motor-pronostico/resultados/tablas/anexo_n_n3.csv        |  22 +++
+ motor-pronostico/resultados/tablas/anexo_n_resumen.json  | 152 ++++++++++++++++++
+ motor-pronostico/resultados/tablas/anexo_p.md            |  33 ++++
+ motor-pronostico/resultados/tablas/anexo_p_p2.csv        |  14 ++
+ motor-pronostico/resultados/tablas/anexo_p_p3.csv        |   8 +
+ motor-pronostico/resultados/tablas/anexo_p_resumen.json  | 200 ++++++++++++++++++++++++
+ motor-pronostico/resultados/tablas/tabla_l3.csv          |  11 ++
+ motor-pronostico/resultados/tablas/tabla_l3.md           |  22 +++
+ motor-pronostico/resultados/tablas/tabla_l3_perdidas.csv |   4 +
+ motor-pronostico/resultados/tablas/tabla_l3_resumen.json |  92 +++++++++++
+ motor-pronostico/scripts/anexo_n_estados.py              | 394 ++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/anexo_p_benchmarks.py           | 468 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/figura_microservicio.py         | 352 +++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/tabla_hiperparametros.py        | 430 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 17 files changed, 2278 insertions(+)
+
+commit 554f6186c56e6ba5d626b088a47a591b7ab4de66
+Autor: noportor
+Fecha: 2026-10-14 14:39:48 -0400
+
+    docker: statsmodels y patsy fijados a las versiones de la imagen publicada
+
+    scikit-posthocs arrastraba statsmodels sin versión y la 0.15 quitó la
+    función que la 0.14 de scikit-posthocs importa: la imagen dejó de
+    construirse. Es la dependencia flotante que la memoria declara como
+    puerta futura; se fija a 0.14.6 y 1.0.2, las versiones con las que se
+    construyó la imagen de la corrida publicada.
+
+ motor-pronostico/Dockerfile       | 5 ++++-
+ motor-pronostico/requirements.txt | 3 +++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+commit 32538e6b3b9b6617aa2e3d2c2fa53ad7b792771e
+Autor: noportor
+Fecha: 2026-10-14 14:28:38 -0400
+
+    títulos: el título definitivo del TFG en los README y en el paquete
+
+ README.md                        | 4 +---
+ motor-pronostico/README.md       | 4 +---
+ motor-pronostico/src/__init__.py | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
+
+commit 0cbd82e4fd14d5b554e948a8af7b951bf49ffb8a
+Autor: noportor
+Fecha: 2026-10-14 14:28:38 -0400
+
+    resultados: tablas de ensayos de la búsqueda de hiperparámetros
+
+    Una fila por ensayo, sin series ni identificadores: LightGBM (60) y las dos
+    redes de la extensión (25 cada una). Sostienen la tabla de hiperparámetros y
+    la evaluación comparativa de la memoria desde el repositorio.
+
+ motor-pronostico/resultados/ensayos/README.md                   | 11 +++++++++
+ motor-pronostico/resultados/ensayos/lightgbm_tuning_ensayos.csv | 61 +++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/resultados/ensayos/nhits_tuning_ensayos.csv    | 26 +++++++++++++++++++++
+ motor-pronostico/resultados/ensayos/tft_tuning_ensayos.csv      | 26 +++++++++++++++++++++
+ 4 files changed, 124 insertions(+)
+
+commit 8f341d6a690380713a2f17c41c2a38ddada06275
+Autor: noportor
+Fecha: 2026-10-14 14:28:37 -0400
+
+    confidencialidad: los identificadores concretos de la empresa salen de la prueba pública
+
+    La lista de patrones prohibidos revelaba por sí misma lo que debía ocultar.
+    Los patrones genéricos (direcciones, credenciales, claves) siguen en el
+    archivo; los concretos viven en config/confidencialidad.local.txt, fuera del
+    control de versiones. La prueba los carga si el archivo existe y se marca
+    omitida si no.
+
+ motor-pronostico/.gitignore                     |  3 +++
+ motor-pronostico/tests/test_confidencialidad.py | 58 ++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 51 insertions(+), 10 deletions(-)
+
+commit 7032481805a635be61eaa3161956d7b291a6e9d7
+Autor: noportor
+Fecha: 2026-10-14 14:28:37 -0400
+
+    lightgbm: los docstrings declaran el objetivo Tweedie calibrado
+
+    Tres docstrings seguían diciendo que el brazo global optimizaba el error
+    absoluto; la configuración vigente usa la pérdida Tweedie con la potencia
+    calibrada en la búsqueda, donde la pérdida absoluta compitió y perdió.
+
+ motor-pronostico/src/modelos/base.py            |  7 ++++---
+ motor-pronostico/src/modelos/lightgbm_modelo.py | 12 ++++++++----
+ motor-pronostico/src/modelos/suavizado.py       |  5 +++--
+ 3 files changed, 15 insertions(+), 9 deletions(-)
+
+commit dbfe8c3dd2fa167c475d3cfdbc00f963c726e8dc
+Autor: noportor
+Fecha: 2026-10-14 14:28:37 -0400
+
+    saneamiento: el código describe la práctica vigente de Planificación, no un sistema automatizado de la empresa
+
+    Se retira un documento interno de notas y las menciones en comentarios,
+    docstrings y textos del manifiesto pasan a hablar de la práctica que
+    Planificación aplica hoy y de la operación mensual propuesta. El horizonte
+    de planificación de la empresa ya no se cifra. Ninguna línea de código ni
+    ningún número cambia.
+
+ motor-pronostico/REQUERIMIENTOS.md             |  7 ++++---
+ motor-pronostico/config/config.yaml            | 24 ++++++++++++------------
+ motor-pronostico/main.py                       |  4 ++--
+ motor-pronostico/src/config.py                 |  4 ++--
+ motor-pronostico/src/metricas.py               |  2 +-
+ motor-pronostico/src/modelos/__init__.py       |  2 +-
+ motor-pronostico/src/modelos/motor.py          |  6 +++---
+ motor-pronostico/src/modelos/naive.py          |  3 +--
+ motor-pronostico/src/modelos/neuronales.py     |  2 +-
+ motor-pronostico/src/modelos/promedio_movil.py | 10 +++++-----
+ motor-pronostico/src/multihorizonte.py         | 23 +++++++++++------------
+ motor-pronostico/src/particion.py              |  2 +-
+ motor-pronostico/tests/test_multihorizonte.py  |  4 ++--
+ 13 files changed, 46 insertions(+), 47 deletions(-)
+
+commit eecd6edba64ae415586c6394263425a2f9d2fabf
+Autor: noportor
+Fecha: 2026-09-05 20:40:42 -0400
+
+    multihorizonte: ablacion reestimar_estadisticos (parametros por origen)
+
+    - multihorizonte.reestimar_estadisticos (apagado por defecto): los brazos
+      estadisticos re-estiman sus parametros en cada origen con la historia hasta
+      el origen, la misma que ve el re-entreno de LightGBM. Sirve para medir la
+      asimetria del protocolo (RN-2) sin alterarlo por defecto.
+    - Conteo de re-estimaciones (solo brazos con parametros) en el informe y en
+      flujo.json; nota de ablacion en la etapa 10b cuando esta encendida.
+    - Pruebas: flag apagado identico bit a bit; con el flag, re-ajuste por
+      origen sin mirar el futuro (panel sintetico).
+
+    Resultado de la corrida (salidas_ablacion_reestimar_estadisticos, no
+    versionada): LightGBM 71,9 y motor 91,2 sin cambio; Holt-Winters 81,2 -> 78,1;
+    suavizado 103,8 -> 106,8; Croston 93,5 -> 94,7. El hallazgo del horizonte no
+    depende de la asimetria.
+
+ motor-pronostico/config/config.yaml           |   3 +
+ motor-pronostico/main.py                      |  12 ++++
+ motor-pronostico/src/config.py                |   7 ++
+ motor-pronostico/src/multihorizonte.py        |  69 +++++++++++++++++-
+ motor-pronostico/tests/test_config.py         |  33 +++++++++
+ motor-pronostico/tests/test_multihorizonte.py | 254 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 373 insertions(+), 5 deletions(-)
+
+commit 5d6f98ce54d52f21d5bb756ac95ba534b8cdb42e
+Autor: noportor
+Fecha: 2026-09-05 19:39:29 -0400
+
+    anexo H: contraste tambien contra el promedio movil de 12 meses con factor de crecimiento
+
+    - REFERENCIAS suma ma_12_gf (formula vigente de planificacion): el script
+      impreso en el Anexo H del documento y el del repositorio vuelven a coincidir.
+    - figura_extension_regimen: el docstring citaba Tabla 12 y apartado 4.4;
+      en el documento son la Tabla 10 y el apartado 4.3.3.
+
+ motor-pronostico/scripts/anexo_h_contraste.py        | 4 ++--
+ motor-pronostico/scripts/figura_extension_regimen.py | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 4e3ac8df299572a8f73b18f13c3b3ce1bbc8b6db
+Autor: noportor
+Fecha: 2026-08-31 16:19:33 -0400
+
+    figuras: proceso propuesto, arquitectura del motor y reparto de la selección
+
+ motor-pronostico/scripts/figura_arquitectura_motor.py | 114 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/figura_proceso_propuesto.py  |  79 ++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/figura_reparto_seleccion.py  |  80 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 273 insertions(+)
+
+commit 5a48f4500a76eaeb9f0958e75c77e8c64fa07b49
+Autor: noportor
+Fecha: 2026-08-31 15:59:00 -0400
+
+    figuras: sensibilidad al régimen de la extensión (Figura 17 del documento)
+
+    Dumbbell de la D valorizada a un paso en las dos gestiones de prueba para
+    los sistemas y pronosticadores clave de la extensión exploratoria, leyendo
+    las tabla_valorizada.csv de salidas_ml2_v9 y salidas_ml2_v9_blindaje. No
+    recalcula nada: dibuja lo que la Tabla 12 y el apartado 4.4 ya reportan,
+    con el orden por peor caso que deja arriba al sistema conmutado.
+
+ motor-pronostico/scripts/figura_extension_regimen.py | 102 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+
+commit 0e1b4a3b24fc26006d386cb38cf50ad6b69bcf40
+Autor: noportor
+Fecha: 2026-08-31 09:46:48 -0400
+
+    figuras: F1 en orden de gestión y F2 marca solo la gestión del confinamiento
+
+    F1 (perfil por categoría): el eje pasa de meses calendario a meses de la
+    gestión comercial (abril a marzo). La campaña escolar, noviembre a febrero,
+    queda entera en el tramo final del eje en vez de partida entre los extremos.
+
+    F2 (valor por gestión): una gestión se marca como del evento exógeno solo si
+    la mayoría de sus meses cae dentro de la ventana. Con "toda gestión tocada"
+    la gestión 2020 (abril 2019 a marzo 2020) salía marcada entera por su último
+    mes, y el lector veía dos gestiones de confinamiento donde hubo una.
+
+    El criterio vive en gestiones_del_evento(cfg) y el camino rápido de figuras
+    lo recalcula desde la configuración en vez de confiar en el valor persistido
+    en insumos_figuras.pkl, que arrastraba el criterio viejo.
+
+ motor-pronostico/main.py        | 24 ++++++++++++++++++++----
+ motor-pronostico/src/figuras.py | 23 ++++++++++++++++++-----
+ 2 files changed, 38 insertions(+), 9 deletions(-)
+
+commit 453a38708aa8a2e8e8954b33a9ca8357f0d72fe3
+Autor: noportor
+Fecha: 2026-08-27 14:13:08 -0400
+
+    fix(figuras): las notas explicativas salen de la imagen — APA las quiere debajo de la figura, en el documento
+
+ motor-pronostico/src/figuras.py | 71 -----------------------------------------------------------------------
+ 1 file changed, 71 deletions(-)
+
+commit 29faa251c121cc763b9fd764baf2753d24e821dd
+Autor: noportor
+Fecha: 2026-08-25 10:37:20 -0400
+
+    fix(figuras): pie de la figura de horizonte sin raya y formateador de valores faltantes en n/d
+
+ motor-pronostico/src/figuras.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0371c9895771001f03b2d2ab5abf0a660682be4a
+Autor: noportor
+Fecha: 2026-08-23 18:12:50 -0400
+
+    fix(visor): la Exploracion ML2 adopta la corrida limpia V9 como canonica — narrativa de la fuga de seleccion (cap. 6), nhits/tft con veredicto honesto y claims de significancia precisados por tamano de efecto
+
+ motor-pronostico/visor/src/vistas/Exploracion.tsx | 294 ++++++++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 192 insertions(+), 102 deletions(-)
+
+commit a9c03b6199c832c90383e4b0c556c91734384809
+Autor: noportor
+Fecha: 2026-08-23 17:13:48 -0400
+
+    chore(ml2): corrida V9 — configs de TFT y N-HiTS elegidas por validacion (HPO V3) en ambas gestiones
+
+ motor-pronostico/config/config_ml2_v9.yaml          | 245 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/config/config_ml2_v9_blindaje.yaml | 247 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 492 insertions(+)
+
+commit c66f6304f7aa089217e99bd414bc8c9a5fc3140e
+Autor: Nicolas Oporto
+Fecha: 2026-08-21 16:42:11 -0400
+
+    feat(explicacion): TreeSHAP dirigido al pico, Pareto del valor y error por mes — paso 9b, figuras F14–F16 y rótulos de paneles (a)/(b)
+
+ motor-pronostico/main.py                         | 105 +++++++++++++++++++++++++++++++-
+ motor-pronostico/scripts/figura_antes_despues.py |   4 +-
+ motor-pronostico/src/explicacion.py              | 207 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/figuras.py                  | 210 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ motor-pronostico/src/modelos/lightgbm_modelo.py  |  24 ++++++++
+ motor-pronostico/tests/test_explicacion.py       | 150 +++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 691 insertions(+), 9 deletions(-)
+
+commit a98f1fcd60659ec3dabdbe46be2bfc5a6c2e030e
+Autor: Nicolas Oporto
+Fecha: 2026-08-21 14:40:51 -0400
+
+    docs(readme): carta de presentación del TFG — correspondencia con el documento, reproducibilidad y confidencialidad
+
+ motor-pronostico/README.md | 304 ++++++++++++++++++++++++++-----------------------------------------------------------
+ 1 file changed, 93 insertions(+), 211 deletions(-)
+
+commit cd00534f0ba815ad72573d726332ae51ce63fd82
+Autor: noportor
+Fecha: 2026-08-12 14:08:02 -0400
+
+    feat(contraste): el contraste corre sobre la matriz que publica, y el anexo la reproduce
+
+    El script del Anexo H del documento daba numeros distintos a los del cuerpo:
+    una serie de 1.668 cambiaba de bando al serializar el CSV (dos errores que
+    diferian en el ultimo bit quedaban iguales al releerlos, y un empate de mas
+    mueve el estadistico de Wilcoxon y los rangos de Friedman).
+
+    Se resuelve por construccion, no por precision: el paso 10 publica
+    matriz_contraste.csv y corre las pruebas sobre la copia RE-LEIDA de ese
+    archivo. Lo reportado y lo reproducible pasan a ser el mismo dato. El CSV se
+    escribe con 17 digitos significativos (precision_exacta en reporte.tabla), el
+    minimo que garantiza el ida y vuelta de un float64.
+
+    - scripts/anexo_h_contraste.py: el script que va al Anexo H del documento;
+      verificado contra pruebas_estadisticas.txt (W = 358.368,0; chi2 = 1.897,3;
+      CD = 0,370 en ambos).
+    - matriz_contraste.csv entra en SALIDAS_ESPERADAS.
+
+    Suite: 168 tests + 3 skips en verde.
+
+ motor-pronostico/main.py                      | 20 ++++++++++++++--
+ motor-pronostico/scripts/anexo_h_contraste.py | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/reporte.py               | 13 +++++++++--
+ motor-pronostico/tests/test_pipeline.py       |  1 +
+ 4 files changed, 113 insertions(+), 4 deletions(-)
+
+commit 1cb998e95477286d94c6f2926537b30dc46b4148
+Autor: noportor
+Fecha: 2026-08-09 17:53:30 -0400
+
+    feat(visor): vista Exploración ML2 — la narrativa de las once corridas
+
+    Vista transversal nueva (aditiva: un archivo en vistas/) que cuenta el
+    arco post-documento en el orden en que la evidencia se construyó: nuevos
+    brazos (V1-V3) → combinar en vez de seleccionar (V4) → caminos que
+    enseñaron por qué no (V5-V6, auditoría incluida) → la prueba de los dos
+    años (blindaje) → póliza estática (V7) y conmutación por régimen (V8).
+
+    Todos los números se leen EN VIVO de los artefactos de las once corridas
+    selladas (tabla_valorizada.csv + manifiesto de cada salidas_ml2*): la
+    vista no duplica cifras, las respalda. Piezas: el arco del mejor sistema
+    por generación (con el campeón individual como referencia), la mecánica
+    de cancelación de sesgos de la V4, el talón de la mezcla en los dos años
+    (sesgos del conjunto por régimen), las cuatro esquinas V7/V8, y la señal del
+    conmutador con su acción λ (el ciclo de vida del quiebre, trazado).
+    Corridas ausentes degradan a «n/d» sin romper la narrativa.
+
+    vitest 10 verdes · build tsc+vite limpio · contenedor reconstruido.
+
+ motor-pronostico/visor/package-lock.json          |  18 --
+ motor-pronostico/visor/src/vistas/Exploracion.tsx | 606 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 606 insertions(+), 18 deletions(-)
+
+commit c5411451d5dccf98b3943c8916f46e73eb0c542b
+Autor: noportor
+Fecha: 2026-08-09 17:37:46 -0400
+
+    feat(ml2): V8 — mezcla_conmutada: la conmutación por régimen, medida en ambos años
+
+    El cierre del arco que abrió el blindaje: ningún conjunto estático domina
+    ambos regímenes (V7), así que la V8 construye el sistema que decide.
+
+      mezcla_conmutada = (1−λ)·prom[conjunto curado] + λ·prom[conjunto diverso]
+
+    λ lo fija un DETECTOR causal por construcción: el sesgo valorizado del
+    sistema base sobre los últimos 3 meses YA OBSERVADOS (la ventana termina
+    en t−1), con rampa DECLARADA 10 %→20 % — sin calibración sobre prueba.
+    La regla de mezcla se fija a priori en el promedio simple (M4, tres
+    veces confirmada). En el multihorizonte λ se evalúa una vez en el
+    origen. La señal mensual se persiste (conmutador_senal.csv) para la
+    sensibilidad post-hoc. Los mezcladores estándar vuelven al conjunto curado:
+    mezcla_prom/pond/h REPRODUCEN EXACTO la V5 y el blindaje (control de
+    determinismo doble, verificado en ambas corridas).
+
+    RESULTADO (las cuatro esquinas V7 como vara):
+
+               | g2026 1p | g2026 D(h) | g2025 1p | g2025 D(h)
+      prom-5   |   67,8   |    72,9    |   90,2   |   86,1
+      prom-7   |   70,2   |    80,3    |   80,7   |   74,2
+      pond-7   |   71,0   |    83,7    |   77,7   |   70,8
+      CONMUTADA|   68,9   |    76,4    |   81,9   |   74,2
+
+    - La conmutada DOMINA al conjunto diverso estático (prom-7) en el año
+      normal (68,9<70,2; 76,4<80,3) y lo empata en el quiebre del
+      horizonte (74,2). En el peor caso del HORIZONTE es el mejor sistema
+      del estudio (76,4); en el promedio entre regímenes también (75,3).
+    - El detector FUNCIONA como detector: en g2025 dispara al mes 1
+      (sesgo móvil +18→+77 %), sostiene λ=1 durante el quiebre y SUELTA
+      cuando el régimen se estabiliza (feb-mar 2025: señal <6 %, λ=0). El
+      ciclo de vida completo del quiebre, trazado en la señal persistida.
+    - Las dos limitaciones, medidas y declaradas: (1) la señal de 3 meses
+      es RUIDOSA en año normal — oscila −17,7..+40,7 % en g2026 por
+      volatilidad de campaña, no por régimen, y esa prima cuesta +1,1/+3,5
+      contra el conjunto curado; (2) a un paso la póliza estática ponderada
+      (pond-7, minimax 77,7) sigue siendo competidora seria — la
+      conmutación gana el horizonte, no todo el tablero.
+    - Contraste: conmutada vs ma_12 r=−0,38 (g2026) y −0,48 (g2025),
+      gana 66,8 %/71,2 % — significativa en AMBOS regímenes, lo que ningún
+      brazo individual del estudio logra a un paso.
+
+    LIMITACIÓN DECLARADA: el diseño del detector se informó en la evidencia
+    de los dos años medidos; su validez plena espera gestiones futuras.
+
+    Ingeniería: MezclaConmutada en mezclador.py (dos Mezclador internos con
+    conjuntos distintos — Mezclador acepta ahora candidatos explícitos), señal
+    precalculada en ajustar, _combinar consciente de NaN, componer con λ del
+    origen; validación de config para candidatos_quiebre; test de rampa
+    exacta, degeneraciones λ=0/λ=1, respaldo sin evidencia y causalidad
+    (alterar el futuro no mueve ningún λ pasado). Suite 170 verdes.
+
+ motor-pronostico/config/config_ml2_v8.yaml          | 231 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/config/config_ml2_v8_blindaje.yaml | 233 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/main.py                            |  39 +++++++++-
+ motor-pronostico/src/config.py                      |   8 +++
+ motor-pronostico/src/modelos/__init__.py            |   4 +-
+ motor-pronostico/src/modelos/mezclador.py           | 198 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ motor-pronostico/tests/test_ml2_brazos.py           |  73 +++++++++++++++++++
+ 7 files changed, 777 insertions(+), 9 deletions(-)
+
+commit 96bed6f2b0cd60960a5aab15a169ba7ec67014c8
+Autor: noportor
+Fecha: 2026-08-09 15:28:13 -0400
+
+    feat(ml2): V7 — el conjunto anti-régimen, medido en los dos años de prueba
+
+    La hipótesis del blindaje puesta a prueba: la mezcla pierde el año de
+    quiebre porque TODO su conjunto comparte el signo del sesgo. La V7 agrega al
+    conjunto los dos brazos de diversidad que el blindaje señaló — nhits (sesgo
+    negativo persistente) y naive_m1 (re-anclaje mensual) — con atribución
+    limpia: la ÚNICA variable contra cada línea base (V5 en g2026, blindaje
+    en g2025) es el conjunto. Dos corridas: salidas_ml2_v7/ y
+    salidas_ml2_v7_blindaje/.
+
+    RESULTADO — LA HIPÓTESIS SE CONFIRMA, Y EL COSTO TAMBIÉN:
+
+    g2025 (quiebre): rescate de ~10 puntos EN TODO.
+      mezcla_pond un paso 87,4 -> 77,7 (2.ª tras nhits; el sesgo compartido
+      +15,9 baja a +9,5 — los brazos negativos SÍ cancelan) y POR PRIMERA
+      VEZ una mezcla vence al naive en el año de crisis (r=-0,055, p=0,014,
+      56,0 %). Contra ma_12: r=-0,622, p 5e-138, gana 78,5 % — el efecto
+      más grande de TODO el estudio. En el horizonte mezcla_pond 81,4 ->
+      70,8: a 0,7 del campeón (lightgbm 70,1). prom 90,2 -> 80,7 / 86,1 ->
+      74,2; mezcla_h 89,0 -> 79,3 / 84,5 -> 73,3.
+
+    g2026 (normal): el precio de la póliza.
+      prom un paso 67,8 -> 70,2 (+2,4: los brazos débiles diluyen y el
+      sesgo se pasa de rosca: -1,5 -> -4,1) y en el horizonte 72,9 -> 80,3
+      (+7,4: la línea plana del naive a 12 meses envenena el promedio
+      ciego). pond 68,6 -> 71,0 / 75,7 -> 83,7.
+
+    LECTURA: el conjunto diverso es una PÓLIZA DE SEGURO — por minimax domina
+    (peor caso a un paso 80,7 vs 90,2 del conjunto curado; peor caso horizonte
+    83,7 vs 86,1) pero cede el año normal. NINGÚN conjunto estático domina ambos
+    regímenes: la conmutación por régimen (detectar el quiebre con el sesgo
+    móvil ya observado y transferir peso hacia el conjunto diverso) deja de ser
+    una mejora posible y pasa a ser una NECESIDAD medida, con los cuatro
+    extremos cuantificados como objetivo: 67,8/72,9 en normal, 77,7/70,8 en
+    quiebre.
+
+    Dato fino: mezcla_pond con conjunto-7 le gana a prom en el quiebre (77,7 vs
+    80,7) porque sus pesos por serie vienen de una validación (g2024) que
+    pondera desde la normalidad — pero en g2026 la validación (g2025)
+    CONTIENE el arranque de la crisis y los pesos ya inclinaban 19 % al
+    naive: la ponderación por validación hereda el régimen de su ventana.
+
+ motor-pronostico/config/config_ml2_v7.yaml          | 219 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/config/config_ml2_v7_blindaje.yaml | 235 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 454 insertions(+)
+
+commit 1bae3a075a26ed0738f0707b58fc70a111373efb
+Autor: noportor
+Fecha: 2026-08-09 13:11:43 -0400
+
+    docs(ml2): auditoría adversarial de la V6 — tres interpretaciones corregidas
+
+    Los números del commit 2b09322 se confirman (determinismo perfecto en los
+    9 brazos no tocados); se corrigen tres lecturas: el récord a un paso es
+    cancelación de sesgo (el error absoluto valorizado sube), la ganancia NO
+    se concentra en estacionales (recurrentes: 2,2x más valor y mejora mayor;
+    el WMAPE estacional empeora), y el mecanismo 'empuje realimentado' del
+    horizonte queda refutado por la forma (degradación 100% sesgo hacia MÁS
+    negativo, pica en h=5-8, pareja entre estratos) — la interacción
+    recursión x calendario queda como locus con mecanismo ABIERTO. Se
+    declaran dos omisiones: intermitente empeora (+4,2) y el motor empeora
+    por migración de la selección hacia lightgbm_directo (maldición del
+    ganador, una vez más).
+
+ motor-pronostico/docs/auditoria_ml2_v6.md | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+commit 1353c7edde003610c1468b2fd4f66ee7d797142c
+Autor: noportor
+Fecha: 2026-08-09 12:55:34 -0400
+
+    feat(ml2): V6 — el calendario comercial declarado como feature
+
+    La primera palanca de DATOS del estudio (V5 y el blindaje agotaron la vía
+    de arquitectura). El calendario viene del DOMINIO — informante del área,
+    2026-08-09 — y se verificó contra el bloque de entrenamiento antes de
+    declararlo: Categoría K oct-dic (nov 11,0 % + dic 16,5 % del valor anual);
+    campaña escolar dic-feb con clases iniciando en febrero (Categoría D 85,4 %
+    del año en esos 3 meses, Categoría E 64,2 %); Categoría J pico suave
+    dic-ene; Categoría I SIN temporada (7,6-9,8 % por mes, venta regular)
+    — y esa ausencia también se declara.
+
+    Dos features nuevas en features.py, ambas DETERMINISTAS del calendario:
+    no usan ninguna observación (RN-3 trivial, con prueba que altera la
+    demanda x1000 y exige igualdad exacta) y son CONOCIDAS a cualquier
+    horizonte — en el multihorizonte se computan para los meses futuros sin
+    persistencia ni supuesto, a diferencia de precio/quiebres/TC.
+      - temporada_alta: el cruce categoría x mes EXPLÍCITO (hoy el modelo
+        global debía aprenderlo solo desde sku/mes serie por serie).
+      - meses_a_clases: cuenta regresiva circular al inicio de clases
+        (feb=0, ene=1, dic=2, ... mar=11) — la rampa de campaña como
+        distancia continua.
+    Hiperparámetros del campeón CONGELADOS: se mide el aporte marginal de la
+    INFORMACIÓN, no una re-optimización (declarado).
+
+    RESULTADO A UN PASO — mejora clara y NUEVO RÉCORD:
+      lightgbm 77,0 -> 74,5 (-2,5): el mecanismo es el SESGO (bias -14,1 ->
+      -10,7, -3,4 pts) con WMAPE casi igual (62,9 -> 63,8) — el calendario no
+      afina el nivel, corrige la sub-estimación sistemática de la campaña.
+      mezcla_prom 67,8 -> 67,3 = RÉCORD del estudio (sesgo -1,5 -> -0,8);
+      mezcla_h 68,7 -> 67,9; mezcla_pond 68,6 -> 68,2.
+      Por estrato el campeón mejora donde tiene que mejorar: estacionales
+      84,9 -> 83,5 y recurrentes 73,4 -> 71,7; suaves 67,7 -> 65,4.
+
+    RESULTADO EN EL HORIZONTE — leve DEGRADACIÓN, declarada:
+      lightgbm recursivo 71,9 -> 73,0 (+1,1) y con él las mezclas (72,9 ->
+      73,1). En cambio el brazo DIRECTO mejora (84,0 -> 83,4): coherente con
+      el mecanismo — el directo usa features reales del origen, mientras que
+      en la recursión el empuje estacional más fuerte se realimenta y
+      compone. La corrección de sesgo está calibrada a un paso.
+
+    QUÉ FEATURE HIZO EL TRABAJO: meses_a_clases entra 4.ª por divisiones
+    (503, empatada con `mes`) — la rampa continua es la que carga la señal;
+    temporada_alta queda 25.ª de 35 (191 divisiones), en buena medida
+    redundante con sku x mes. Hallazgo para el documento: al árbol le sirve
+    más la DISTANCIA a la campaña que la bandera binaria.
+
+    MATIZ HONESTO: la D valorizada mejora pero el Wilcoxon por serie sobre
+    unidades se afloja levemente (lightgbm vs ma_12 r -0,093 -> -0,081). No
+    es contradicción: la ganancia se concentra en las series estacionales de
+    alto valor, que dominan la métrica valorizada y son minoría en el conteo
+    por serie. Las dos lecturas se reportan.
+
+ motor-pronostico/.gitignore                |   4 ++
+ motor-pronostico/config/config_ml2_v6.yaml | 236 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/config.py             |  20 ++++++
+ motor-pronostico/src/features.py           |  41 ++++++++++++
+ motor-pronostico/tests/test_features.py    |  73 ++++++++++++++++++++++
+ 5 files changed, 374 insertions(+)
+
+commit 9775196b8694892c8b56b60cc77b17b0f9246fa7
+Autor: noportor
+Fecha: 2026-08-09 09:32:56 -0400
+
+    feat(ml2): corrida de blindaje — el protocolo desplazado un año (prueba g2025)
+
+    La limitación declarada del contraste era el corte único de prueba. Esta
+    corrida repite el protocolo ÍNTEGRO desplazado un año (train g2018-2023,
+    val g2024, prueba g2025 = el arranque de la crisis cambiaria, con el
+    histórico CORTADO en 2025-03) sin re-optimizar nada: los congelados se
+    reusan tal cual y lo que el protocolo estima en validación se re-estima
+    solo sobre g2024. N=1.613 series (vs 1.668), cohorte estable.
+
+    LO QUE SOBREVIVE al segundo año (blindado):
+    - LightGBM recursivo N.º 1 del horizonte EN AMBOS años (71,9 g2026 /
+      70,1 g2025) — la corona es del sistema, no del año.
+    - Las mezclas vs ma_12: r=-0,34..-0,43 en ambos años (gana 65-69 %) —
+      el efecto más fuerte del estudio replica.
+    - La maldición del ganador del motor: acierto 10,4 % / 9,1 % (azar 6,7)
+      y motor al fondo del horizonte en ambos años.
+    - ma_12 y Holt-Winters colapsan en el año de crisis (111,8 / 111,5):
+      el método actual de la empresa es el MÁS frágil ante quiebres.
+
+    LO QUE NO SOBREVIVE (año-dependiente, declarado):
+    - El podio a un paso SE INVIERTE: nhits 72,6 y naive_m1 78,7 lideran
+      g2025; mezcla_prom cae de 67,8 a 90,2. El mecanismo es estructural:
+      la mezcla gana cancelando sesgos OPUESTOS (g2026: lgbm -14, tft +7),
+      pero en el año de quiebre TODOS los brazos del conjunto sobre-pronostican
+      (+7..+35) y no hay nada que cancelar — la combinación no protege
+      contra el sesgo compartido de régimen.
+    - El negativo del directo re-entrenado NO replica: en g2025 es 2.º del
+      horizonte (72,8, a 2,7 del recursivo) vs 84,0 (a 12,1) en g2026.
+    - La anatomía de la corona tampoco: en g2025 el recursivo domina
+      h=1..10 (no solo h=3..8) y la mezcla no gana ningún extremo.
+    - TFT config V2 colapsa (124,5 / 139,1, sesgo +35): su podio del
+      horizonte en g2026 era en parte suerte de selección de config.
+    - Chronos calibrado aguanta digno (81,3, 4.º): factores pre-crisis
+      aplicados al año de crisis solo dejan +8,9 de sesgo.
+
+    LECCIÓN para el documento: ningún sistema domina ambos regímenes — el
+    año normal premia estructura (mezcla) y el año de quiebre premia
+    adaptividad (naive re-anclado cada mes, nhits conservador). El corte
+    único era una limitación real: las conclusiones por-año del estudio
+    quedan ahora calibradas con evidencia de dos gestiones.
+
+ motor-pronostico/config/config_ml2_blindaje.yaml | 222 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 222 insertions(+)
+
+commit 5347496b0cc4cefa0a527745db34befae2e41077
+Autor: noportor
+Fecha: 2026-08-09 08:21:00 -0400
+
+    feat(ml2): V5 — el asalto al horizonte: mezcla_h + directo re-entrenado
+
+    Dos palancas independientes contra la única corona que faltaba, la D(h)
+    del LightGBM recursivo (71,9). Salidas en salidas_ml2_v5/; V1-V4 intactas.
+
+    - MEZCLA_H: pesos por candidato × HORIZONTE — el inverso de la D
+      valorizada del abanico de validación (h=1..12 desde el cierre de
+      entrenamiento, el mismo insumo de la ventana de selección del motor,
+      ahora computado UNA vez y compartido). Cada peso agrega ~1.500 series
+      con costo: cientos de veces más evidencia que los pesos por serie de
+      mezcla_pond. A un paso aplican los pesos de h=1 (declarado).
+    - REENTRENAR_DIRECTO: los 12 boosters del brazo directo se re-entrenan
+      en cada origen con árboles congelados del ajuste base (la misma
+      excepción declarada del recursivo) — separa recursión de
+      re-entrenamiento, el confundido que la V4 dejó medido.
+
+    RESULTADO: la corona del horizonte NO cae, y las dos derrotas enseñan.
+
+    1. mezcla_h 72,8 vs mezcla_prom 72,9 — los pesos inverso-D quedan casi
+       planos (lightgbm 33 % en h=1 → 29 % en h=12) y la mezcla por
+       horizonte colapsa al promedio simple. Tercera confirmación M4: el
+       promedio simple sobrevive a dos intentos de ponderarlo (por serie en
+       V4, por horizonte en V5). A un paso 68,7: inclinar hacia lightgbm
+       en h=1 rompe la cancelación de sesgos que hace ganar al promedio.
+    2. lightgbm_directo re-entrenado 84,0 vs 83,5 congelado: re-entrenar
+       EMPEORA. El confundido queda resuelto — la ventaja del recursivo
+       (71,9) es su diseño (recursión con features simuladas), no su
+       re-entrenamiento mensual. Sanidad verificada: a un paso el directo
+       sigue reproduciendo EXACTO al brazo base (77,0).
+    3. La curva D(h) por horizonte revela de dónde viene la corona: el
+       recursivo domina SOLO h=3..8; la mezcla gana ambos extremos (h<=2 y
+       h>=9, donde el recursivo se degrada hasta 89,8). El abanico de
+       validación (un solo origen) no anticipó ese patrón — evidencia de
+       una sola trayectoria, declarado.
+
+    Contraste: mezcla_h vence a ma_12 (r=-0,29, p 4e-33) y al ingenuo
+    (r=-0,08, p 9e-4). mezcla_prom sigue siendo el sistema recomendado:
+    67,8 a un paso (récord) y 72,9 en el horizonte, a 1,0 del campeón.
+
+    De paso: el control de confidencialidad atrapó una regional real en un
+    helper de tests de la V4 (la tanda corrió con -k y el control no se
+    ejecutó) — renombrada al seudónimo; suite completa 168 passed.
+
+ motor-pronostico/config/config_ml2_v5.yaml       | 217 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/main.py                         |  42 +++++++++++-
+ motor-pronostico/src/config.py                   |  11 ++++
+ motor-pronostico/src/modelos/__init__.py         |   2 +-
+ motor-pronostico/src/modelos/lightgbm_directo.py |  79 +++++++++++++++++++---
+ motor-pronostico/src/modelos/mezclador.py        | 225 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ motor-pronostico/src/multihorizonte.py           |  73 +++++++++++++++++----
+ motor-pronostico/tests/test_ml2_brazos.py        | 137 +++++++++++++++++++++++++++++++++++++-
+ 8 files changed, 741 insertions(+), 45 deletions(-)
+
+commit 5984430bf1e73afcf258785b1387909e83a4fbde
+Autor: noportor
+Fecha: 2026-08-09 06:15:18 -0400
+
+    feat(ml2): V4 — el mezclador: combinar en vez de seleccionar + LightGBM directo
+
+    Dos piezas (salidas_ml2_v4/; V1-V3 y el experimento documentado intactos):
+
+    - MEZCLADORES sobre un conjunto curado {lightgbm, chronos, exp_smooth_opt,
+      holt_winters, tft}, con pesos estimados SOLO en validación (RN-2 con
+      verificación activa propia) y congelados para prueba y multihorizonte:
+      mezcla_prom (promedio simple) y mezcla_pond (inverso del error
+      compuesto de validación, por serie, con piso numérico relativo).
+    - LIGHTGBM DIRECTO: 12 boosters, uno por horizonte h, cada uno
+      aprendiendo y(p+h-1) desde las features del mes p. Como toda feature
+      usa solo información anterior a su mes (RN-3), el abanico completo se
+      predice con features REALES en el origen: sin recursión, sin
+      simulación, sin fuga. A un paso reproduce EXACTO al brazo base (77,0
+      — verificación de sanidad pasada).
+
+    RESULTADO a un paso: RÉCORD PULVERIZADO. mezcla_prom D=67,8 (sesgo
+    −1,5) y mezcla_pond 68,6, contra 74,3 del mejor individual (chronos
+    calibrado) y 77,0 del campeón LightGBM. El promedio simple gana al
+    ponderado (el clásico de las competencias M, reproducido). Contraste:
+    mezcla_pond vs ma_12 r=−0,43, gana 68,8 % de las series (el efecto más
+    fuerte de todo el estudio); y primera propuesta que vence
+    significativamente al ingenuo a un paso (r=−0,14, p=3,6e-9). El motor
+    con conjunto curado también mejora (73,7).
+
+    La mecánica: los sesgos opuestos del conjunto (lightgbm −14, tft +7, hw +6)
+    se cancelan en la mezcla (−1,5) — la cobertura que la selección dura no
+    puede dar. Detalles: motor.tasa_de_acierto ahora usa sus candidatos
+    REALES (los mezcladores no son opciones del motor); construir_modelos
+    salta la segunda etapa; el mezclador rechaza conjuntos con brazos ausentes.
+
+ motor-pronostico/config/config_ml2_v4.yaml       | 273 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/main.py                         |  36 ++++++++-
+ motor-pronostico/src/modelos/__init__.py         |  11 ++-
+ motor-pronostico/src/modelos/lightgbm_directo.py | 163 ++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/modelos/mezclador.py        | 191 ++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/modelos/motor.py            |   8 +-
+ motor-pronostico/src/multihorizonte.py           |  11 ++-
+ motor-pronostico/tests/test_ml2_brazos.py        |  75 +++++++++++++++++-
+ 8 files changed, 762 insertions(+), 6 deletions(-)
+
+commit b33e476843a1d444f34d989544fe0c6b98b61de2
+Autor: noportor
+Fecha: 2026-08-09 01:42:47 -0400
+
+    feat(ml2): V3 — HPO propio por red, Chronos por categoría, históricas en TFT
+
+    La V3 cierra la exploración con un vuelco y dos lecciones duras
+    (salidas_ml2_v3/; V1, V2 y el experimento documentado intactos):
+
+    - CHRONOS CALIBRADO POR CATEGORÍA ES EL NUEVO LÍDER A UN PASO
+      (D 74,3 vs 77,0 de LightGBM) y 3.º en el horizonte (81,6): cinco
+      factores estimados en validación convierten al modelo fundacional
+      cero-shot en el mejor pronóstico de corto plazo del estudio. El
+      factor global de la V2 sobre-corregía (96,9).
+    - La búsqueda por pliegue interno NO transfirió para las redes: el
+      fold g2024 es pre-crisis cambiaria y la prueba g2026 es post. Los
+      ganadores internos (N-HiTS 67,8; TFT 68,0 con sesgo ~0) dieron en
+      prueba sesgos de −27 y −37: la maldición del ganador a nivel de
+      búsqueda, amplificada por el quiebre de régimen. La configuración
+      V2 del TFT (rho del campeón, sin históricas) sigue siendo la mejor
+      medida en prueba (84,8 / 78,5) — se conserva como referencia.
+    - DeepAR: tercera verosimilitud (StudentT), tercer colapso (147,8);
+      se declara incompatible con esta demanda en su forma actual.
+    - scripts/ajustar_neuronal.py replica la disciplina del campeón
+      (Optuna TPE determinista, fold g2024, D interna valorizada, ensayos
+      divergentes declarados sin matar la búsqueda; input_size por brazo).
+
+    LightGBM sigue campeón del horizonte (71,9). El cuadro final del
+    sistema: Chronos calibrado para el paso corto, LightGBM para el
+    horizonte — y el motor, para arbitrarlos, necesita una selección más
+    robusta que la ventana única (acierto 9,9 % con 15 candidatos).
+
+ motor-pronostico/config/config_ml2_v3.yaml   | 272 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/ajustar_neuronal.py | 252 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/modelos/__init__.py     |   6 +-
+ motor-pronostico/src/modelos/fundacional.py  |  51 +++++++++++--
+ motor-pronostico/src/modelos/neuronales.py   |  49 ++++++++++--
+ 5 files changed, 612 insertions(+), 18 deletions(-)
+
+commit 91f0e89bc71317f348129cb7cdd9fea3ab52ed95
+Autor: noportor
+Fecha: 2026-08-08 23:57:30 -0400
+
+    feat(ml2): V2 — Tweedie en las redes, exógenas en TFT, Chronos calibrado, motor multihorizonte
+
+    La V2 aplica las correcciones que los números de la V1 pidieron, cada una
+    con su resultado medido (salidas_ml2_v2/; la V1 y el experimento
+    documentado quedan intactos):
+
+    - TFT + Tweedie + exógenas estáticas (categoría/canal/regional) + mes:
+      de 107,0 a 84,8 en D a un paso y de 117,2 a 78,5 en D(h) — SEGUNDO
+      ABSOLUTO en el horizonte, solo detrás de LightGBM (71,9). El
+      transformer necesitaba sus covariables y la pérdida correcta.
+    - Motor con selección multihorizonte (mecanismo pre-registrado): D(h)
+      93,3 → 84,1 con 15 candidatos; a un paso 78,6 → 77,9. La corrección
+      de la maldición del ganador funciona también con el conjunto grande.
+    - Chronos con factor de sesgo global (validación): mejor en el
+      horizonte (92,4 → 87,6), PEOR a un paso (84,2 → 96,9) — el sesgo de
+      validación no es el de prueba; un factor único sobre-corrige.
+    - Resultados negativos declarados: la Tweedie del campeón NO es
+      transferible a ciegas — N-HiTS empeoró (84,0 → 112,1) y la cabeza de
+      distribución diverge numéricamente en DLinear (predicciones 1e13);
+      DeepAR sigue colapsado. Cada red necesita su propia búsqueda de
+      hiperparámetros, como la tuvo LightGBM.
+
+    LightGBM+Tweedie+features sigue campeón en ambas modalidades (77,0 /
+    71,9), ahora con un retador real en el horizonte.
+
+ motor-pronostico/config/config_ml2_v2.yaml  | 222 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/modelos/__init__.py    |  12 ++--
+ motor-pronostico/src/modelos/fundacional.py |  30 +++++++++-
+ motor-pronostico/src/modelos/neuronales.py  | 126 +++++++++++++++++++++++++++++----------
+ motor-pronostico/tests/test_ml2_brazos.py   |  37 +++++++++++-
+ 5 files changed, 387 insertions(+), 40 deletions(-)
+
+commit 8841997028bcf0741b4262ea27621912df9cb670
+Autor: noportor
+Fecha: 2026-08-08 22:57:37 -0400
+
+    feat(ml2): brazos neuronales y fundacional — la corrida exploratoria post-documento
+
+    Cinco brazos nuevos sobre el MISMO protocolo congelado (config_ml2.yaml,
+    salidas_ml2/; el experimento documentado no se toca): dlinear (control
+    lineal), nhits (multi-horizonte directo), deepar (verosimilitud de
+    conteos), tft (V1 univariante) y chronos (fundacional, cero-shot local).
+
+    Contrato: entrenamiento único con parada temprana contra validación (la
+    excepción que ya tenía LightGBM), un paso = h=1 del abanico directo
+    emitido desde t−1, y proyección DIRECTA en el multihorizonte (despacho
+    aditivo por capacidad, sin tocar la mecánica de los brazos previos).
+
+    Resultados (D valorizada): LightGBM+Tweedie+features sigue campeón en
+    ambas modalidades (77,0 / 71,9). La lección Tweedie se replica en las
+    redes: todas las V1 univariantes subestiman (deepar −74,6 % de sesgo).
+    Chronos cero-shot: 2.º mejor WMAPE a un paso (63,9) y mejor brazo nuevo
+    en el horizonte (92,4) sin ver un dato de la empresa. El motor con 15
+    candidatos se degrada (78,6 vs 75,4; acierto 12,3 %): la maldición del
+    ganador crece con el conjunto — refuerza la selección multihorizonte.
+
+    Gotchas cazados por los tests: pandas 3 dejó de descartar NaN en
+    stack(); la librería pronostica desde el último mes VIVO de cada serie
+    (abanico re-indexado al origen); chronos 2.x renombró context→inputs.
+
+ motor-pronostico/.gitignore                 |   3 +
+ motor-pronostico/config/config_ml2.yaml     | 209 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/requirements-ml2.txt       |  19 ++++++
+ motor-pronostico/src/modelos/__init__.py    |  17 ++++++
+ motor-pronostico/src/modelos/fundacional.py | 116 ++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/modelos/neuronales.py  | 220 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/multihorizonte.py      |   8 +++
+ motor-pronostico/tests/conftest.py          |   6 ++
+ motor-pronostico/tests/test_ml2_brazos.py   | 119 +++++++++++++++++++++++++++++++++++++
+ 9 files changed, 717 insertions(+)
+
+commit b696c1cbf6d7bd1d966c569244eaffb4eaaa298e
+Autor: noportor
+Fecha: 2026-08-08 17:29:07 -0400
+
+    chore: documento/privado/ fuera del repositorio
+
+    Carpeta de trabajo para la tesis y las observaciones del tribunal.
+    El control de confidencialidad no mira dentro de los binarios de
+    Office, asi que las copias de trabajo no entran al historial; al
+    repositorio ira solo la version revisada a ojo (documento/README.md).
+
+ .gitignore | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit c1d5293acb0195cf57a6a77753a1214aa94ee010
+Autor: noportor
+Fecha: 2026-08-08 09:56:39 -0400
+
+    feat(figuras): catalogo listo para el documento + redibujo en segundos
+
+    Pulido del catalogo tras una inspeccion visual figura por figura:
+    - Sin titulos incrustados: los epigrafes se escriben en el documento y en
+      el PNG se duplicarian. Las decodificaciones que vivian en los titulos
+      pasaron a leyendas (F2 bloques, F3 barra atenuada, F13 sombreado y
+      linea de validacion) o al pie (F12: CD con su regla visual, alfa, N).
+    - Solapamientos: leyendas fuera del area de datos (F2, F7, F9),
+      anotaciones que cruzaban spines (F4, F7), flecha sobre puntos (F10),
+      rotulos que desbordaban su barra (F5) o su panel (F13).
+    - F12 dibuja solo grupos maximales (una barra contenida en otra sugiere
+      grupos que no existen) y F13 no repite SKU entre paneles (regla
+      declarada: mayor valor del regimen con SKU no usado).
+    - Convencion numerica castellana en todo el catalogo (_es): miles con
+      punto, decimales con coma, menos tipografico.
+
+    Redibujo sin re-correr el pipeline (los modelos van a tardar cada vez
+    mas, un retoque de rotulo no puede costar una corrida):
+    - El paso de figuras persiste sus insumos como DATOS puros
+      (insumos_figuras.pkl, hasheado en el manifiesto) y un unico dibujador
+      (dibujar_catalogo) sirve a ambos caminos.
+    - `python main.py figuras` redibuja el catalogo en segundos y re-sella
+      los hashes en el manifiesto con marca explicita de redibujo.
+    - `ajustar_lightgbm.py --solo-figura` hace lo propio con la F10 desde el
+      CSV de ensayos, sin re-correr los 60 trials.
+    - Test nuevo: el camino rapido reproduce los PNG del pipeline BYTE a
+      byte y el manifiesto queda coherente con el disco.
+
+ motor-pronostico/main.py                         | 313 ++++++++++++++++++++++++++++++++++++++-----------------
+ motor-pronostico/scripts/ajustar_lightgbm.py     |  17 +++
+ motor-pronostico/scripts/figura_antes_despues.py |  35 ++++---
+ motor-pronostico/src/figuras.py                  | 355 ++++++++++++++++++++++++++++++++++++++++-----------------------
+ motor-pronostico/src/reporte.py                  |  54 +++++++++-
+ motor-pronostico/tests/test_pipeline.py          |  39 +++++++
+ 6 files changed, 577 insertions(+), 236 deletions(-)
+
+commit 16e807568232048ee83433fbd4ad748cfb253f99
+Autor: noportor
+Fecha: 2026-08-08 04:47:30 -0400
+
+    feat(estratos): la D partida por regimen y tipo de categoria — el ultimo pendiente del mapa
+
+    estratos_valorizados.csv (un paso) y multihorizonte_estratos.csv (D(h)
+    global): la MISMA metrica de decision recalculada dentro de cada estrato,
+    con test de consistencia (cada estrato reproduce exacto la suite sobre su
+    subconjunto; series sin estrato = sin_clasificar, visibles). Dos dimensiones
+    declaradas: regimen ADI-CV2 por serie (entrenamiento) y tipo de categoria
+    (estacional = >50% del valor de entrenamiento en nov-feb — la MISMA regla
+    derivada de datos que la Figura 1, calculada una vez y compartida).
+
+    Vista 'Estratos' del visor: dimension x protocolo con barras D por modelo
+    dentro de cada estrato (colores por rol) + tabla completa.
+
+    LA RESPUESTA a la pregunta abierta (de donde viene el dominio del ML en el
+    horizonte): es TRANSVERSAL — lightgbm gana los 4 regimenes ADI-CV2 y ambos
+    tipos de categoria en D(h) — pero la ventaja aplastante esta en las
+    ESTACIONALES (83,2 vs 121,7 del mejor clasico estacional: -38 pts), donde
+    la visibilidad de categoria/calendario/quiebres mas paga. A un paso los
+    clasicos siguen competitivos en suave/recurrente (SES 56-64), coherente con
+    que el motor elija mezcla. 159 tests + 1 skip verdes.
+
+ motor-pronostico/main.py                       | 106 +++++++++++++++++++++++++++-------------
+ motor-pronostico/src/metricas.py               |  53 ++++++++++++++++++++
+ motor-pronostico/src/multihorizonte.py         |  19 ++++++++
+ motor-pronostico/tests/test_metricas.py        |  37 ++++++++++++++
+ motor-pronostico/tests/test_pipeline.py        |   2 +
+ motor-pronostico/visor/src/vistas/Estratos.tsx | 170 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 355 insertions(+), 32 deletions(-)
+
+commit 9c00093646ed77a782a98cc7644704919a97f377
+Autor: noportor
+Fecha: 2026-08-08 03:28:37 -0400
+
+    feat(series): la evidencia serie por serie — persistencia, vista y figura de casos
+
+    series_y_predicciones.csv: la realidad y los doce pronosticos a un paso por
+    serie y mes (con bloque), emitido en el paso del motor. Test de integridad:
+    recomputar el MAE de una serie desde el CSV reproduce EXACTO lo reportado —
+    la evidencia inspeccionable ES la evidencia evaluada.
+
+    Vista 'Series' del visor: buscador de serie, chips de modelos (color por
+    rol), linea real completa + pronosticos desde validacion, bloque de prueba
+    sombreado, el elegido del motor y las metricas de prueba de la serie. La
+    vista de la defensa: cualquier numero agregado baja a una serie y se VE.
+
+    F13 casos ilustrativos: 4 paneles con seleccion por REGLA declarada (la
+    serie de mayor demanda valorizada de cada regimen: estacional Categoría D,
+    recurrente Categoría I, esporadica, erratica) — representativos por
+    construccion, no por conveniencia. Pronosticos desde validacion, ultimas
+    cuatro gestiones. Confidencialidad: el titulo lleva SOLO el SKU seudonimizado
+    (la regional real no puede ir a una figura del documento publicado).
+
+    158 tests + 1 skip verdes.
+
+ motor-pronostico/main.py                     |  86 +++++++++++++++++++++-
+ motor-pronostico/src/figuras.py              |  74 +++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py      |  22 ++++++
+ motor-pronostico/visor/src/vistas/Series.tsx | 263 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 444 insertions(+), 1 deletion(-)
+
+commit c92d9496c0944b78c53ba72148fa2457f97a9dde
+Autor: noportor
+Fecha: 2026-08-08 01:28:58 -0400
+
+    feat(figuras): catalogo F1-F12 del documento — cada figura con UN trabajo
+
+    Plan de figuras decidido con el investigador. Nuevas:
+    - F1 perfil mensual del valor por categoria (estacionales DERIVADAS de los
+      datos: >50% del valor en nov-feb) — justifica la poblacion objetivo
+    - F2 demanda valorizada por gestion (confinamiento en trama; val/prueba
+      marcadas) — valorizada porque sumar unidades entre SKUs no tiene sentido
+    - F3 unidad de analisis en dos paneles (combos por SKU + correlacion intra)
+    - F4 cascada de la muestra + sensibilidad del umbral de ceros (el circulo
+      es la decision)
+    - F5 linea de tiempo del diseno (bloques, evento, fold interno del tuning)
+    - F6 esquema de origenes rodantes (el protocolo multihorizonte sin palabras)
+    - F7 LA PRINCIPAL: D descompuesta en barras apiladas WMAPE + |Bias| con el
+      signo anotado — reemplaza a la vieja figura 2 sin valorizar
+    - F9 antes/despues del FE (scripts/figura_antes_despues.py: compara base vs
+      ablacion piso con mini-manifiesto que cita ambos hashes y exige mismo
+      snapshot). Corrida piso reproduce los numeros pre-FE EXACTOS (95,27/80,14
+      = determinismo RN-5 entre generaciones). Deltas: ML -18,3 un paso y -26,3
+      multihorizonte; motor -4,7 / -8,5
+    - F10 la busqueda de Optuna completa (un punto por ensayo, marcador por
+      objetivo: las tres nubes de la hipotesis del sesgo) — artefacto del tuning
+    - F8/F11/F12 renombradas al esquema del catalogo
+
+    Visor: galeria de Resultados por DESCUBRIMIENTO (toda figura emitida aparece
+    sola; sin listas hardcodeadas). Verificacion visual de las 6 nuevas con datos
+    reales; colisiones de etiquetas corregidas (leyendas fuera del area de datos,
+    anotaciones reubicadas). Ablacion piso v1 como corrida viva
+    (salidas_ablacion_piso_v1). 157 tests + 1 skip verdes.
+
+ motor-pronostico/main.py                         | 125 +++++++++++++++---
+ motor-pronostico/scripts/ajustar_lightgbm.py     |   8 ++
+ motor-pronostico/scripts/figura_antes_despues.py | 136 +++++++++++++++++++
+ motor-pronostico/src/figuras.py                  | 453 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ motor-pronostico/tests/test_pipeline.py          |  14 +-
+ motor-pronostico/visor/src/vistas/Resultados.tsx |  32 +++--
+ 6 files changed, 703 insertions(+), 65 deletions(-)
+
+commit aaec3b0dd7ccebc08db1dac367b556a249f707c3
+Autor: noportor
+Fecha: 2026-08-07 19:48:39 -0400
+
+    feat(ml): features v2 + hiperparametros tweedie — el brazo ML deja de ser el piso
+
+    FEATURES V2 (decision con el investigador, 2026-08-07): el ML gana la
+    visibilidad que los clasicos no tienen. Todas causales (shift antes de toda
+    ventana; barridas por el guardian de no-fuga):
+    - exogenas del snapshot re-extraido (SHA 5d1190ff): precio mensual (100%
+      cobertura) + venta perdida rezagada (demanda insatisfecha; 0 pre-2020
+      declarado)
+    - fuentes nuevas: quiebres de stock (inventario semanal mensualizado, desde
+      2022-04, NaN antes = 'no hay historia' declarado) + tipo de cambio (regimen
+      variable desde 2022 + fijo 6,96 documentado hacia atras)
+    - categoria como categorica del modelo global + derivadas causales (recencia,
+      % ceros movil, media historica del mismo mes, razon interanual, momentum,
+      min/max movil)
+    - multihorizonte: exogenas futuras = PERSISTENCIA del ultimo valor conocido
+      al origen (el reemplazo honesto del sesgo de la operación que proyecta ceros)
+
+    HIPERPARAMETROS por busqueda determinista (scripts/ajustar_lightgbm.py):
+    Optuna TPE semilla fija secuencial, espacio declarado en config, fold interno
+    = gestion 2024 (validacion real intacta, RN-2), criterio D interna valorizada,
+    tabla completa de ensayos como artefacto. LA HIPOTESIS DEL SESGO SE CONFIRMO:
+    regression_l1 optimiza la mediana y sub-pronostica demanda de cola derecha
+    (bias interno -13,6); tweedie lo elimina (+0,2) con igual error absoluto.
+    D interna: l1 73,3 / l2 79,8 / tweedie 59,7. Ganador declarado en config.
+
+    Auditoria adversarial previa al merge (29 revisiones): 11 confirmados corregidos
+    - TC: cola sin dato ahora CONTADA y declarada (era ffill silencioso latente)
+    - claves de quiebres normalizadas al dtype canonico + guardas de duplicados
+      (quiebres y tc) con errores explicitos
+    - persistencia salta filas NaN ('ultimo valor CONOCIDO' literal)
+    - categoria determinista (keep last por periodo, no orden de archivo)
+    - guardian de no-fuga extendido a perdidas/quiebres (hand-math + alteracion
+      futura) — antes solo cubria precio/tc
+    - humo e2e del script de tuning (2 ensayos sobre fixture sintetica)
+    157 tests + 1 skip verdes.
+
+ motor-pronostico/.dockerignore                  |   3 +
+ motor-pronostico/Dockerfile                     |   5 ++
+ motor-pronostico/config/config.yaml             | 113 ++++++++++++++++++++++++---
+ motor-pronostico/config/extraccion.ejemplo.yaml |  22 ++++++
+ motor-pronostico/main.py                        |  28 +++++--
+ motor-pronostico/requirements.txt               |   1 +
+ motor-pronostico/scripts/ajustar_lightgbm.py    | 268 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/scripts/extraer_snapshot.py    | 170 +++++++++++++++++++++++++++++++++++++++-
+ motor-pronostico/src/carga.py                   |   6 ++
+ motor-pronostico/src/config.py                  |  27 +++++++
+ motor-pronostico/src/exogenas.py                | 219 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/features.py                | 157 ++++++++++++++++++++++++++++++++++++-
+ motor-pronostico/src/modelos/lightgbm_modelo.py |   4 +-
+ motor-pronostico/src/multihorizonte.py          |  68 ++++++++++++++--
+ motor-pronostico/tests/test_carga.py            |  12 +--
+ motor-pronostico/tests/test_features.py         | 181 +++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_multihorizonte.py   |  43 +++++++++++
+ motor-pronostico/tests/test_pipeline.py         |  62 ++++++++++++++-
+ 18 files changed, 1355 insertions(+), 34 deletions(-)
+
+commit 35967dc45fc38c53eacd91ae614388981f91e1fb
+Autor: noportor
+Fecha: 2026-08-07 17:36:03 -0400
+
+    feat(muestra): poblacion objetivo + estados declarativos + sensibilidad de umbrales
+
+    La decision de muestra, completa y a la vista (decidida con el investigador,
+    2026-08-07):
+
+    POBLACION OBJETIVO (etapa 1b): el estudio se acota a un grupo representativo
+    de categorias con comportamiento comercial conocido — recurrentes (Categoría K,
+    Categoría J, Categoría I) y estacionales de campana (Categoría E 75%
+    del valor en nov-feb, Categoría D 89%). 685 SKUs, 4.439 series, 72,3% del valor
+    del negocio. Es decision de DISENO declarada, no criterio de inclusion; la
+    ablacion poblacion.categorias=[] vuelve al portafolio completo y las corridas
+    previas sobre el portafolio completo se conservan como evidencia.
+
+    UMBRALES CONFIRMADOS (36 / 0,70 / 50): ancla metodologica — con 36 meses
+    todos los brazos juegan de verdad (HW consume 24 en inicializar). La grilla
+    de sensibilidad (N x cobertura valorizada bajo umbrales alternativos) se
+    emite como artefacto: sensibilidad_umbrales.csv, con test de consistencia
+    contra la cascada real.
+
+    CLASIFICAR Y DECLARAR, NO DESCARTAR EN SILENCIO: fuera_de_muestra.csv
+    clasifica TODAS las series (estado de actividad al cierre de entrenamiento,
+    molde de la clasificación de estados: activa/dormida/descontinuada/nueva/reciente)
+    con el criterio exacto que la excluyo y su peso valorizado. Hallazgo
+    documentado: las series apagadas por el confinamiento quedan fuera por
+    intermitencia cronica medida sobre el panel YA reparado, no por el apagon.
+
+    Extractor con columna_categoria; snapshot re-extraido (SHA 15e48cfc, 204.096
+    filas); filtro con guardas explicitas (typo de categoria = error con la lista
+    real; sin columna = error que pide re-extraer).
+
+ motor-pronostico/config/config.yaml             |  29 ++++++++++
+ motor-pronostico/config/extraccion.ejemplo.yaml |   7 +++
+ motor-pronostico/main.py                        |  88 +++++++++++++++++++++++++++--
+ motor-pronostico/scripts/extraer_snapshot.py    |  37 ++++++++++--
+ motor-pronostico/src/carga.py                   |  86 ++++++++++++++++++++++++++++
+ motor-pronostico/src/config.py                  |  29 ++++++++++
+ motor-pronostico/src/particion.py               | 196 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_carga.py            |  12 ++--
+ motor-pronostico/tests/test_muestra.py          | 194 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py         |  86 ++++++++++++++++++++++++++--
+ 10 files changed, 743 insertions(+), 21 deletions(-)
+
+commit 28f76c8a4dd48e0a2239674ebcc4a1ef21cfce79
+Autor: noportor
+Fecha: 2026-08-07 16:55:42 -0400
+
+    feat(unidad): etapa unidad_analisis — la evidencia de la serie SKU-canal-regional
+
+    Tres patas reproducibles en el paso 8b: (1) declarada — demanda independiente
+    por combinacion, unidades NO agregables entre SKUs; (2) estructura medida SOLO
+    sobre entrenamiento (multi-combo, deriva de participacion, correlaciones
+    niveles+interanual, regimenes ADI-CV2, ganadores del motor por SKU); (3)
+    contrafactual justo arriba/abajo (mismo modelo, participaciones de 12 meses
+    CERRADOS, valorizado, solo validacion). Vista 'Unidad de analisis' en el visor.
+
+    Auditoria adversarial previa al merge (31 revisiones, 3 lentes + 2 escepticos por
+    hallazgo): 9 confirmados, todos corregidos —
+    - contrafactual PAREADO con mascara comun (la participacion 0/0 le regalaba al
+      top-down los meses de resurreccion; delta fabricado de hasta -66,7 pts
+      reproducido por los auditores) + exclusiones contadas
+    - ventana COVID excluida de deriva/correlaciones (la copia fabricaba
+      interanuales (0,0): r_yoy inflada de +0,07 a +0,27 en series independientes)
+      con reindex calendario para que diff(12) no cruce 24 meses
+    - NaN -> null en TODA serializacion JSON (un NaN rompia el visor entero y la
+      suite no lo veia: json.loads de Python acepta el token) + test estricto
+    - histograma ya no fabrica ceros con SKUs sin correlacion medida
+    - numeros >=1000 ya no se vuelven NaN en tablas (tambien en Horizonte)
+    - ventana del ma derivada del nombre del benchmark; esqueletos para paneles
+      sin multi-combo; acoplamiento fixture-contrato asertado explicito
+
+    Corrida real: 88,1% SKUs multi-combo (mediana 7), deriva 17,4 pp/mes, r 0,20
+    niveles / 0,12 interanual (78% pares <0,5, 11.299 pares), 75% regimenes
+    mixtos, 97,7% SKUs con ganadores distintos; contrafactual: ma_12 empata
+    exacto, naive_m1 -4,5 pts pro-top-down — la alternativa no domina.
+
+ motor-pronostico/main.py                             |  68 +++++++-
+ motor-pronostico/src/reporte.py                      |  21 ++-
+ motor-pronostico/src/unidad_analisis.py              | 514 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py              |  44 ++++-
+ motor-pronostico/tests/test_unidad_analisis.py       | 336 ++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/visor/src/contrato.ts               |  34 ++++
+ motor-pronostico/visor/src/vistas/Horizonte.tsx      |  12 +-
+ motor-pronostico/visor/src/vistas/UnidadAnalisis.tsx | 277 ++++++++++++++++++++++++++++++++
+ 8 files changed, 1295 insertions(+), 11 deletions(-)
+
+commit cfa1fa6d93b278d4cdbe35d8a1e5e65c21aa8541
+Autor: noportor
+Fecha: 2026-08-07 15:14:14 -0400
+
+    feat(motor): ablacion pre-registrada — ventana de seleccion multihorizonte
+
+    Una sola decision cambia: el motor selecciona por serie con el error
+    multihorizonte de validacion (proyeccion recursiva desde el cierre de
+    entrenamiento, h=1..12, la mecánica del backtest de la operación mensual)
+    en vez del error a un paso. Regla, bloques, brazos y metricas identicos.
+    --anular modelos.motor_seleccion=multihorizonte
+
+    Resultado (corrida salidas_ablacion_motor_multihorizonte): el motor pasa de
+    4.o (99,1 %) a 2.o (86,4 %) en D multihorizonte global Y de 77,9 a 76,5 en D
+    a un paso — PRIMERO en ambos protocolos frente a su version a un paso. La
+    caida del motor base no era del concepto de seleccion por serie sino de la
+    ventana con que seleccionaba: elegia planos (naive -236, ma_2 -118 series)
+    que colapsan al horizonte; con la ventana correcta migra a estructura
+    (lightgbm +120, croston +68, ma_12 +61, HW +44).
+
+ motor-pronostico/config/config.yaml           |  15 +++++++++
+ motor-pronostico/main.py                      |  23 ++++++++++++--
+ motor-pronostico/src/config.py                |  12 ++++++++
+ motor-pronostico/src/modelos/motor.py         |  60 +++++++++++++++++++++++++-----------
+ motor-pronostico/src/multihorizonte.py        |  99 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_multihorizonte.py | 110 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 299 insertions(+), 20 deletions(-)
+
+commit 171c88c6c2d31cdbf5708bc1b86fde350a1aec50
+Autor: noportor
+Fecha: 2026-08-07 14:52:25 -0400
+
+    feat(multihorizonte): evaluacion con origenes rodantes — la RN-4 completa
+
+    La operación mensual re-pronostica el horizonte de planificación cada mes; a un paso los modelos de
+    linea recta nunca quedan expuestos. Cada mes de prueba es un origen, proyeccion
+    recursiva realimentada (la mecánica de la operación mensual propuesta; Croston
+    constante), LightGBM re-entrenado por origen con arboles congelados, seleccion
+    del motor congelada de validacion (RN-2). Curva D(h) valorizada + figura 5 +
+    vista Horizonte en el visor. Notas de diseño documentadas
+    en el registro interno del proyecto.
+
+    Verificado: h=1 rodante reproduce exactamente la D a un paso; la recursion
+    realimentada reproduce las formas cerradas (SES plano, HW l+h*b+s) contra la
+    formula a mano.
+
+ motor-pronostico/config/config.yaml             |  26 ++++
+ motor-pronostico/main.py                        |  95 +++++++++++++-
+ motor-pronostico/src/config.py                  |  39 ++++++
+ motor-pronostico/src/figuras.py                 | 106 ++++++++++++++++
+ motor-pronostico/src/modelos/base.py            |   6 +
+ motor-pronostico/src/modelos/lightgbm_modelo.py |   3 +-
+ motor-pronostico/src/modelos/promedio_movil.py  |  10 +-
+ motor-pronostico/src/multihorizonte.py          | 430 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_multihorizonte.py   | 207 +++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py         |   6 +-
+ motor-pronostico/visor/src/contrato.ts          |  12 ++
+ motor-pronostico/visor/src/vistas/Horizonte.tsx | 278 +++++++++++++++++++++++++++++++++++++++++
+ 12 files changed, 1209 insertions(+), 9 deletions(-)
+
+commit f3ea6204eea7983762f656125f3b601bcfe1c562
+Autor: noportor
+Fecha: 2026-08-07 13:38:35 -0400
+
+    feat(evento): tratamiento COVID-19 parametrizado — la practica de la empresa
+
+    Diagnostico (valorizado): shock mar-2020..feb-2021, piso abril 2020 (-88 %),
+    gestion 2021 -39 %, 181 series activas apagadas en el confinamiento, 16 % de
+    las observaciones de entrenamiento. Validacion y prueba estan limpias: la
+    ventana cae integra en train (lo valida la configuracion).
+
+    Tratamiento base `copiar_gestion_previa`: cada mes de la ventana se reemplaza
+    PARA EL AJUSTE por el mismo mes del anio anterior. No es una decision del
+    investigador: es la practica documentada de Planificacion durante el evento
+    (el benchmark debe ser el metodo real, §10). Garantias:
+    - La serie observada sigue siendo la fuente de verdad: dos mundos con las
+      mismas series (ajuste corregido / real), y el pipeline VERIFICA que el
+      bloque de prueba es identico en ambos (RN-1 activa, no supuesta).
+    - Sin historia previa no se copia nada (nacer en el evento no fabrica datos).
+    - Todo contado: 33.064 observaciones reemplazadas en 3.261 series, en el
+      informe y en flujo.json (etapa evento_exogeno).
+    - Ablacion: --anular evento_exogeno.tratamiento=nada (salidas_ablacion_covid_crudo).
+
+    Resultado del experimento de sensibilidad (pre-registrado ANTES de mirar):
+    el tratamiento casi no mueve la muestra (N 2.229 vs 2.226; 18 entran/15
+    salen) ni a los modelos de ventana; degrada a LightGBM (D 92,7->97,0) y deja
+    al grupo de cabeza (SES-opt, motor, Holt-Winters) empatado dentro de ~1 pp
+    bajo D (77,6/77,9/78,6). La base SIGUE siendo la practica de la empresa:
+    cambiarla ahora porque el crudo favorece a la propuesta seria exactamente lo
+    que el §10 prohibe.
+
+    108 pruebas (eventos con casos a mano: copia, sin-historia, apagon, ventanas
+    invalidas).
+
+ motor-pronostico/config/config.yaml     |  24 +++++++++++++++
+ motor-pronostico/main.py                |  73 +++++++++++++++++++++++++++++++++++++++++-----
+ motor-pronostico/src/config.py          |  49 +++++++++++++++++++++++++++++++
+ motor-pronostico/src/eventos.py         | 115 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_eventos.py  |  97 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py |   4 +--
+ 6 files changed, 352 insertions(+), 10 deletions(-)
+
+commit 659793760d1908ce406edce61d2fba18a2de6526
+Autor: noportor
+Fecha: 2026-08-07 13:06:04 -0400
+
+    feat(metricas): suite valorizada por costo y metrica de decision D
+
+    Aporte metodologico del autor en tres golpes, ahora formalizado:
+
+    1) Las unidades de medida difieren ENTRE SKUs: promediar MAE entre productos
+       no tiene sentido fisico. La agregacion legitima es VALORIZADA:
+       |error| x costo unitario (el costo es constante por serie en la fuente,
+       lo que ademas evita mezclar error con deriva de precios).
+
+    2) Suite valorizada por modelo: WMAPE_val, Bias_val, RMSE_val (agrupado, ahora
+       valido: misma unidad) y la METRICA DE DECISION
+       D = WMAPE_val + |Bias_val| - rehabilita el "error compuesto" del documento
+       (dimensionalmente invalido en unidades, coherente en porcentajes del mismo
+       denominador) y captura el objetivo del pronostico: errar poco y sin sesgo.
+
+    3) CONSISTENCIA: el motor selecciona por el analogo por-serie de D
+       (mae+|bias|, ranking invariante a valorizar dentro de una serie - probado),
+       el contraste se parea sobre esa misma metrica y la conclusion se lee en D.
+       Es ademas la regla que el documento declara (§3.2.1) y la de la operación propuesta.
+
+    RESULTADO: bajo D el ranking se invierte - el motor con la regla compuesta es
+    PRIMERO (77,1%) y LightGBM solo cae a penultimo (92,7%: su bias valorizado de
+    -31% lo hace indespachable sin el motor alrededor). La ablacion con regla MAE
+    queda en salidas_ablacion_regla_mae/.
+
+    - Extractor: costos.csv (mismo mapa de seudonimos; re-extraccion verificada
+      byte a byte identica al congelado: hash 6dbba013... intacto).
+    - src/costos.py: maestro con cobertura declarada (88-90%); su ausencia no
+      detiene el pipeline, se declara.
+    - tabla_valorizada.csv como artefacto + bloque en el visor + etapa en flujo.
+    - 102 pruebas (suite valorizada con Bs a mano e invariancia del ranking).
+
+ motor-pronostico/config/config.yaml              |  14 +++++++--
+ motor-pronostico/config/extraccion.ejemplo.yaml  |   8 +++++
+ motor-pronostico/main.py                         |  62 ++++++++++++++++++++++++++++++------
+ motor-pronostico/scripts/extraer_snapshot.py     |  44 ++++++++++++++++++++++++--
+ motor-pronostico/src/costos.py                   |  75 ++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/src/metricas.py                 | 107 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_config.py            |   8 +++--
+ motor-pronostico/tests/test_metricas.py          |  66 +++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py          |  12 +++++++
+ motor-pronostico/visor/src/vistas/Resultados.tsx |  26 +++++++++++++++-
+ 10 files changed, 404 insertions(+), 18 deletions(-)
+
+commit 4297d7c4d38bc200659797e61221fbb66f428c90
+Autor: noportor
+Fecha: 2026-08-07 12:19:43 -0400
+
+    feat(visor): SPA React reemplaza al tablero Streamlit
+
+    El modelo de ejecucion de Streamlit (re-ejecutar el script en cada
+    interaccion) no satisfacia el uso real: el usuario quiere filtros
+    instantaneos y su stack diario es React. Se reconstruyo el visor completo y
+    se retiro Streamlit.
+
+    STACK (decidido con el usuario)
+    - React 18 + TypeScript + Vite - MUI (DataGrid) - ECharts - TanStack Query +
+      PapaParse. SIN backend: nginx sirve la SPA y expone salidas*/ como /datos/
+      (autoindex JSON). Supabase evaluado y descartado: RN-5/RN-6 viven en
+      archivos hasheados, la confidencialidad no admite terceros y la tesis debe
+      ser autocontenida (§9).
+
+    SEGURIDAD (Anexo B)
+    - nginx niega todo lo que no sea salidas*/: datos/crudo/, config y src
+      responden 403 aunque esten en el montaje (verificado por curl).
+
+    ADITIVIDAD (misma que el tablero, ahora en build)
+    - Corridas descubiertas del autoindex; CSV/PNG nuevos aparecen en Artefactos;
+      etapas nuevas en Flujo; una vista nueva = un archivo en src/vistas/ que
+      exporta `vista` (import.meta.glob, sin lista central).
+
+    CALIDAD
+    - tsc como gate del build (sin types verdes no hay imagen), vitest en la capa
+      de datos con fixtures sinteticas (RN-1), package-lock congelado, y
+      verificacion visual de las 9 vistas con capturas headless — que cazo dos
+      charts invisibles (datos escalares/objeto sobre eje categorico en ECharts;
+      fix: pares [x,y] planos).
+    - La misma paleta por rol validada con el verificador de la guia dataviz.
+
+    RETIRO DE STREAMLIT
+    - Fuera tablero/, Dockerfile.tablero, requirements-tablero, .streamlit y sus
+      pruebas de lectores. Las pruebas del CONTRATO (schema de flujo.json) viven
+      en tests/test_pipeline.py y quedan: el visor consume el mismo contrato.
+    - El visor toma el puerto 8501. Suite del pipeline: 98 verdes, gate incluido.
+
+ motor-pronostico/.gitignore                                |    4 +
+ motor-pronostico/.streamlit/config.toml                    |   12 -
+ motor-pronostico/Dockerfile.tablero                        |   32 -
+ motor-pronostico/README.md                                 |   42 +-
+ motor-pronostico/docker-compose.yml                        |   54 +-
+ motor-pronostico/requirements-tablero.txt                  |   18 -
+ motor-pronostico/tablero/__init__.py                       |    7 -
+ motor-pronostico/tablero/app.py                            |   87 -
+ motor-pronostico/tablero/comunes.py                        |   68 -
+ motor-pronostico/tablero/estilo.py                         |  128 --
+ motor-pronostico/tablero/humo.py                           |   74 -
+ motor-pronostico/tablero/lectores.py                       |  150 --
+ motor-pronostico/tablero/paginas/1_corrida.py              |   65 -
+ motor-pronostico/tablero/paginas/2_flujo.py                |   97 --
+ motor-pronostico/tablero/paginas/3_datos.py                |  136 --
+ motor-pronostico/tablero/paginas/4_resultados.py           |  197 ---
+ motor-pronostico/tablero/paginas/5_modelos.py              |  136 --
+ motor-pronostico/tablero/paginas/6_motor.py                |   91 --
+ motor-pronostico/tablero/paginas/7_contraste.py            |  123 --
+ motor-pronostico/tablero/paginas/8_comparar.py             |  135 --
+ motor-pronostico/tablero/paginas/9_artefactos.py           |   61 -
+ motor-pronostico/tests/test_tablero_lectores.py            |  145 --
+ motor-pronostico/visor/.dockerignore                       |    2 +
+ motor-pronostico/visor/Dockerfile                          |   25 +
+ motor-pronostico/visor/index.html                          |   12 +
+ motor-pronostico/visor/nginx.conf                          |   43 +
+ motor-pronostico/visor/package-lock.json                   | 4439 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/visor/package.json                        |   36 +
+ motor-pronostico/visor/src/App.tsx                         |  154 ++
+ motor-pronostico/visor/src/componentes/BarrasPorModelo.tsx |  123 ++
+ motor-pronostico/visor/src/componentes/Estado.tsx          |   25 +
+ motor-pronostico/visor/src/componentes/Grafico.tsx         |   22 +
+ motor-pronostico/visor/src/componentes/PanelJSON.tsx       |   31 +
+ motor-pronostico/visor/src/componentes/PanelTexto.tsx      |   55 +
+ motor-pronostico/visor/src/componentes/Seccion.tsx         |   24 +
+ motor-pronostico/visor/src/componentes/TablaDatos.tsx      |   60 +
+ motor-pronostico/visor/src/componentes/TarjetaKPI.tsx      |   29 +
+ motor-pronostico/visor/src/contrato.ts                     |  229 +++
+ motor-pronostico/visor/src/corrida.ts                      |    8 +
+ motor-pronostico/visor/src/datos/csv.test.ts               |   75 +
+ motor-pronostico/visor/src/datos/csv.ts                    |   58 +
+ motor-pronostico/visor/src/datos/hooks.ts                  |  126 ++
+ motor-pronostico/visor/src/datos/indice.test.ts            |   52 +
+ motor-pronostico/visor/src/datos/indice.ts                 |   68 +
+ motor-pronostico/visor/src/main.tsx                        |   23 +
+ motor-pronostico/visor/src/tema/echarts.ts                 |   33 +
+ motor-pronostico/visor/src/tema/paleta.ts                  |   82 +
+ motor-pronostico/visor/src/tema/tema.ts                    |   33 +
+ motor-pronostico/visor/src/vistas/Artefactos.tsx           |  154 ++
+ motor-pronostico/visor/src/vistas/Comparar.tsx             |  213 +++
+ motor-pronostico/visor/src/vistas/Contraste.tsx            |  243 +++
+ motor-pronostico/visor/src/vistas/Corrida.tsx              |  114 ++
+ motor-pronostico/visor/src/vistas/Datos.tsx                |  186 +++
+ motor-pronostico/visor/src/vistas/Flujo.tsx                |  188 +++
+ motor-pronostico/visor/src/vistas/Modelos.tsx              |  237 +++
+ motor-pronostico/visor/src/vistas/Motor.tsx                |  145 ++
+ motor-pronostico/visor/src/vistas/Resultados.tsx           |  291 ++++
+ motor-pronostico/visor/src/vistas/registro.ts              |   28 +
+ motor-pronostico/visor/src/vistas/tipos.ts                 |   14 +
+ motor-pronostico/visor/tsconfig.json                       |   21 +
+ motor-pronostico/visor/vite.config.ts                      |   35 +
+ 61 files changed, 7794 insertions(+), 1804 deletions(-)
+
+commit d841b832f84e43890c941e6ce5471f9ea4581bb4
+Autor: noportor
+Fecha: 2026-08-07 11:19:02 -0400
+
+    fix(tablero): sobrevive a crashes nativos y las interacciones son fluidas
+
+    El proceso murio con SIGSEGV (exit 139) al interactuar y quedo muerto: sin
+    politica de reinicio, un fallo en la capa nativa (serializacion pyarrow) deja
+    el tablero caido hasta levantarlo a mano y no deja traceback que un test
+    pueda cazar. Tres frentes:
+
+    RESILIENCIA
+    - restart: unless-stopped + healthcheck: si vuelve a morir, vuelve solo.
+    - numpy fijado en la linea 2.3 madura (pip resolvia 2.5.1 recien salida, el
+      binomio con pyarrow es la capa donde ocurrio el segfault).
+
+    FLUIDEZ
+    - Las secciones con controles son st.fragment: cambiar una metrica re-ejecuta
+      SOLO esa seccion, no la pagina entera.
+    - Al navegador viajan agregados: el boxplot sobre ~6.600 filas por serie se
+      reemplaza por percentiles precalculados (once filas) dibujados como rango
+      p10-p90 + banda p25-p75 + mediana. Menos payload = menos superficie para el
+      crash nativo, ademas de mas rapido.
+    - File watcher apagado: en Docker sobre Windows, vigilar por polling el repo
+      montado (con .git y datos) consumia CPU/IO de fondo. Streamlit relee los
+      scripts en cada ejecucion igual.
+    - Styler de pandas fuera de la Tabla 8 (otra ruta de serializacion nativa que
+      un round() reemplaza sin perdida).
+
+    Verificacion: humo 11/11 + barrido de TODAS las combinaciones de metrica y
+    resumen en Resultados y Comparar (0 fallas).
+
+ motor-pronostico/docker-compose.yml              |  16 ++++++
+ motor-pronostico/requirements-tablero.txt        |   4 ++
+ motor-pronostico/tablero/paginas/4_resultados.py | 178 +++++++++++++++++++++++++++++++++++++--------------------------
+ motor-pronostico/tablero/paginas/5_modelos.py    |  21 +++++---
+ motor-pronostico/tablero/paginas/6_motor.py      |  20 ++++---
+ motor-pronostico/tablero/paginas/8_comparar.py   | 135 +++++++++++++++++++++++++-----------------------
+ 6 files changed, 223 insertions(+), 151 deletions(-)
+
+commit e6d4e39f4e43d80f63f19504a152d23073d3c4ce
+Autor: noportor
+Fecha: 2026-08-07 10:56:11 -0400
+
+    fix(tablero): las paginas se pasan relativas al script principal
+
+    Con 'streamlit run tablero/app.py' __file__ queda RELATIVO al CWD; el glob
+    devolvia rutas que Streamlit re-unia contra la carpeta del script y terminaba
+    buscando tablero/tablero/paginas/. La prueba de humo no lo veia porque AppTest
+    lanza con ruta absoluta: ahora el humo ejecuta app.py de las dos formas, y la
+    relativa reproduce exactamente el arranque del servidor.
+
+ motor-pronostico/tablero/app.py  | 11 +++++++++--
+ motor-pronostico/tablero/humo.py | 30 ++++++++++++++++++++----------
+ 2 files changed, 29 insertions(+), 12 deletions(-)
+
+commit 4144374ec790ded77b14896eb9e1791d5fa36245
+Autor: noportor
+Fecha: 2026-08-07 10:32:20 -0400
+
+    fix(confidencialidad): 0.0.0.0 y loopback no son IPs internas
+
+    El patron de direcciones IP marcaba el 0.0.0.0 del CMD de un Dockerfile.
+    Escucha-universal y 127.* son las direcciones de cualquier contenedor del
+    mundo y no revelan nada de la red de la empresa; el patron ahora las excluye
+    en vez de acumular excepciones por archivo.
+
+ motor-pronostico/tests/test_confidencialidad.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit f96c8ac58f909a791486df8e9c424ee3cb315f4f
+Autor: noportor
+Fecha: 2026-08-07 10:30:50 -0400
+
+    feat(tablero): visor del flujo completo + dashboard de resultados
+
+    Interfaz Streamlit (docker compose up tablero -> :8501) que muestra el
+    experimento de punta a punta: datos crudos, limpieza, transformacion,
+    criterios y features, modelos y su optimizacion, motor, y el dashboard con
+    resultados y contraste. Es un proyecto aditivo y la arquitectura esta
+    disenada para que las mejoras aparezcan sin esfuerzo:
+
+    CONTRATO (pipeline -> tablero)
+    - Cada corrida emite flujo.json: la lista de etapas con schema uniforme
+      (entrada/salida, decisiones, conteos, artefactos). Los datos ya existian en
+      los Informe* de cada modulo; reporte.etapa() los registra.
+    - inspeccion.json expone el informe de inspeccion como datos.
+    - Ambos quedan hasheados en el manifiesto (RN-6) y con schema probado.
+
+    VISOR (tablero/, solo lectura)
+    - 9 paginas descubiertas por convencion de nombre; los lectores son puros
+      (sin streamlit) y se prueban en la imagen del pipeline.
+    - Aditividad: salidas*/ nuevo = corrida visible; CSV/PNG nuevo = aparece en
+      Artefactos; etapa nueva = aparece en Flujo; archivo nuevo en paginas/ =
+      pagina nueva. Cero registro central.
+    - Montaje :ro y sin calculo de resultados: el pipeline sigue siendo la unica
+      fuente de verdad (RN-1).
+    - Color por ROL del modelo (propuesta/ML/benchmark/contexto), par de acentos
+      validado con el verificador de la guia de visualizacion; identidad siempre
+      por etiqueta, nunca color solo.
+    - Imagen Docker propia (streamlit no entra al entorno del pipeline).
+    - Prueba de humo (tablero/humo.py) que ejecuta las 9 paginas de verdad; ya
+      cazo una incompatibilidad de API antes del primer uso.
+
+    105 pruebas + humo 10/10.
+
+ motor-pronostico/.streamlit/config.toml          |  12 +++++
+ motor-pronostico/Dockerfile.tablero              |  32 +++++++++++
+ motor-pronostico/README.md                       |  24 +++++++++
+ motor-pronostico/docker-compose.yml              |  21 ++++++++
+ motor-pronostico/main.py                         | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ motor-pronostico/requirements-tablero.txt        |  14 +++++
+ motor-pronostico/src/reporte.py                  |  74 ++++++++++++++++++++++++++
+ motor-pronostico/tablero/__init__.py             |   7 +++
+ motor-pronostico/tablero/app.py                  |  80 ++++++++++++++++++++++++++++
+ motor-pronostico/tablero/comunes.py              |  68 ++++++++++++++++++++++++
+ motor-pronostico/tablero/estilo.py               | 128 ++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/humo.py                 |  64 ++++++++++++++++++++++
+ motor-pronostico/tablero/lectores.py             | 150 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/1_corrida.py    |  65 +++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/2_flujo.py      |  97 +++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/3_datos.py      | 136 +++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/4_resultados.py | 163 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/5_modelos.py    | 129 ++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/6_motor.py      |  85 +++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/7_contraste.py  | 123 ++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/8_comparar.py   | 130 +++++++++++++++++++++++++++++++++++++++++++++
+ motor-pronostico/tablero/paginas/9_artefactos.py |  61 +++++++++++++++++++++
+ motor-pronostico/tests/test_pipeline.py          |  72 +++++++++++++++++++++++++
+ motor-pronostico/tests/test_tablero_lectores.py  | 145 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 24 files changed, 2061 insertions(+), 2 deletions(-)
+
+commit f681d6b8d334373ab62272f3f91434abf8b93af1
+Autor: noportor
+Fecha: 2026-08-07 08:54:13 -0400
+
+    docs: como autenticar contra este repo sin romper otras cuentas de la maquina
+
+    El gitconfig del SISTEMA (Git for Windows) define credential.helper=manager, que
+    se ejecuta antes que cualquier helper agregado y devuelve la credencial guardada
+    de otra cuenta. GitHub responde entonces 'Repository not found' —404 en vez de
+    403, porque el repositorio es privado—, que parece un error de URL y manda a
+    buscar en el lugar equivocado.
+
+    La identidad y el helper quedan en la configuracion LOCAL del repositorio, para
+    no tocar el setup global de la maquina.
+
+ README.md | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+commit 231cdf15e8a3a9ecede167349e049036c71a7fd2
+Autor: noportor
+Fecha: 2026-08-07 08:46:22 -0400
+
+    chore: excepcion declarada para la ubicacion publica y finales de linea LF
+
+    - El control de confidencialidad marcaba 'Santa Cruz de la Sierra' en la portada
+      del README. Es la delimitacion espacial que la tesis declara en su tapa y la
+      sede de la universidad: no identifica a la empresa. Queda como excepcion con
+      el motivo escrito, que es la regla de la casa.
+    - .gitattributes normaliza a LF. En Windows cada checkout reescribia a CRLF y el
+      arbol figuraba sucio siempre; el manifiesto registra ese estado (RN-6) y un
+      arbol sucio de mentira convierte ese campo en ruido.
+
+ .gitattributes                                  | 16 ++++++++++++++++
+ motor-pronostico/tests/test_confidencialidad.py |  9 +++++++++
+ 2 files changed, 25 insertions(+)
+
+commit dcf5d608a507e1de3ca53c16b53d09301342eeb0
+Autor: noportor
+Fecha: 2026-08-07 08:43:18 -0400
+
+    refactor: el repositorio pasa a ser el del TFG completo, no solo el codigo
+
+    El documento oficial y los anexos van a convivir con el analisis, asi que la
+    raiz deja de ser el proyecto de codigo:
+
+        TFG/
+        ├── documento/                  <- documento y anexos
+        └── motor-pronostico/  <- el analisis cuantitativo
+
+    Lo que hubo que ajustar por el cambio de profundidad:
+    - El manifiesto buscaba `.git` junto al codigo y ahora esta un nivel arriba;
+      pasa a buscarlo hacia arriba, que ademas lo hace inmune a otro movimiento.
+    - El control de confidencialidad miraba solo la carpeta del codigo. Ahora
+      consulta la raiz del repositorio: el documento y los anexos se publican igual.
+      Se le agregan las extensiones ofimaticas a la lista de binarios que NO puede
+      inspeccionar, y esa limitacion queda declarada en documento/README.md.
+    - docker-compose monta el repositorio entero en /repo.
+
+    Ademas, a raiz de que un token clasico de GitHub termino commiteado en la raiz:
+    - Se purgo del historial y se corrigio la autoria de todos los commits.
+    - El control gana patrones para la CREDENCIAL en si (ghp_, github_pat_, claves
+      de AWS, claves privadas, cadenas de conexion con contrasena) y una prueba que
+      rechaza archivos cuyo NOMBRE indica que guardan un secreto. El patron viejo
+      buscaba `token: "..."` como asignacion y no veia un archivo suelto.
+    - .gitignore de la raiz cubre token*, *.pem, *.key, credentials*, .env
+
+ .gitignore                                                                  |  51 ++++----
+ README.md                                                                   | 230 ++++++------------------------------
+ {datos/crudo => documento}/.gitkeep                                         |   0
+ documento/README.md                                                         |  29 +++++
+ .dockerignore => motor-pronostico/.dockerignore                             |   0
+ motor-pronostico/.gitignore                                                 |  47 ++++++++
+ Dockerfile => motor-pronostico/Dockerfile                                   |   0
+ motor-pronostico/README.md                                                  | 229 +++++++++++++++++++++++++++++++++++
+ REQUERIMIENTOS.md => motor-pronostico/REQUERIMIENTOS.md                     |   0
+ {config => motor-pronostico/config}/config.yaml                             |   0
+ {config => motor-pronostico/config}/extraccion.ejemplo.yaml                 |   0
+ {datos/procesado => motor-pronostico/datos/crudo}/.gitkeep                  |   0
+ {notebooks => motor-pronostico/datos/procesado}/.gitkeep                    |   0
+ docker-compose.yml => motor-pronostico/docker-compose.yml                   |  28 ++---
+ main.py => motor-pronostico/main.py                                         |   0
+ {salidas => motor-pronostico/notebooks}/.gitkeep                            |   0
+ requirements-extraccion.txt => motor-pronostico/requirements-extraccion.txt |   0
+ requirements.txt => motor-pronostico/requirements.txt                       |   0
+ motor-pronostico/salidas/.gitkeep                                           |   0
+ {scripts => motor-pronostico/scripts}/extraer_snapshot.py                   |   0
+ {src => motor-pronostico/src}/__init__.py                                   |   0
+ {src => motor-pronostico/src}/carga.py                                      |   0
+ {src => motor-pronostico/src}/config.py                                     |   0
+ {src => motor-pronostico/src}/features.py                                   |   0
+ {src => motor-pronostico/src}/figuras.py                                    |   0
+ {src => motor-pronostico/src}/inspeccion.py                                 |   0
+ {src => motor-pronostico/src}/metricas.py                                   |   0
+ {src => motor-pronostico/src}/modelos/__init__.py                           |   0
+ {src => motor-pronostico/src}/modelos/base.py                               |   0
+ {src => motor-pronostico/src}/modelos/croston.py                            |   0
+ {src => motor-pronostico/src}/modelos/lightgbm_modelo.py                    |   0
+ {src => motor-pronostico/src}/modelos/motor.py                              |   0
+ {src => motor-pronostico/src}/modelos/naive.py                              |   0
+ {src => motor-pronostico/src}/modelos/promedio_movil.py                     |   0
+ {src => motor-pronostico/src}/modelos/suavizado.py                          |   0
+ {src => motor-pronostico/src}/particion.py                                  |   0
+ {src => motor-pronostico/src}/pruebas.py                                    |   0
+ {src => motor-pronostico/src}/reporte.py                                    |  28 ++++-
+ {src => motor-pronostico/src}/series.py                                     |   0
+ {tests => motor-pronostico/tests}/conftest.py                               |   0
+ {tests => motor-pronostico/tests}/test_carga.py                             |   0
+ {tests => motor-pronostico/tests}/test_confidencialidad.py                  |  97 +++++++++++----
+ {tests => motor-pronostico/tests}/test_config.py                            |   0
+ {tests => motor-pronostico/tests}/test_features.py                          |   0
+ {tests => motor-pronostico/tests}/test_metricas.py                          |   0
+ {tests => motor-pronostico/tests}/test_modelos.py                           |   0
+ {tests => motor-pronostico/tests}/test_particion.py                         |   0
+ {tests => motor-pronostico/tests}/test_pipeline.py                          |   0
+ {tests => motor-pronostico/tests}/test_pruebas.py                           |   0
+ {tests => motor-pronostico/tests}/test_series.py                            |   0
+ 50 files changed, 479 insertions(+), 260 deletions(-)
+
+commit 32a1ecfa8e7123779ba94172aac9c9a9f7bc6c73
+Autor: noportor
+Fecha: 2026-08-07 08:31:55 -0400
+
+    feat(confidencialidad): saca el esquema interno del codigo y automatiza el control
+
+    El repositorio se publica (el Anexo G enlaza el codigo), asi que la obligacion
+    del Anexo B se extiende mas alla de los datos: los nombres de base, esquema,
+    tabla y columnas del sistema de origen son igual de internos.
+
+    - El esquema de origen pasa a config/extraccion.local.yaml, que no se versiona.
+      Queda config/extraccion.ejemplo.yaml como plantilla. El extractor arma la
+      consulta desde ahi y valida los identificadores antes de interpolarlos.
+    - El manifiesto de extraccion deja de registrar la tabla y la base: vive junto
+      al snapshot, que puede compartirse. Lo que lo hace verificable es el hash.
+    - Las etiquetas reales de canal y regional salen de las pruebas.
+    - tests/test_confidencialidad.py revisa los archivos que git rastrea y falla si
+      aparece un identificador interno. Revisar a mano no es un control: basta un
+      descuido una vez.
+    - La imagen suma git, que hacia falta para saber que rastrea git y para que el
+      manifiesto pueda decir si el arbol tenia cambios sin commitear.
+
+ .gitignore                     |   4 ++
+ Dockerfile                     |  12 +++++
+ README.md                      |  35 +++++++++++---
+ REQUERIMIENTOS.md              |  20 ++++++--
+ config/extraccion.ejemplo.yaml |  49 ++++++++++++++++++++
+ docker-compose.yml             |   2 +-
+ scripts/extraer_snapshot.py    | 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------
+ tests/conftest.py              |   4 +-
+ tests/test_carga.py            |  24 +++++-----
+ tests/test_confidencialidad.py | 136 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/test_modelos.py          |   4 +-
+ tests/test_pipeline.py         |   4 +-
+ tests/test_series.py           |  48 ++++++++++----------
+ 13 files changed, 438 insertions(+), 105 deletions(-)
+
+commit a7d5c704f554bae640b4660983c37fc79a92bd37
+Autor: noportor
+Fecha: 2026-08-06 23:27:34 -0400
+
+    fix(manifiesto): registra el commit sin depender del binario de git
+
+    La imagen es python-slim y no trae git, asi que el manifiesto guardaba
+    commit=null: la RN-6 exige poder rastrear cada numero hasta el commit que lo
+    genero. Se lee .git/HEAD y la referencia (suelta o empaquetada) directamente,
+    sin agregar dependencias a la imagen. Lo que no se puede saber por esta via
+    —si el arbol tenia cambios sin commitear— queda declarado, no asumido.
+
+ docker-compose.yml     |  3 +++
+ src/reporte.py         | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ tests/test_pipeline.py |  6 ++++++
+ 3 files changed, 62 insertions(+), 3 deletions(-)
+
+commit 96b2004e307b49a4d19a643426d3963abc689cdc
+Autor: noportor
+Fecha: 2026-08-06 21:54:47 -0400
+
+    docs(pruebas): explicita por que el motor no puede ganar en solitario
+
+    Su pronostico ES el de uno de los candidatos, asi que cada acierto empata con
+    el modelo elegido. La columna de victorias sin empate sale cero por
+    construccion, no por un fallo, y sin decirlo el lector concluiria lo contrario.
+
+ src/reporte.py | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit 11ba7b51befc06aa86bb904fde1a5a9ab452e8fe
+Autor: noportor
+Fecha: 2026-08-06 21:53:01 -0400
+
+    feat: motor de pronóstico de demanda INNOVA — análisis cuantitativo del TFG
+
+    Implementa RF-1 a RF-10 del REQUERIMIENTOS.md sobre el histórico real de
+    ventas, con los seis requerimientos no negociables verificados por pruebas.
+
+    Diseño experimental (decisiones cerradas con el autor):
+    - Período: 9 gestiones fiscales completas, abr-2017 a mar-2026.
+    - Objetivo: ventas efectivas. La venta perdida no se registró antes de 2020,
+      así que "demanda total" cambiaría de definición a mitad de la serie.
+    - Cortes en frontera de gestión: train 2018-2024 / val 2025 / prueba 2026.
+    - Once brazos: los seis métodos que la empresa usa hoy, tres clásicos
+      estadísticos, LightGBM y el motor de selección.
+
+    Puntos de diseño que sostienen la validez:
+    - El motor verifica activamente que su ventana de decisión no toque prueba.
+    - Los criterios de inclusión se miden solo sobre entrenamiento.
+    - Los estadísticos van en NumPy con rejilla explícita: sin optimizadores que
+      cambien de óptimo entre versiones de una biblioteca.
+    - Todos los modelos cubren los mismos meses; los respaldos se cuentan.
+    - Manifiesto con hash de datos, de configuración, de cada salida y versiones
+      realmente cargadas.
+
+    91 pruebas, incluida la de no-fuga temporal (escrita antes que el módulo) y
+    una de extremo a extremo del pipeline completo.
+
+ .dockerignore                  |  12 ++
+ .gitignore                     |  33 ++++++
+ Dockerfile                     |  59 ++++++++++
+ README.md                      | 193 ++++++++++++++++++++++++++++++++
+ REQUERIMIENTOS.md              | 488 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ config/config.yaml             | 202 ++++++++++++++++++++++++++++++++++
+ datos/crudo/.gitkeep           |   0
+ datos/procesado/.gitkeep       |   0
+ docker-compose.yml             |  35 ++++++
+ main.py                        | 359 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ notebooks/.gitkeep             |   0
+ requirements-extraccion.txt    |   8 ++
+ requirements.txt               |  19 ++++
+ salidas/.gitkeep               |   0
+ scripts/extraer_snapshot.py    | 295 +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/__init__.py                |  13 +++
+ src/carga.py                   | 188 +++++++++++++++++++++++++++++++
+ src/config.py                  | 393 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/features.py                | 129 ++++++++++++++++++++++
+ src/figuras.py                 | 286 +++++++++++++++++++++++++++++++++++++++++++++++
+ src/inspeccion.py              | 297 +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/metricas.py                | 231 ++++++++++++++++++++++++++++++++++++++
+ src/modelos/__init__.py        | 100 +++++++++++++++++
+ src/modelos/base.py            | 206 ++++++++++++++++++++++++++++++++++
+ src/modelos/croston.py         | 105 ++++++++++++++++++
+ src/modelos/lightgbm_modelo.py | 141 ++++++++++++++++++++++++
+ src/modelos/motor.py           | 233 +++++++++++++++++++++++++++++++++++++++
+ src/modelos/naive.py           |  42 +++++++
+ src/modelos/promedio_movil.py  |  54 +++++++++
+ src/modelos/suavizado.py       | 331 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/particion.py               | 286 +++++++++++++++++++++++++++++++++++++++++++++++
+ src/pruebas.py                 | 392 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/reporte.py                 | 410 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/series.py                  | 212 +++++++++++++++++++++++++++++++++++
+ tests/conftest.py              |  66 +++++++++++
+ tests/test_carga.py            |  78 +++++++++++++
+ tests/test_config.py           | 118 ++++++++++++++++++++
+ tests/test_features.py         | 161 +++++++++++++++++++++++++++
+ tests/test_metricas.py         | 157 ++++++++++++++++++++++++++
+ tests/test_modelos.py          | 309 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/test_particion.py        | 139 +++++++++++++++++++++++
+ tests/test_pipeline.py         | 172 +++++++++++++++++++++++++++++
+ tests/test_pruebas.py          | 166 ++++++++++++++++++++++++++++
+ tests/test_series.py           | 126 +++++++++++++++++++++
+ 44 files changed, 7244 insertions(+)

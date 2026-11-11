@@ -1,0 +1,71 @@
+# Ejecución del experimento. Los comandos se corren DESDE ESTA CARPETA:
+#
+#   docker compose build
+#   docker compose run --rm tfg python -m pytest -q
+#   docker compose run --rm tfg python scripts/extraer_snapshot.py
+#   docker compose run --rm tfg python main.py inspeccionar
+#   docker compose run --rm tfg python main.py ejecutar
+#
+# Se monta el repositorio ENTERO en /repo, no solo esta carpeta. Hacen falta dos
+# cosas que viven un nivel más arriba: el directorio `.git`, del que el
+# manifiesto saca el commit que generó los números (RN-6), y el que necesita el
+# control de confidencialidad para saber qué archivos se publicarían.
+#
+# Los datos y las salidas quedan dentro del montaje, así que persisten fuera del
+# contenedor sin necesidad de volúmenes adicionales.
+
+services:
+  tfg:
+    build: .
+    image: motor-pronostico
+    volumes:
+      - ..:/repo
+    working_dir: /repo/motor-pronostico
+    environment:
+      # Credenciales de la extracción. Se leen del entorno del host; nunca se
+      # escriben en este archivo ni en el repositorio.
+      TFG_DB_HOST: "${TFG_DB_HOST:-host.docker.internal}"
+      TFG_DB_PORT: "${TFG_DB_PORT:-}"
+      TFG_DB_NAME: "${TFG_DB_NAME:-}"
+      TFG_DB_USER: "${TFG_DB_USER:-}"
+      TFG_DB_PASSWORD: "${TFG_DB_PASSWORD:-}"
+    extra_hosts:
+      # El túnel a la base vive en el host, no en la red de Docker.
+      - "host.docker.internal:host-gateway"
+
+  # ---------------------------------------------------------------------------
+  # Visor: SPA React (MUI + ECharts) servida por nginx, de solo lectura sobre
+  # salidas*/.
+  #
+  #   docker compose up -d visor       ->  http://localhost:8501
+  #
+  # Sin backend: nginx sirve la SPA y expone salidas*/ como /datos/ (autoindex
+  # JSON). Todo lo demás del montaje —datos/crudo/ incluido— responde 403 por
+  # regla de nginx (ver visor/nginx.conf). Los filtros son estado del cliente:
+  # no re-ejecutan nada.
+  # ---------------------------------------------------------------------------
+  visor:
+    build:
+      context: ./visor
+    image: motor-pronostico-visor
+    restart: unless-stopped
+    ports:
+      - "8501:80"
+    volumes:
+      - ..:/repo:ro
+
+  # Desarrollo del visor con HMR (vite). Levantar con:
+  #   docker compose --profile dev up visor-dev   ->  http://localhost:5173
+  visor-dev:
+    profiles: ["dev"]
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install --no-audit --no-fund && npm run dev"
+    environment:
+      VISOR_DATOS_URL: "http://visor:80"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./visor:/app
+    depends_on:
+      - visor

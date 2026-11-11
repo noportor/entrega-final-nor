@@ -1,0 +1,189 @@
+"""LightGBM — modelo global sobre todas las series.
+
+Es el único brazo *global* del experimento: un solo modelo aprende de las miles
+de series a la vez, en lugar de ajustar un modelo por serie. Ahí está su ventaja
+potencial —una serie con poca historia se beneficia del patrón estacional que el
+modelo aprendió en el resto del portafolio— y también su principal limitación a
+declarar: sus números no son comparables entre subconjuntos distintos de series,
+porque entrenar con la muestra no es lo mismo que entrenar con la población
+completa.
+
+Decisiones que se justifican en la memoria
+------------------------------------------
+- **Objetivo ``tweedie``**, con la potencia de varianza calibrada en la búsqueda
+  de hiperparámetros (``config.yaml``, sección ``lightgbm``). Es la pérdida
+  adecuada a una demanda no negativa con muchos ceros; la pérdida absoluta y la
+  cuadrática compitieron en la misma búsqueda y perdieron en la métrica de
+  decisión interna (ver ``resultados/ensayos/``). Con el objetivo cuadrático por
+  defecto el modelo perseguiría los picos.
+- **Parada temprana contra validación.** Es el único uso legítimo del bloque de
+  validación por parte de un modelo, y por eso la interfaz común lo recibe. La
+  parada temprana fija el número de árboles; no toca el bloque de prueba.
+- **Un solo hilo y modo determinista.** Con varios hilos el orden de reducción
+  en punto flotante varía entre corridas y el modelo no es reproducible bit a
+  bit, que es lo que exige la RN-5. Se paga en tiempo de entrenamiento.
+- **Predicción a un paso.** El modelo se entrena una vez y sus parámetros quedan
+  congelados; lo que avanza mes a mes son las features, construidas con los
+  valores REALES hasta el mes anterior. Es exactamente el mismo protocolo que
+  siguen los demás brazos (RN-4). La proyección multihorizonte (recursiva, con
+  re-entrenamiento por origen) vive en ``src/multihorizonte.py``.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from ..config import Config
+from ..features import categoricas_de, nombres_de_features
+
+
+class ModeloLightGBM:
+    """Modelo global de gradient boosting sobre el panel completo."""
+
+    nombre = "lightgbm"
+
+    def __init__(self, cfg: Config, tabla: pd.DataFrame):
+        """
+        Args:
+            tabla: salida de ``features.construir_features`` para el panel
+                completo. Se inyecta en el constructor porque este brazo es el
+                único que necesita la representación larga con features; los
+                demás operan directamente sobre el panel ancho.
+        """
+        self.cfg = cfg
+        self.tabla = tabla
+        self.columnas = nombres_de_features(cfg)
+        self.categoricas = [c for c in categoricas_de(cfg) if c in self.columnas]
+        self.booster = None
+        self.mejor_iteracion: int | None = None
+        self.importancias: pd.DataFrame | None = None
+
+    # -- utilidades ---------------------------------------------------------
+
+    def _filas_de(self, panel: pd.DataFrame) -> pd.DataFrame:
+        """Sub-tabla con las filas cuyo mes está en el panel indicado."""
+        meses = set(panel.index)
+        series = set(panel.columns)
+        seleccion = self.tabla["periodo"].isin(meses) & self.tabla["serie"].isin(series)
+        return self.tabla.loc[seleccion]
+
+    # -- interfaz común -----------------------------------------------------
+
+    def ajustar(self, entrenamiento: pd.DataFrame, validacion: pd.DataFrame) -> None:
+        import lightgbm as lgb
+
+        filas_entrenamiento = self._filas_de(entrenamiento)
+        filas_validacion = self._filas_de(validacion)
+
+        if filas_entrenamiento.empty:
+            raise ValueError("No hay filas de entrenamiento para LightGBM.")
+        if filas_validacion.empty:
+            raise ValueError(
+                "No hay filas de validación: sin ellas no puede haber parada "
+                "temprana y el número de árboles quedaría sin justificar."
+            )
+
+        parametros = {
+            k: v for k, v in self.cfg.modelos["lightgbm"].items()
+            if k not in ("num_boost_round", "early_stopping_rounds")
+        }
+        num_boost_round = int(self.cfg.modelos["lightgbm"]["num_boost_round"])
+        early_stopping = int(self.cfg.modelos["lightgbm"]["early_stopping_rounds"])
+
+        conjunto_entrenamiento = lgb.Dataset(
+            filas_entrenamiento[self.columnas],
+            label=filas_entrenamiento["y"],
+            categorical_feature=self.categoricas,
+            free_raw_data=False,
+        )
+        conjunto_validacion = lgb.Dataset(
+            filas_validacion[self.columnas],
+            label=filas_validacion["y"],
+            categorical_feature=self.categoricas,
+            reference=conjunto_entrenamiento,
+            free_raw_data=False,
+        )
+
+        self.booster = lgb.train(
+            parametros,
+            conjunto_entrenamiento,
+            num_boost_round=num_boost_round,
+            valid_sets=[conjunto_validacion],
+            valid_names=["validacion"],
+            callbacks=[
+                lgb.early_stopping(early_stopping, verbose=False),
+                lgb.log_evaluation(period=0),
+            ],
+        )
+        self.mejor_iteracion = int(self.booster.best_iteration)
+
+        self.importancias = (
+            pd.DataFrame({
+                "feature": self.booster.feature_name(),
+                "ganancia": self.booster.feature_importance(importance_type="gain"),
+                "divisiones": self.booster.feature_importance(importance_type="split"),
+            })
+            .sort_values("ganancia", ascending=False)
+            .reset_index(drop=True)
+        )
+
+    def predecir(self, datos: pd.DataFrame) -> pd.DataFrame:
+        if self.booster is None:
+            raise RuntimeError("Hay que llamar a ajustar() antes que a predecir().")
+
+        filas = self._filas_de(datos)
+        predicho = self.booster.predict(
+            filas[self.columnas], num_iteration=self.booster.best_iteration
+        )
+
+        largo = pd.DataFrame({
+            "serie": filas["serie"].to_numpy(),
+            "periodo": filas["periodo"].to_numpy(),
+            "prediccion": np.asarray(predicho, dtype=float),
+        })
+        ancho = largo.pivot(index="periodo", columns="serie", values="prediccion")
+        return ancho.reindex(index=datos.index, columns=datos.columns)
+
+    def contribuciones(self, datos: pd.DataFrame) -> pd.DataFrame:
+        """Contribuciones TreeSHAP de cada feature a cada predicción.
+
+        Usa el TreeSHAP nativo de LightGBM (``pred_contrib=True``), una
+        descomposición aditiva y exacta, no una aproximación, que no agrega
+        dependencias al entorno.
+
+        Escala: LightGBM devuelve las contribuciones en la escala CRUDA del
+        modelo, la del puntaje antes de la función de enlace. Con el objetivo
+        ``tweedie`` el enlace es logarítmico, de modo que para cada fila
+
+            valor_base + suma(contribuciones) = raw_score = log(predicción)
+
+        y NO la predicción en unidades. Cada contribución ``c`` actúa como un
+        factor multiplicativo ``exp(c)`` sobre la predicción: +0,20 equivale a
+        multiplicarla por exp(0,20) ≈ 1,22 (un 22 % más), y la suma de todas
+        recompone ``predicción = exp(valor_base) × Π exp(c)``. Las magnitudes
+        absolutas y sus participaciones porcentuales son comparables entre
+        variables dentro de esa escala; leerlas como unidades vendidas es un
+        error. La prueba ``tests/test_explicacion.py`` lo verifica con datos
+        sintéticos y el mismo objetivo.
+
+        Returns:
+            Una fila por predicción con la contribución de cada feature (escala
+            logarítmica del modelo), ``valor_base`` (misma escala), ``serie`` y
+            ``periodo``.
+        """
+        if self.booster is None:
+            raise RuntimeError("Hay que llamar a ajustar() antes que a contribuciones().")
+
+        filas = self._filas_de(datos)
+        matriz = self.booster.predict(
+            filas[self.columnas],
+            num_iteration=self.booster.best_iteration,
+            pred_contrib=True,
+        )
+        matriz = np.asarray(matriz, dtype=float)
+        tabla = pd.DataFrame(matriz[:, :-1], columns=self.columnas)
+        tabla["valor_base"] = matriz[:, -1]
+        tabla["serie"] = filas["serie"].to_numpy()
+        tabla["periodo"] = filas["periodo"].to_numpy()
+        return tabla

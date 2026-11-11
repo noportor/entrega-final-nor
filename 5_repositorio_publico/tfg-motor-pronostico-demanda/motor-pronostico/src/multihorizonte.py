@@ -1,0 +1,728 @@
+"""Evaluación multihorizonte con orígenes rodantes — la segunda mitad de la RN-4.
+
+Por qué existe
+--------------
+El protocolo principal del experimento evalúa a UN paso: cada mes se pronostica
+con el valor real del mes anterior. Es la comparación justa entre brazos y es el
+caso h=1 de este módulo. Pero el objetivo operativo del pronóstico en NOVAPACK
+es el horizonte de PLANIFICACIÓN, que supera el año: las decisiones de compra
+y producción se toman sobre esos meses lejanos.
+
+A un paso, un modelo que proyecta línea recta (Naïve, promedio móvil, suavizado
+exponencial simple) nunca queda expuesto: se re-engancha a la realidad cada mes.
+A varios meses, la raya horizontal ignora la campaña escolar. Ese contraste es
+invisible para el protocolo a un paso y es exactamente lo que este módulo mide.
+
+La RN-4 lo anticipa: «si en algún momento se agrega evaluación multihorizonte,
+debe aplicarse por igual a todos los modelos y reportarse por separado». Ambas
+condiciones se cumplen acá: mismos orígenes y misma mecánica de proyección para
+todos los brazos, y salidas separadas de la Tabla 8 (que sigue siendo a un paso).
+
+El protocolo
+------------
+- **Orígenes rodantes.** La operación real re-pronostica TODO el horizonte cada
+  mes. El experimento replica eso: cada mes del bloque de prueba es un origen y
+  desde cada uno se proyecta hasta ``horizonte_maximo`` o hasta donde haya
+  realidad con la que comparar. h=1 agrega tantos orígenes como meses de prueba;
+  el horizonte máximo, uno solo (el conteo se reporta).
+- **La historia de cada origen es todo lo anterior al origen**, incluidos los
+  meses de prueba ya transcurridos. No hay fuga: ningún pronóstico usa el futuro
+  del mes que predice — es literalmente lo que el planificador sabe ese día.
+- **Parámetros congelados, estado que avanza (RN-2).** Los parámetros de cada
+  modelo se estimaron una sola vez con entrenamiento; lo que avanza con el
+  origen es el estado (niveles, ventanas), alimentado con los meses observados.
+  LightGBM es la excepción declarada: en operación el modelo global se
+  re-entrena en cada corrida mensual, así que aquí se re-entrena por origen
+  con la historia disponible y el número de árboles CONGELADO del ajuste base
+  (la parada temprana no se repite: re-mirar validación en cada origen sería
+  re-optimizar, y mirar prueba sería fuga).
+- **La selección del motor no se re-decide.** La elección por serie se tomó
+  mirando solo validación (RN-2) y se mantiene fija en todos los orígenes.
+- **Ablación: re-estimación de los estadísticos por origen.** Con
+  ``multihorizonte.reestimar_estadisticos: true`` (APAGADO por defecto) los
+  brazos estadísticos re-estiman sus parámetros (alfa del suavizado, alfa/
+  beta/gamma de Holt-Winters, alfa de Croston) en cada origen con la historia
+  disponible hasta ese origen: exactamente la misma historia con la que
+  LightGBM se re-entrena. Sirve para medir si la asimetría del protocolo
+  (LightGBM re-aprende por origen, los estadísticos no) influye en el
+  hallazgo del horizonte. No altera la RN-2 por defecto: con el flag apagado
+  la salida es idéntica a la del protocolo anterior, y aun con el flag
+  encendido la selección del motor sigue congelada y ningún parámetro mira
+  más allá del origen. El conteo de re-ajustes se reporta.
+- **Proyección recursiva** — la mecánica de la operación mensual: el
+  pronóstico de cada mes se realimenta como un dato para pronosticar el
+  siguiente. Con esa recursión el suavizado exponencial reproduce exactamente
+  su forma cerrada (línea plana en el nivel) y Holt-Winters reproduce
+  ``ℓ + h·b + s`` — las pruebas lo verifican contra la fórmula a mano. Croston
+  es la excepción: sus estados solo se actualizan con demanda observada, de
+  modo que su pronóstico multihorizonte es su constante congelada en el origen.
+- **Agregación valorizada por horizonte.** Las unidades difieren entre SKUs:
+  la única curva de degradación agregable entre productos es la valorizada,
+  ``D(h) = WMAPE_val(h) + |Bias_val(h)|``, agrupando todos los orígenes que
+  alcanzan ese horizonte.
+"""
+
+from __future__ import annotations
+
+import copy
+from dataclasses import dataclass, field
+
+import numpy as np
+import pandas as pd
+
+from .config import Config
+from .features import categoricas_de, construir_features, nombres_de_features
+from .modelos.base import truncar_en_cero
+
+
+# ---------------------------------------------------------------------------
+# Proyección por modelo
+# ---------------------------------------------------------------------------
+
+def _extender_indice(historia: pd.DataFrame, hasta: pd.Period) -> pd.DataFrame:
+    """Agrega al panel los meses futuros (en NaN) hasta ``hasta`` inclusive."""
+    indice = pd.period_range(historia.index[0], hasta, freq="M")
+    return historia.reindex(indice)
+
+
+def proyectar_recursivo(
+    modelo, historia: pd.DataFrame, horizonte: int
+) -> pd.DataFrame:
+    """Proyecta ``horizonte`` meses realimentando las propias predicciones.
+
+    Es la mecánica de la operación mensual: el pronóstico del mes h entra al
+    panel como si fuera un dato y alimenta el pronóstico del mes h+1. Se trunca
+    en cero ANTES de realimentar: una predicción negativa no puede propagarse
+    como demanda.
+    """
+    origen = historia.index[-1]
+    extendido = _extender_indice(historia, origen + horizonte)
+    for h in range(1, horizonte + 1):
+        mes = origen + h
+        paso = modelo.predecir(extendido)
+        extendido.loc[mes] = truncar_en_cero(paso.loc[[mes]]).iloc[0]
+    return extendido.loc[extendido.index > origen]
+
+
+def proyectar_constante(
+    modelo, historia: pd.DataFrame, horizonte: int
+) -> pd.DataFrame:
+    """Proyección plana: el pronóstico a un paso en el origen, repetido.
+
+    Es la proyección multihorizonte correcta de Croston: sus estados solo se
+    actualizan con demanda observada, así que realimentar predicciones los
+    contaminaría (el cociente z/p derivaría sin haber visto ningún pedido).
+    """
+    origen = historia.index[-1]
+    extendido = _extender_indice(historia, origen + 1)
+    paso = truncar_en_cero(modelo.predecir(extendido).loc[[origen + 1]])
+    meses = pd.period_range(origen + 1, origen + horizonte, freq="M")
+    return pd.DataFrame(
+        np.repeat(paso.to_numpy(dtype=float), horizonte, axis=0),
+        index=meses, columns=historia.columns,
+    )
+
+
+class ProyectorLightGBM:
+    """Proyección recursiva del brazo global, con re-entrenamiento por origen.
+
+    Dos decisiones que replican la operación mensual sin heredar fugas:
+
+    - **Re-entrenamiento por origen** con ``num_boost_round`` congelado del
+      ajuste base. La tabla de entrenamiento de cada origen es el recorte
+      ``periodo <= origen`` de la tabla completa: como toda feature usa solo
+      información anterior a su mes (RN-3, garantizado por
+      ``tests/test_features.py``), recortar equivale a reconstruir con la
+      historia disponible en el origen.
+    - **Features del futuro desde la simulación.** Los rezagos de los meses
+      proyectados se calculan sobre la historia real MÁS las predicciones ya
+      realimentadas, nunca sobre los valores reales del futuro. Para eso la
+      tabla de predicción se reconstruye con ``construir_features`` en cada
+      paso: usar la tabla del pipeline (construida con la realidad completa)
+      sería fuga a partir de h=2.
+    """
+
+    def __init__(self, cfg: Config, cohorte_ajustada: pd.DataFrame, modelo_base,
+                 exogenas=None):
+        self.cfg = cfg
+        self.base = modelo_base
+        self.exogenas = exogenas
+        self.columnas = nombres_de_features(cfg)
+        self.categoricas = [c for c in categoricas_de(cfg) if c in self.columnas]
+        crudos = cfg.modelos["lightgbm"]
+        self.parametros = {
+            k: v for k, v in crudos.items()
+            if k not in ("num_boost_round", "early_stopping_rounds")
+        }
+        contexto = ["serie", "sku", "canal", "regional", "periodo", "y"]
+        self.largo = cohorte_ajustada[contexto].copy()
+        self.identidad = (
+            self.largo.drop_duplicates("serie")[["serie", "sku", "canal", "regional"]]
+            .reset_index(drop=True)
+        )
+        self.reentrenos = 0
+        self._cache_origen: pd.Period | None = None
+        self._cache_booster = None
+
+    def _exogenas_persistidas(self, origen: pd.Period, horizonte: int):
+        """Extiende las fuentes exógenas hacia el futuro con PERSISTENCIA.
+
+        Es el reemplazo honesto del defecto de proyectar con precio=0 y
+        quiebre=0: para los meses futuros, cada
+        exógena vale su último valor CONOCIDO al origen — el supuesto de
+        persistencia, declarado. Solo se usa lo anterior al origen (sin fuga).
+        """
+        if self.exogenas is None:
+            return None
+        import copy
+
+        meses = pd.period_range(origen + 1, origen + horizonte, freq="M")
+        extendidas = copy.copy(self.exogenas)
+
+        def _extender_por_clave(frame, claves, columnas_valor):
+            if frame is None:
+                return None
+            conocido = frame.loc[frame["periodo"] <= origen]
+            # «Último valor CONOCIDO»: las filas cuyo valor es NaN no cuentan
+            # como conocimiento — persistir un NaN taparía al último dato real.
+            ultimo = (
+                conocido.dropna(subset=list(columnas_valor))
+                .sort_values("periodo", kind="stable")
+                .drop_duplicates(claves, keep="last")
+            )
+            futuras = []
+            for mes in meses:
+                futuras.append(ultimo[[*claves, *columnas_valor]].assign(periodo=mes))
+            return pd.concat([conocido, *futuras], ignore_index=True)
+
+        extendidas.precio = _extender_por_clave(
+            self.exogenas.precio, ["serie"], ["precio"]
+        )
+        extendidas.perdidas = _extender_por_clave(
+            self.exogenas.perdidas, ["serie"], ["perdidas"]
+        )
+        extendidas.quiebres = _extender_por_clave(
+            self.exogenas.quiebres, ["sku", "regional"],
+            ["semanas_medidas", "semanas_en_cero"],
+        )
+        tc = self.exogenas.tipo_cambio
+        if tc is not None:
+            conocido = tc.loc[tc.index <= origen]
+            futuro = pd.Series(
+                float(conocido.iloc[-1]) if len(conocido) else np.nan, index=meses
+            )
+            extendidas.tipo_cambio = pd.concat([conocido, futuro])
+        return extendidas
+
+    def _booster_para(self, origen: pd.Period, reentrenar: bool):
+        """Devuelve (booster, num_iteration) para el origen dado."""
+        if not reentrenar:
+            return self.base.booster, int(self.base.booster.best_iteration)
+        if self._cache_origen == origen:
+            return self._cache_booster, None
+        import lightgbm as lgb
+
+        filas = self.base.tabla.loc[self.base.tabla["periodo"] <= origen]
+        conjunto = lgb.Dataset(
+            filas[self.columnas], label=filas["y"],
+            categorical_feature=self.categoricas, free_raw_data=False,
+        )
+        booster = lgb.train(
+            self.parametros, conjunto,
+            num_boost_round=int(self.base.mejor_iteracion),
+        )
+        self.reentrenos += 1
+        self._cache_origen, self._cache_booster = origen, booster
+        return booster, None
+
+    def proyectar(
+        self, origen: pd.Period, horizonte: int, reentrenar: bool
+    ) -> pd.DataFrame:
+        booster, num_iteracion = self._booster_para(origen, reentrenar)
+        extendido = self.largo.loc[self.largo["periodo"] <= origen]
+        exogenas = self._exogenas_persistidas(origen, horizonte)
+        salida: dict[pd.Period, pd.Series] = {}
+
+        for h in range(1, horizonte + 1):
+            mes = origen + h
+            nuevas = self.identidad.assign(periodo=mes, y=np.nan)
+            tabla = construir_features(
+                pd.concat([extendido, nuevas], ignore_index=True), self.cfg,
+                exogenas,
+            )
+            filas = tabla.loc[tabla["periodo"] == mes]
+            predicho = booster.predict(
+                filas[self.columnas], num_iteration=num_iteracion
+            )
+            predicho = np.maximum(np.asarray(predicho, dtype=float), 0.0)
+            valores = pd.Series(
+                predicho, index=pd.Index(filas["serie"].astype(str), name="serie")
+            )
+            salida[mes] = valores
+            extendido = pd.concat(
+                [extendido, nuevas.assign(y=nuevas["serie"].map(valores).to_numpy())],
+                ignore_index=True,
+            )
+
+        proyeccion = pd.DataFrame(salida).T
+        proyeccion.index = pd.PeriodIndex(proyeccion.index, freq="M")
+        return proyeccion
+
+
+# ---------------------------------------------------------------------------
+# Agregación valorizada
+# ---------------------------------------------------------------------------
+
+def agregado_valorizado(obs: pd.DataFrame, claves: list[str]) -> pd.DataFrame:
+    """Suite valorizada sobre observaciones largas, agrupada por ``claves``.
+
+    ``obs`` debe traer las columnas ``y_real``, ``y_pred``, ``costo``, ``serie``
+    y ``origen``. Mismas definiciones que ``metricas.suite_valorizada``:
+    WMAPE_val, Bias_val y D sobre demanda y error llevados a dinero. Los grupos
+    sin demanda valorizada positiva quedan en NaN (visibles, no descartados).
+    """
+    tabla = obs.assign(
+        demanda_val=obs["costo"] * obs["y_real"],
+        error_val=obs["costo"] * (obs["y_pred"] - obs["y_real"]).abs(),
+        pred_val=obs["costo"] * obs["y_pred"],
+    )
+    grupos = tabla.groupby(claves, observed=True).agg(
+        demanda=("demanda_val", "sum"),
+        error=("error_val", "sum"),
+        pred=("pred_val", "sum"),
+        n_observaciones=("y_real", "size"),
+        n_series=("serie", "nunique"),
+        n_origenes=("origen", "nunique"),
+    ).reset_index()
+
+    con_demanda = grupos["demanda"] > 0
+    grupos["wmape_val"] = np.where(
+        con_demanda, 100.0 * grupos["error"] / grupos["demanda"], np.nan
+    )
+    grupos["bias_val"] = np.where(
+        con_demanda,
+        100.0 * (grupos["pred"] - grupos["demanda"]) / grupos["demanda"],
+        np.nan,
+    )
+    grupos["D"] = grupos["wmape_val"] + grupos["bias_val"].abs()
+    return grupos.drop(columns=["pred"])
+
+
+# ---------------------------------------------------------------------------
+# Selección multihorizonte del motor (ablación pre-registrada)
+# ---------------------------------------------------------------------------
+
+def criterio_por_serie(
+    proyeccion: pd.DataFrame, real: pd.DataFrame, regla: str
+) -> pd.Series:
+    """El criterio de selección por serie sobre un bloque de meses.
+
+    ``mae``: media de |pred − real| sobre los meses comparables.
+    ``mae_mas_bias``: le suma |media(pred) − media(real)| — la regla compuesta.
+    Series sin ningún mes comparable quedan en NaN: el motor las cuenta y les
+    asigna su respaldo declarado, nunca un número inventado.
+    """
+    y = real.to_numpy(dtype=float)
+    p = proyeccion.reindex(index=real.index, columns=real.columns).to_numpy(dtype=float)
+    comparable = ~np.isnan(y) & ~np.isnan(p)
+    n = comparable.sum(axis=0)
+
+    with np.errstate(invalid="ignore"):
+        suma_abs = np.where(comparable, np.abs(p - y), 0.0).sum(axis=0)
+        criterio = np.where(n > 0, suma_abs / np.maximum(n, 1), np.nan)
+        if regla == "mae_mas_bias":
+            media_real = np.where(n > 0, np.where(comparable, y, 0.0).sum(axis=0)
+                                  / np.maximum(n, 1), np.nan)
+            media_pred = np.where(n > 0, np.where(comparable, p, 0.0).sum(axis=0)
+                                  / np.maximum(n, 1), np.nan)
+            criterio = criterio + np.abs(media_pred - media_real)
+
+    return pd.Series(criterio, index=real.columns, name="criterio")
+
+
+def proyecciones_validacion(
+    cfg: Config,
+    modelos: dict[str, object],
+    panel_ajuste: pd.DataFrame,
+    panel_real: pd.DataFrame,
+    panel_entrenamiento: pd.DataFrame,
+    cohorte_ajustada: pd.DataFrame,
+    exogenas=None,
+) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
+    """El abanico de VALIDACIÓN de cada brazo (h=1..H desde el cierre de
+    entrenamiento), completo con la cascada de respaldo declarada.
+
+    Es el insumo compartido de las dos decisiones que el pipeline toma mirando
+    solo validación con mecánica multihorizonte: la ventana de selección del
+    motor (ablación pre-registrada) y los pesos por horizonte del mezclador
+    (V5). Computarlo una sola vez evita duplicar las proyecciones caras
+    (re-entrenos de LightGBM, abanicos neuronales, Chronos).
+
+    RN-2 intacta y verificada activamente: el origen es el cierre de
+    entrenamiento y los meses proyectados caen íntegros en validación. La
+    información usada es exactamente la misma que en la selección a un paso
+    (historia de entrenamiento + realidad de validación).
+
+    Devuelve ``(proyecciones, real)``: un panel meses × series por brazo y la
+    realidad de esos mismos meses.
+    """
+    origen = cfg.particion.fin_entrenamiento
+    meses_validacion = pd.period_range(
+        origen + 1, cfg.particion.fin_validacion, freq="M"
+    )
+    horizonte = min(cfg.multihorizonte.horizonte_maximo, len(meses_validacion))
+    meses = meses_validacion[:horizonte]
+    if meses[-1] > cfg.particion.fin_validacion:
+        raise ValueError(
+            "La ventana de selección multihorizonte se sale de validación: "
+            f"llega a {meses[-1]} con cierre {cfg.particion.fin_validacion} (RN-2)."
+        )
+
+    historia = panel_ajuste.loc[panel_ajuste.index <= origen]
+    real = panel_real.reindex(index=meses)
+    media_entrenamiento = panel_entrenamiento.mean(axis=0, skipna=True)
+    ultimo_observado = historia.ffill().iloc[-1]
+
+    proyector_lgbm = (
+        ProyectorLightGBM(cfg, cohorte_ajustada, modelos["lightgbm"], exogenas)
+        if "lightgbm" in modelos else None
+    )
+
+    salida: dict[str, pd.DataFrame] = {}
+    for nombre, modelo in modelos.items():
+        if nombre == "lightgbm":
+            cruda = proyector_lgbm.proyectar(
+                origen, horizonte,
+                reentrenar=cfg.multihorizonte.reentrenar_lightgbm,
+            )
+        elif nombre == "croston":
+            cruda = proyectar_constante(modelo, historia, horizonte)
+        elif hasattr(modelo, "proyectar_directo"):
+            # Brazos multi-horizonte DIRECTOS (ML2): emiten el abanico h=1..H
+            # de una sola vez; realimentarlos recursivamente desperdiciaría su
+            # diseño y no correspondería a cómo se usarían en operación.
+            cruda = modelo.proyectar_directo(historia, horizonte)
+        else:
+            cruda = proyectar_recursivo(modelo, historia, horizonte)
+
+        cruda = cruda.reindex(index=meses, columns=panel_ajuste.columns)
+        # Misma cascada de respaldo que la evaluación: ningún candidato llega
+        # a la comparación con huecos que otro no tenga.
+        salida[nombre] = truncar_en_cero(
+            cruda.fillna(ultimo_observado).fillna(media_entrenamiento)
+        )
+    return salida, real
+
+
+def criterio_seleccion_multihorizonte(
+    cfg: Config,
+    modelos: dict[str, object],
+    panel_ajuste: pd.DataFrame,
+    panel_real: pd.DataFrame,
+    panel_entrenamiento: pd.DataFrame,
+    cohorte_ajustada: pd.DataFrame,
+    exogenas=None,
+    proyecciones: dict[str, pd.DataFrame] | None = None,
+    real: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Matriz serie × candidato con el error MULTIHORIZONTE de validación.
+
+    Es la ablación pre-registrada de la ventana de selección del motor: en vez
+    de comparar pronósticos a un paso, cada candidato proyecta la validación
+    completa desde el cierre de entrenamiento (h=1..H) con la MISMA mecánica
+    recursiva con la que después será evaluado — que es como selecciona un
+    backtest a horizonte.
+
+    Acepta los abanicos ya computados por ``proyecciones_validacion`` (para no
+    proyectar dos veces cuando el mezclador por horizonte también los usa); si
+    no llegan, los computa acá con las mismas garantías.
+    """
+    if proyecciones is None or real is None:
+        proyecciones, real = proyecciones_validacion(
+            cfg, modelos, panel_ajuste, panel_real, panel_entrenamiento,
+            cohorte_ajustada, exogenas,
+        )
+    regla = str(cfg.modelos.get("motor_regla", "mae"))
+    return pd.DataFrame({
+        nombre: criterio_por_serie(proyeccion, real, regla)
+        for nombre, proyeccion in proyecciones.items()
+    })
+
+
+# ---------------------------------------------------------------------------
+# El protocolo completo
+# ---------------------------------------------------------------------------
+
+@dataclass
+class InformeMultihorizonte:
+    origenes: list[str] = field(default_factory=list)
+    horizonte_maximo: int = 0
+    modelos: list[str] = field(default_factory=list)
+    observaciones: int = 0
+    observaciones_con_costo: int = 0
+    reentrenos_lightgbm: int = 0
+    reentrenos_directo: int = 0
+    # Ablación reestimar_estadisticos: re-ajustes de brazos estadísticos con
+    # parámetros (uno por origen y brazo: suavizado, Holt-Winters, Croston). 0 = protocolo con parámetros congelados (RN-2).
+    reestimaciones_estadisticas: int = 0
+    respaldos: dict[str, int] = field(default_factory=dict)
+    sin_pronostico: int = 0
+    d_global: dict[str, float] = field(default_factory=dict)
+
+    def lineas(self) -> list[str]:
+        cobertura = (
+            100.0 * self.observaciones_con_costo / self.observaciones
+            if self.observaciones else float("nan")
+        )
+        salida = [
+            f"Orígenes rodantes                : {len(self.origenes)} "
+            f"({self.origenes[0]} .. {self.origenes[-1]})" if self.origenes else
+            "Orígenes                          : 0",
+            f"Horizonte máximo                 : {self.horizonte_maximo} meses",
+            f"Observaciones (origen, serie, h) : {self.observaciones:,} "
+            f"({cobertura:.1f} % con costo)",
+            f"Re-entrenamientos de LightGBM    : {self.reentrenos_lightgbm}",
+        ]
+        if self.reentrenos_directo:
+            salida.append(
+                f"Re-entrenamientos del directo    : {self.reentrenos_directo} "
+                "boosters (por origen, árboles congelados)"
+            )
+        if self.reestimaciones_estadisticas:
+            salida.append(
+                f"Re-estimaciones de estadísticos  : {self.reestimaciones_estadisticas} "
+                "(ablación: parámetros por origen con la historia hasta el origen)"
+            )
+        con_respaldo = {m: n for m, n in self.respaldos.items() if n}
+        if con_respaldo:
+            salida.append(f"Respaldos aplicados               : {con_respaldo}")
+        if self.d_global:
+            salida.append("D global (todos los horizontes, menor es mejor):")
+            for modelo, d in sorted(self.d_global.items(), key=lambda kv: kv[1]):
+                salida.append(f"   {modelo:<20} {d:7.1f} %")
+        return salida
+
+
+@dataclass
+class ResultadoMultihorizonte:
+    resumen_horizonte: pd.DataFrame
+    resumen_origen: pd.DataFrame
+    informe: InformeMultihorizonte
+    resumen_estratos: pd.DataFrame = field(default_factory=pd.DataFrame)
+
+
+def _origenes_de(cfg: Config) -> list[pd.Period]:
+    """Los orígenes del protocolo. El primero es SIEMPRE el cierre de
+    validación: un origen anterior evaluaría sobre meses que el motor usó para
+    seleccionar (RN-2)."""
+    if cfg.multihorizonte.origenes == "fijo":
+        return [cfg.particion.fin_validacion]
+    return list(
+        pd.period_range(cfg.particion.fin_validacion, cfg.periodo.fin - 1, freq="M")
+    )
+
+
+def _tiene_parametros(modelo) -> bool:
+    """True si el brazo estima parámetros (alfa del suavizado, alfa/beta/gamma
+    de Holt-Winters, alfa de Croston). Naïve y promedios móviles no tienen."""
+    return (
+        getattr(modelo, "alfa_por_serie", None) is not None
+        or getattr(modelo, "parametros_por_serie", None) is not None
+    )
+
+
+def _reestimar_en_origen(modelo, historia: pd.DataFrame):
+    """Copia del brazo con sus parámetros re-estimados con la historia hasta
+    el origen (ablación ``multihorizonte.reestimar_estadisticos``).
+
+    ``copy.deepcopy`` de un modelo ya ajustado es barato (su estado son unas
+    pocas Series con un parámetro por serie) y ``ajustar()`` lo sobrescribe
+    por completo, así que la copia no hereda nada del ajuste base y el modelo
+    original queda intacto. La validación que se le pasa está VACÍA: los
+    estadísticos no la usan (solo LightGBM, para la parada temprana) y así
+    queda explícito que ningún parámetro mira más allá del origen.
+
+    Naïve y promedios móviles no tienen parámetros y su ``ajustar()`` no hace
+    nada: se re-ajustan igual, por uniformidad (RN-4: la mecánica se aplica
+    por igual a todos los brazos) y para no mantener acá una lista de quién
+    tiene parámetros y quién no. El conteo del informe cuenta solo los brazos
+    con parámetros estimados (suavizado, Holt-Winters, Croston).
+    """
+    copia = copy.deepcopy(modelo)
+    copia.ajustar(historia, historia.iloc[0:0])
+    return copia
+
+
+def evaluar(
+    cfg: Config,
+    modelos: dict[str, object],
+    elegido_por_serie: pd.Series,
+    panel_ajuste: pd.DataFrame,
+    panel_real: pd.DataFrame,
+    panel_entrenamiento: pd.DataFrame,
+    cohorte_ajustada: pd.DataFrame,
+    costo_por_serie: pd.Series,
+    exogenas=None,
+    estratos: dict[str, pd.Series] | None = None,
+    mezclas: dict[str, object] | None = None,
+) -> ResultadoMultihorizonte:
+    """Corre el protocolo multihorizonte completo y agrega la curva D(h).
+
+    Args:
+        modelos: los brazos ya AJUSTADOS del paso 7 (parámetros congelados).
+        elegido_por_serie: la selección del motor, decidida en validación.
+        panel_ajuste: panel ancho de AJUSTE (con el tratamiento del evento);
+            es la historia que alimenta las proyecciones, igual que en el
+            protocolo a un paso.
+        panel_real: panel ancho observado; la evaluación compara SIEMPRE
+            contra él (RN-1).
+        costo_por_serie: maestro de costos; sin él no hay agregación válida
+            entre SKUs y el llamador debe saltarse esta etapa declarándolo.
+    """
+    mh = cfg.multihorizonte
+    origenes = _origenes_de(cfg)
+    if origenes[0] < cfg.particion.fin_validacion:
+        raise ValueError(
+            f"El primer origen ({origenes[0]}) es anterior al cierre de "
+            f"validación ({cfg.particion.fin_validacion}): la evaluación "
+            "pisaría la ventana de selección del motor (RN-2)."
+        )
+
+    media_entrenamiento = panel_entrenamiento.mean(axis=0, skipna=True)
+    proyector_lgbm = (
+        ProyectorLightGBM(cfg, cohorte_ajustada, modelos["lightgbm"], exogenas)
+        if "lightgbm" in modelos else None
+    )
+
+    informe = InformeMultihorizonte(
+        origenes=[str(o) for o in origenes],
+        horizonte_maximo=mh.horizonte_maximo,
+        modelos=sorted(modelos) + ["motor"] + sorted(mezclas or {}),
+    )
+    respaldos: dict[str, int] = {nombre: 0 for nombre in informe.modelos}
+    filas_obs: list[pd.DataFrame] = []
+    columnas = np.asarray(panel_ajuste.columns, dtype=object)
+
+    for origen in origenes:
+        horizonte = min(mh.horizonte_maximo, (cfg.periodo.fin - origen).n)
+        historia = panel_ajuste.loc[panel_ajuste.index <= origen]
+        meses = pd.period_range(origen + 1, origen + horizonte, freq="M")
+        real_futuro = panel_real.reindex(index=meses)
+        ultimo_observado = historia.ffill().iloc[-1]
+
+        proyecciones: dict[str, pd.DataFrame] = {}
+        for nombre, modelo in modelos.items():
+            if nombre == "lightgbm":
+                cruda = proyector_lgbm.proyectar(
+                    origen, horizonte, reentrenar=mh.reentrenar_lightgbm
+                )
+            elif hasattr(modelo, "proyectar_directo"):
+                # Brazos ML2: proyección directa nativa (ver criterio arriba).
+                cruda = modelo.proyectar_directo(historia, horizonte)
+            else:
+                # Brazos estadísticos. Con la ablación activa, cada origen
+                # proyecta con una copia re-estimada sobre la MISMA historia
+                # que ve el re-entreno de LightGBM (``historia``, hasta el
+                # origen); el modelo original queda intacto. Con el flag
+                # apagado se usa el modelo congelado del paso 7, tal cual.
+                if mh.reestimar_estadisticos and nombre not in (mezclas or {}):
+                    modelo = _reestimar_en_origen(modelo, historia)
+                    if _tiene_parametros(modelo):
+                        informe.reestimaciones_estadisticas += 1
+                if nombre == "croston":
+                    # Croston sigue siendo constante en el horizonte: sus
+                    # estados solo se actualizan con demanda observada.
+                    cruda = proyectar_constante(modelo, historia, horizonte)
+                else:
+                    cruda = proyectar_recursivo(modelo, historia, horizonte)
+
+            cruda = cruda.reindex(index=meses, columns=panel_ajuste.columns)
+            respaldos[nombre] += int(
+                (cruda.isna() & real_futuro.notna()).to_numpy().sum()
+            )
+            # Misma cascada declarada que el protocolo a un paso, adaptada al
+            # horizonte: primero el último valor observado en el origen (el
+            # Naïve multihorizonte), después la media de entrenamiento.
+            completa = cruda.fillna(ultimo_observado).fillna(media_entrenamiento)
+            proyecciones[nombre] = truncar_en_cero(completa)
+
+        # El motor aplica, por serie, la proyección del modelo que ganó en
+        # validación. La decisión NO se re-toma en ningún origen.
+        motor = pd.DataFrame(
+            np.nan, index=meses, columns=panel_ajuste.columns, dtype=float
+        )
+        for nombre, grupo in elegido_por_serie.groupby(elegido_por_serie, sort=True):
+            if nombre not in proyecciones:
+                continue
+            presentes = [s for s in grupo.index if s in motor.columns]
+            motor[presentes] = proyecciones[nombre][presentes]
+        proyecciones["motor"] = motor
+
+        # Los mezcladores componen las proyecciones de su conjunto con los pesos
+        # CONGELADOS de validación: en el horizonte no se re-decide nada,
+        # igual que la selección del motor.
+        for nombre_mezcla, mezcla in (mezclas or {}).items():
+            proyecciones[nombre_mezcla] = truncar_en_cero(
+                mezcla.componer(proyecciones)
+            )
+
+        y = real_futuro.to_numpy(dtype=float)
+        for nombre, proyeccion in proyecciones.items():
+            p = proyeccion.to_numpy(dtype=float)
+            comparable = ~np.isnan(y) & ~np.isnan(p)
+            informe.sin_pronostico += int((~np.isnan(y) & np.isnan(p)).sum())
+            fila_mes, fila_serie = np.where(comparable)
+            filas_obs.append(pd.DataFrame({
+                "modelo": nombre,
+                "origen": str(origen),
+                "horizonte": fila_mes + 1,   # meses consecutivos desde origen+1
+                "serie": columnas[fila_serie],
+                "y_real": y[comparable],
+                "y_pred": p[comparable],
+            }))
+
+    obs = pd.concat(filas_obs, ignore_index=True)
+    obs["costo"] = obs["serie"].map(costo_por_serie)
+    con_costo = obs.dropna(subset=["costo"])
+
+    informe.observaciones = len(obs)
+    informe.observaciones_con_costo = len(con_costo)
+    informe.respaldos = respaldos
+    informe.reentrenos_lightgbm = (
+        proyector_lgbm.reentrenos if proyector_lgbm else 0
+    )
+    informe.reentrenos_directo = int(
+        getattr(modelos.get("lightgbm_directo"), "reentrenos", 0)
+    )
+
+    resumen_horizonte = agregado_valorizado(con_costo, ["modelo", "horizonte"])
+    resumen_origen = agregado_valorizado(con_costo, ["modelo", "origen"])
+    global_ = agregado_valorizado(con_costo, ["modelo"])
+    informe.d_global = {
+        str(fila["modelo"]): float(fila["D"])
+        for _, fila in global_.iterrows()
+        if not np.isnan(fila["D"])
+    }
+
+    # La D(h) global partida por estrato: responde de dónde viene el dominio
+    # de cada brazo en el horizonte (¿estacionales, recurrentes, esporádicas?).
+    resumen_estratos = pd.DataFrame()
+    if estratos:
+        piezas = []
+        for dimension, asignacion in estratos.items():
+            etiquetado = con_costo.assign(
+                estrato=con_costo["serie"].map(asignacion)
+                .fillna("sin_clasificar")
+            )
+            piezas.append(
+                agregado_valorizado(etiquetado, ["modelo", "estrato"])
+                .assign(dimension=dimension)
+            )
+        resumen_estratos = pd.concat(piezas, ignore_index=True)
+
+    return ResultadoMultihorizonte(
+        resumen_estratos=resumen_estratos,
+        resumen_horizonte=resumen_horizonte,
+        resumen_origen=resumen_origen,
+        informe=informe,
+    )
