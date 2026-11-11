@@ -1,0 +1,399 @@
+diff --git a/README.md b/README.md
+index 048c4d1..2e17986 100644
+--- a/README.md
++++ b/README.md
+@@ -12,7 +12,7 @@ Santa Cruz de la Sierra, Bolivia
+ 
+ | Carpeta | Contenido |
+ |---|---|
+-| [`motor-pronostico/`](motor-pronostico/) | **El análisis cuantitativo.** Código, pruebas y entorno reproducible que generan la Tabla 8, las figuras y el contraste estadístico del Capítulo III. Es el material que enlaza el **Anexo G**. |
++| [`motor-pronostico/`](motor-pronostico/) | **El análisis cuantitativo.** Código, pruebas y entorno reproducible que generan la Tabla 8, las figuras y el contraste estadístico del Capítulo III. Es el material que enlaza el **Anexo 7**. |
+ | [`documento/`](documento/) | El documento oficial de la tesis y sus anexos. |
+ 
+ Cada carpeta tiene su propio `README.md`. Para correr el análisis, empezá por
+@@ -20,10 +20,29 @@ Cada carpeta tiene su propio `README.md`. Para correr el análisis, empezá por
+ 
+ ---
+ 
++## Correspondencia con el documento final
++
++El documento final numera sus anexos (Anexo 1 a Anexo 18) en lugar de rotularlos
++con letras, y numera de corrido las tablas y figuras de los anexos. Los archivos
++de resultados y los scripts de este repositorio conservan los rótulos de la
++versión evaluada, porque están sellados por los hashes del manifiesto de la
++corrida. Correspondencia:
++
++| Versión evaluada | Documento final |
++|---|---|
++| Anexo A a Anexo R | Anexo 1 a Anexo 18 (A es 1, B es 2, G es 7, H es 8, K es 11, L es 12, N es 14, P es 16) |
++| Tabla H3, Tabla H4 | Tabla 20, Tabla 21 |
++| Tabla K1 | Tabla 25 |
++| Tabla L3 | Tabla 28 |
++| Tablas N1 a N4 | Tablas 30 a 33 |
++| Tabla O1 | Tabla 35 |
++| Tablas P2 y P3 | Tablas 44 y 45 |
++| Figura K1 | Figura 15 |
++
+ ## Confidencialidad
+ 
+ El histórico de ventas que sustenta el análisis está cubierto por un acuerdo de
+-confidencialidad con la empresa (**Anexo B** del documento). En consecuencia:
++confidencialidad con la empresa (**Anexo 2** del documento). En consecuencia:
+ 
+ - Los **datos** no se versionan. El análisis parte de un snapshot congelado cuyo
+   SHA-256 queda registrado en el manifiesto de cada corrida; el archivo en sí
+diff --git a/documento/README.md b/documento/README.md
+index 2186403..e06343e 100644
+--- a/documento/README.md
++++ b/documento/README.md
+@@ -17,7 +17,7 @@ una excepción con su motivo escrito. La revisión, en concreto:
+   archivo.
+ - Que no haya códigos de producto, listas de clientes ni capturas del sistema
+   interno.
+-- Que el **Anexo B** (acuerdo de confidencialidad) no exponga nombres, cargos ni
++- Que el **Anexo 2** (acuerdo de confidencialidad) no exponga nombres, cargos ni
+   firmas de terceros que no hayan consentido su publicación.
+ - Que las tablas y figuras coincidan con las salidas vigentes de
+   `motor-pronostico/salidas/`. Si se vuelve a ejecutar el análisis, los
+diff --git a/motor-pronostico/.dockerignore b/motor-pronostico/.dockerignore
+index 4c12e03..0d5ad75 100644
+--- a/motor-pronostico/.dockerignore
++++ b/motor-pronostico/.dockerignore
+@@ -1,5 +1,5 @@
+ # El snapshot de datos NO entra en la imagen: se monta como volumen. Meterlo en
+-# una capa de Docker sería distribuir información confidencial (Anexo B).
++# una capa de Docker sería distribuir información confidencial (Anexo 2).
+ datos/
+ salidas/
+ notebooks/
+diff --git a/motor-pronostico/.gitignore b/motor-pronostico/.gitignore
+index 3728ec0..58bd9b5 100644
+--- a/motor-pronostico/.gitignore
++++ b/motor-pronostico/.gitignore
+@@ -1,6 +1,6 @@
+ # =============================================================================
+ # El histórico de NOVAPACK está cubierto por un acuerdo de confidencialidad
+-# (Anexo B de la tesis). datos/crudo/ NUNCA se versiona.
++# (Anexo 2 de la tesis). datos/crudo/ NUNCA se versiona.
+ # =============================================================================
+ datos/crudo/*
+ !datos/crudo/.gitkeep
+diff --git a/motor-pronostico/README.md b/motor-pronostico/README.md
+index 4bf228c..fe36686 100644
+--- a/motor-pronostico/README.md
++++ b/motor-pronostico/README.md
+@@ -6,8 +6,8 @@ Artificial.
+ 
+ Este repositorio contiene el código con el que se produjeron **todos los
+ resultados cuantitativos del documento**: cada tabla, figura y prueba
+-estadística proviene de una corrida reproducible de este pipeline. El Anexo G
+-del documento enlaza aquí; el Anexo H reproduce el contraste estadístico con
++estadística proviene de una corrida reproducible de este pipeline. El Anexo 7
++del documento enlaza aquí; el Anexo 8 reproduce el contraste estadístico con
+ [`scripts/anexo_h_contraste.py`](scripts/anexo_h_contraste.py). La
+ especificación completa del experimento (requerimientos y reglas de negocio
+ RN-1 a RN-6) está en [`REQUERIMIENTOS.md`](REQUERIMIENTOS.md).
+@@ -71,7 +71,7 @@ de Nemenyi).
+ | `salidas/figura01_*.png` … `figura13_*.png` | Catálogo de figuras del documento (F1–F13) |
+ | `salidas/inspeccion_datos.txt`, `cohorte_flujo.csv` | Criterios de inclusión y tamaño de la muestra |
+ | `salidas/manifiesto.json` | Trazabilidad de la corrida (datos, configuración, código) |
+-| `scripts/anexo_h_contraste.py` | Anexo H — reproduce el contraste estadístico |
++| `scripts/anexo_h_contraste.py` | Anexo 8 — reproduce el contraste estadístico |
+ 
+ ## Reproducibilidad
+ 
+@@ -125,7 +125,7 @@ docker compose up -d visor        # -> http://localhost:8501
+ ## Confidencialidad
+ 
+ El histórico de ventas de NOVAPACK S.A. está cubierto por un acuerdo de
+-confidencialidad (Anexo B del documento), y con él el esquema interno del
++confidencialidad (Anexo 2 del documento), y con él el esquema interno del
+ sistema de origen. Por eso **los datos no están en este repositorio** y el
+ pipeline se ejecuta sobre un snapshot local que no se versiona. Tres barreras
+ lo garantizan:
+@@ -154,7 +154,7 @@ el documento llevan los hashes de su manifiesto para su verificación.
+ | Ruta | Contenido |
+ |---|---|
+ | `main.py`, `src/` | El pipeline del experimento (etapas, modelos, reporte) |
+-| `scripts/` | Extracción del snapshot, ajuste de modelos y Anexo H |
++| `scripts/` | Extracción del snapshot, ajuste de modelos y Anexo 8 |
+ | `tests/` | Contrato de datos, pipeline y control de confidencialidad |
+ | `visor/` | Visor de corridas (React + nginx, solo lectura) |
+ | `config/` | Configuración declarada del experimento |
+diff --git a/motor-pronostico/REQUERIMIENTOS.md b/motor-pronostico/REQUERIMIENTOS.md
+index c83470d..5640bb7 100644
+--- a/motor-pronostico/REQUERIMIENTOS.md
++++ b/motor-pronostico/REQUERIMIENTOS.md
+@@ -342,10 +342,10 @@ Tres desviaciones respecto del boceto inicial, todas deliberadas:
+   datos, una sola vez— del pipeline, que no lo hace nunca (§9).
+ 
+ **Sobre los datos y el control de versiones.** El histórico de NOVAPACK está
+-cubierto por un acuerdo de confidencialidad (Anexo B de la tesis). `datos/crudo/`
++cubierto por un acuerdo de confidencialidad (Anexo 2 de la tesis). `datos/crudo/`
+ va en `.gitignore` desde el primer commit.
+ 
+-El repositorio **se publica**: el Anexo G enlaza el código. Eso extiende la
++El repositorio **se publica**: el Anexo 7 enlaza el código. Eso extiende la
+ obligación más allá de los datos, al esquema interno del sistema de origen
+ —nombres de base, de esquema, de tabla y de columnas—, que por eso vive en
+ `config/extraccion.local.yaml`, fuera del control de versiones.
+diff --git a/motor-pronostico/config/config.yaml b/motor-pronostico/config/config.yaml
+index ba63397..0b1a86b 100644
+--- a/motor-pronostico/config/config.yaml
++++ b/motor-pronostico/config/config.yaml
+@@ -12,7 +12,7 @@
+ # -----------------------------------------------------------------------------
+ datos:
+   # Ruta del archivo crudo. Se resuelve relativa a la raíz del repositorio.
+-  # datos/crudo/ está en .gitignore desde el primer commit (Anexo B — acuerdo de
++  # datos/crudo/ está en .gitignore desde el primer commit (Anexo 2 — acuerdo de
+   # confidencialidad).
+   archivo: "datos/crudo/ventas_novapack.csv"
+ 
+diff --git a/motor-pronostico/config/extraccion.ejemplo.yaml b/motor-pronostico/config/extraccion.ejemplo.yaml
+index 1fd4f02..faec9e1 100644
+--- a/motor-pronostico/config/extraccion.ejemplo.yaml
++++ b/motor-pronostico/config/extraccion.ejemplo.yaml
+@@ -10,7 +10,7 @@
+ # El código de esta tesis se publica; el esquema interno de NOVAPACK S.A. no.
+ # Los nombres de esquema, tabla y columnas del sistema de origen son
+ # información de la empresa cubierta por el acuerdo de confidencialidad
+-# (Anexo B), igual que los datos. Tenerlos hardcodeados en `extraer_snapshot.py`
++# (Anexo 2), igual que los datos. Tenerlos hardcodeados en `extraer_snapshot.py`
+ # obligaría a elegir entre publicar el código o proteger el esquema.
+ #
+ # La contrapartida es que quien reciba el repositorio no puede reproducir la
+diff --git a/motor-pronostico/main.py b/motor-pronostico/main.py
+index c2f353e..e231d0c 100644
+--- a/motor-pronostico/main.py
++++ b/motor-pronostico/main.py
+@@ -1391,7 +1391,7 @@ def comando_ejecutar(cfg) -> int:
+             skus_usados.add(serie.split("|")[0])
+             # SOLO el SKU seudonimizado en el título: esta figura va al
+             # documento publicado y el nombre real de la regional es
+-            # información de la empresa (Anexo B).
++            # información de la empresa (Anexo 2).
+             return serie, f"{etiqueta}\n{serie.split('|')[0]}"
+ 
+         # Etiquetas cortas: los rótulos largos desbordaban el ancho del panel.
+diff --git a/motor-pronostico/scripts/anexo_h_contraste.py b/motor-pronostico/scripts/anexo_h_contraste.py
+index eaabe97..eb966e0 100644
+--- a/motor-pronostico/scripts/anexo_h_contraste.py
++++ b/motor-pronostico/scripts/anexo_h_contraste.py
+@@ -1,4 +1,4 @@
+-"""ANEXO H — Script de contraste estadístico de la hipótesis.
++"""ANEXO 8 (Anexo H en la versión evaluada) — Script de contraste estadístico de la hipótesis.
+ 
+ Reproduce, desde el artefacto ``errores_por_serie.csv`` de la corrida, los
+ valores reportados en el apartado «Contraste estadístico de la hipótesis»:
+diff --git a/motor-pronostico/scripts/anexo_n_estados.py b/motor-pronostico/scripts/anexo_n_estados.py
+index 67c4bdd..e7aa200 100644
+--- a/motor-pronostico/scripts/anexo_n_estados.py
++++ b/motor-pronostico/scripts/anexo_n_estados.py
+@@ -1,9 +1,10 @@
+-"""Anexo N: conteos por estado de actividad y meses de historia de las series.
++"""Anexo 14 (Anexo N en la versión evaluada; sus Tablas N1 a N4 son las Tablas 30 a 33 del documento
++final): conteos por estado de actividad y meses de historia de las series.
+ 
+ Propósito
+ ---------
+ Reproduce, sólo desde salidas publicadas de la corrida principal, las Tablas
+-N2 y N3 del Anexo N, los conteos de costo faltante del párrafo que las sigue y
++N2 y N3 del Anexo 14, los conteos de costo faltante del párrafo que las sigue y
+ la evidencia de datos de las Tablas N1 y N4:
+ 
+ * Tabla N2: series por estado de actividad al cierre del entrenamiento y por
+@@ -29,7 +30,7 @@ la evidencia de datos de las Tablas N1 y N4:
+   meses con el detector de régimen activo en cada gestión de la extensión y la
+   D de la variante sin tratamiento del evento.
+ 
+-Lo que este script NO calcula, porque exige la captura de ventas (Anexo B) y no
++Lo que este script NO calcula, porque exige la captura de ventas (Anexo 2) y no
+ está en ninguna salida publicada: las series que venden en validación y en
+ prueba y el valor de prueba de las series excluidas, la línea base de respaldo
+ fuera de la muestra, las seis series sin historia y sin costo (317 en total),
+diff --git a/motor-pronostico/scripts/anexo_p_benchmarks.py b/motor-pronostico/scripts/anexo_p_benchmarks.py
+index ee24cba..7a8b1ce 100644
+--- a/motor-pronostico/scripts/anexo_p_benchmarks.py
++++ b/motor-pronostico/scripts/anexo_p_benchmarks.py
+@@ -1,4 +1,5 @@
+-"""Anexo P: Tablas P2 y P3 de la evaluación comparativa de referencia (benchmarks).
++"""Anexo 16 (Anexo P en la versión evaluada): Tablas P2 y P3 (Tablas 43 y 44 del documento final) de la
++evaluación comparativa de referencia (benchmarks).
+ 
+ Propósito
+ ---------
+diff --git a/motor-pronostico/scripts/figura_microservicio.py b/motor-pronostico/scripts/figura_microservicio.py
+index 11fe848..168c959 100644
+--- a/motor-pronostico/scripts/figura_microservicio.py
++++ b/motor-pronostico/scripts/figura_microservicio.py
+@@ -113,7 +113,7 @@ REUNION = "Reunión\nmensual de\nplanificación"
+ RETRO = ("Plan consensuado y venta real: error por etapa y valor agregado "
+          "(FVA), medidos en la corrida siguiente")
+ 
+-# Franja inferior: interior del microservicio (nombres de la Tabla O1).
++# Franja inferior: interior del microservicio (nombres de la Tabla O1, la Tabla 35 del documento final).
+ API = "API y\nautenticación"
+ PERMISOS = "Permisos\npor rol"
+ ORQUESTADOR = "Orquestador\nde la corrida\nmensual"
+diff --git a/motor-pronostico/scripts/incertidumbre_agrupada.py b/motor-pronostico/scripts/incertidumbre_agrupada.py
+index 55f27e2..edf522e 100644
+--- a/motor-pronostico/scripts/incertidumbre_agrupada.py
++++ b/motor-pronostico/scripts/incertidumbre_agrupada.py
+@@ -1,4 +1,5 @@
+-"""Anexo H, Tabla H3: incertidumbre agrupada de las diferencias del contraste.
++"""Anexo 8 (Anexo H en la versión evaluada), Tabla H3 (Tabla 20 del documento final): incertidumbre
++agrupada de las diferencias del contraste.
+ 
+ Propósito
+ ---------
+@@ -55,7 +56,7 @@ Insumos (todos de ``salidas/``; el script verifica su SHA-256 contra
+   de prueba (variante temporal) y demanda observada de entrenamiento.
+ * ``fuera_de_muestra.csv``: valor de entrenamiento valorizado a costo por
+   serie. El costo unitario de cada serie se deduce como ese valor sobre la
+-  demanda observada de entrenamiento, igual que el script del Anexo N; el
++  demanda observada de entrenamiento, igual que el script del Anexo 14; el
+   script se detiene si la D así reconstruida no reproduce la Tabla 8
+   valorizada (``tabla_valorizada.csv``) de los once modelos.
+ * ``tabla_valorizada.csv``, ``error_por_mes.csv``: controles.
+@@ -102,7 +103,7 @@ COMPARACIONES: list[tuple[str, str]] = [
+     ("lightgbm", "naive_m1"),
+ ]
+ # Las que publica pruebas_estadisticas.txt (la quinta, motor frente a ma_12_gf,
+-# la reproduce el script del Anexo H): control de reproducción del p y de r.
++# la reproduce el script del Anexo 8): control de reproducción del p y de r.
+ PUBLICADAS_EN_TXT: dict[tuple[str, str], tuple[float, float]] = {
+     # (r, rango biserial) tal como los imprime pruebas_estadisticas.txt
+     ("motor", "ma_12"): (-0.3071, -0.3726),
+diff --git a/motor-pronostico/scripts/incertidumbre_extension.py b/motor-pronostico/scripts/incertidumbre_extension.py
+index 5422dba..4bde370 100644
+--- a/motor-pronostico/scripts/incertidumbre_extension.py
++++ b/motor-pronostico/scripts/incertidumbre_extension.py
+@@ -1,4 +1,5 @@
+-"""Anexo H, Tabla H4: incertidumbre agrupada de la extensión exploratoria.
++"""Anexo 8 (Anexo H en la versión evaluada), Tabla H4 (Tabla 21 del documento final): incertidumbre
++agrupada de la extensión exploratoria.
+ 
+ Propósito
+ ---------
+diff --git a/motor-pronostico/scripts/sensibilidad_cohorte.py b/motor-pronostico/scripts/sensibilidad_cohorte.py
+index b6b3e5d..5b1fdaa 100644
+--- a/motor-pronostico/scripts/sensibilidad_cohorte.py
++++ b/motor-pronostico/scripts/sensibilidad_cohorte.py
+@@ -1,4 +1,5 @@
+-"""Anexo K, Tabla K1: sensibilidad de la cohorte de evaluación.
++"""Anexo 11 (Anexo K en la versión evaluada), Tabla K1 (Tabla 25 del documento final): sensibilidad de
++la cohorte de evaluación.
+ 
+ Propósito
+ ---------
+@@ -48,12 +49,12 @@ Definiciones (las mismas del motor):
+ 
+ * Costo unitario de cada serie: valor de entrenamiento (``fuera_de_muestra.csv``)
+   sobre su demanda observada de entrenamiento (``series_y_predicciones.csv``),
+-  como los scripts de los Anexos H y N. El script se detiene si la D así
++  como los scripts de los Anexos 8 y 14. El script se detiene si la D así
+   reconstruida no reproduce ``tabla_valorizada.csv`` de cada corrida.
+ * D = WMAPE valorizado + |sesgo valorizado agregado|, sobre las series con costo,
+   a un paso en el bloque de prueba.
+ * Cobertura: valor de entrenamiento de las series de la cohorte sobre el de toda
+-  la población objetivo (la misma medida de la cascada del Anexo K y de la
++  la población objetivo (la misma medida de la cascada del Anexo 11 y de la
+   Tabla N2).
+ 
+ Uso
+diff --git a/motor-pronostico/scripts/tabla_hiperparametros.py b/motor-pronostico/scripts/tabla_hiperparametros.py
+index e964999..60a86bb 100644
+--- a/motor-pronostico/scripts/tabla_hiperparametros.py
++++ b/motor-pronostico/scripts/tabla_hiperparametros.py
+@@ -1,10 +1,10 @@
+-"""Tabla L3 del Anexo L: hiperparámetros del modelo global y lectura de la búsqueda.
++"""Tabla L3 del Anexo L (Tabla 28 del Anexo 12 en el documento final): hiperparámetros del modelo global y lectura de la búsqueda.
+ 
+ Propósito
+ ---------
+ Reproduce, desde la tabla de ensayos publicada de la búsqueda de hiperparámetros
+ (``resultados/ensayos/lightgbm_tuning_ensayos.csv``) y desde la configuración
+-declarada (``config/config.yaml``), la Tabla L3 del Anexo L con las mismas
++declarada (``config/config.yaml``), la Tabla L3 (Tabla 28 del documento final) con las mismas
+ filas, columnas y rótulos que el texto del anexo: para cada hiperparámetro, el
+ valor elegido, el rango explorado con su escala, la función que cumple, el
+ rango que ocupa en la meseta (los ensayos a menos de dos puntos de la mejor D
+diff --git a/motor-pronostico/src/modelos/fundacional.py b/motor-pronostico/src/modelos/fundacional.py
+index d8d4968..8345f7f 100644
+--- a/motor-pronostico/src/modelos/fundacional.py
++++ b/motor-pronostico/src/modelos/fundacional.py
+@@ -15,7 +15,7 @@ Decisiones declaradas
+   vieron jamás datos de NOVAPACK.
+ - **Los datos no salen de la máquina.** Los pesos se descargan una vez desde el
+   repositorio público y la inferencia corre local (GPU si hay): ninguna serie
+-  viaja a una API externa (Anexo B).
++  viaja a una API externa (Anexo 2).
+ - **Punto de pronóstico = media.** La salida nativa es probabilística
+   (cuantiles); se toma la media, consistente con el objetivo de los demás
+   brazos (la demanda esperada, no la mediana — la lección Tweedie del estudio).
+diff --git a/motor-pronostico/tests/test_confidencialidad.py b/motor-pronostico/tests/test_confidencialidad.py
+index 526afa0..6a50549 100644
+--- a/motor-pronostico/tests/test_confidencialidad.py
++++ b/motor-pronostico/tests/test_confidencialidad.py
+@@ -1,7 +1,7 @@
+ """Control de confidencialidad sobre los archivos versionados.
+ 
+-Este repositorio se publica: el Anexo G de la tesis enlaza el código. El
+-histórico de ventas está cubierto por un acuerdo de confidencialidad (Anexo B), y
++Este repositorio se publica: el Anexo 7 de la tesis enlaza el código. El
++histórico de ventas está cubierto por un acuerdo de confidencialidad (Anexo 2), y
+ con él el esquema interno del sistema de origen: nombres de base, de esquema, de
+ tabla, direcciones e identificadores de la empresa.
+ 
+@@ -217,7 +217,7 @@ def test_ningun_archivo_versionado_parece_una_credencial():
+ 
+ 
+ def test_no_se_versiona_ningun_archivo_de_datos():
+-    """`datos/crudo/` NUNCA se versiona (Anexo B)."""
++    """`datos/crudo/` NUNCA se versiona (Anexo 2)."""
+     versionados = [p.relative_to(RAIZ).as_posix() for p in _archivos_versionados()]
+     filtrados = [
+         v for v in versionados
+diff --git a/motor-pronostico/tests/test_incertidumbre_agrupada.py b/motor-pronostico/tests/test_incertidumbre_agrupada.py
+index 87605f2..0932f57 100644
+--- a/motor-pronostico/tests/test_incertidumbre_agrupada.py
++++ b/motor-pronostico/tests/test_incertidumbre_agrupada.py
+@@ -1,4 +1,4 @@
+-"""Pruebas del remuestreo agrupado de la Tabla H3 (scripts/incertidumbre_agrupada.py).
++"""Pruebas del remuestreo agrupado de la Tabla H3, Tabla 20 del documento final (scripts/incertidumbre_agrupada.py).
+ 
+ Sólo paneles sintéticos, construidos aquí: ninguna cifra ni clave de la
+ corrida real.
+diff --git a/motor-pronostico/tests/test_incertidumbre_extension.py b/motor-pronostico/tests/test_incertidumbre_extension.py
+index 2a6e174..397dd17 100644
+--- a/motor-pronostico/tests/test_incertidumbre_extension.py
++++ b/motor-pronostico/tests/test_incertidumbre_extension.py
+@@ -1,4 +1,4 @@
+-"""Pruebas de la Tabla H4 (scripts/incertidumbre_extension.py).
++"""Pruebas de la Tabla H4, Tabla 21 del documento final (scripts/incertidumbre_extension.py).
+ 
+ Sólo paneles sintéticos, construidos aquí: ninguna cifra ni clave de las
+ corridas reales. Se arma una carpeta de salidas completa (con su manifiesto y
+diff --git a/motor-pronostico/tests/test_sensibilidad_cohorte.py b/motor-pronostico/tests/test_sensibilidad_cohorte.py
+index 36eb036..e19b4a3 100644
+--- a/motor-pronostico/tests/test_sensibilidad_cohorte.py
++++ b/motor-pronostico/tests/test_sensibilidad_cohorte.py
+@@ -1,4 +1,4 @@
+-"""Pruebas de la sensibilidad de la cohorte (scripts/sensibilidad_cohorte.py, Tabla K1).
++"""Pruebas de la sensibilidad de la cohorte (scripts/sensibilidad_cohorte.py, Tabla K1, Tabla 25 del documento final).
+ 
+ Sólo corridas sintéticas, construidas aquí en directorios temporales: ninguna
+ cifra ni clave de la corrida real.
+diff --git a/motor-pronostico/visor/nginx.conf b/motor-pronostico/visor/nginx.conf
+index fbf0b5e..08ab50f 100644
+--- a/motor-pronostico/visor/nginx.conf
++++ b/motor-pronostico/visor/nginx.conf
+@@ -1,6 +1,6 @@
+ # Visor del experimento — nginx sirviendo la SPA + los artefactos de salidas*/.
+ #
+-# REGLA DE SEGURIDAD (Anexo B): bajo /datos/ SOLO se sirven los directorios de
++# REGLA DE SEGURIDAD (Anexo 2): bajo /datos/ SOLO se sirven los directorios de
+ # corridas (salidas*). Todo lo demás del repositorio montado —en particular
+ # datos/crudo/ (el snapshot confidencial) y config/extraccion.local.yaml (el
+ # esquema interno)— responde 403 aunque el archivo exista en el montaje.

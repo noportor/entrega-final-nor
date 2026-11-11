@@ -1,0 +1,206 @@
+==============================================================================
+CONTRASTE ESTADÍSTICO DE LA HIPÓTESIS
+==============================================================================
+
+Métrica de contraste     : ERROR_COMPUESTO_UNIDADES por serie, bloque de prueba
+Unidad de análisis       : la serie SKU–canal–regional
+Bloques completos        : 1,812
+Nivel de significación   : 0.05
+Hipótesis alternativa    : el modelo propuesto tiene MENOS error (unilateral, 'less')
+
+
+------------------------------------------------------------------------------
+1. WILCOXON DE RANGOS CON SIGNO (pareado, unilateral)
+------------------------------------------------------------------------------
+
+Referencia metodológica: Demšar (2006) recomienda Wilcoxon para comparar
+dos modelos sobre múltiples conjuntos, por no asumir normalidad ni
+homogeneidad de varianzas.
+
+  motor  vs  ma_12
+    Tamaño del efecto  r = -0.3465  (mediano)
+    Rango-biserial       = -0.4174  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,121 de 1,812 (61.9 %)
+    Series en contra     : 543   ·  empates exactos: 148
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.4828
+    Estadístico W        = 403,521.5   ·  Z = -14.7483
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1815, p = < 1e-16  (n = 1,812)
+
+  motor  vs  naive_m1
+    Tamaño del efecto  r = -0.0377  (insignificante)
+    Rango-biserial       = -0.0515  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 680 de 1,812 (37.5 %)
+    Series en contra     : 614   ·  empates exactos: 518
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: +0.0000
+    Estadístico W        = 397,347.0   ·  Z = -1.6055
+    p                    = 0.0542   ->  no significativo al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1530, p = < 1e-16  (n = 1,812)
+
+  lightgbm  vs  ma_12
+    Tamaño del efecto  r = +0.0249  (insignificante)
+    Rango-biserial       = +0.0287  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 855 de 1,812 (47.2 %)
+    Series en contra     : 957   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: +0.3796
+    Estadístico W        = 844,865.0   ·  Z = +1.0584
+    p                    = 0.8551   ->  no significativo al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2191, p = < 1e-16  (n = 1,812)
+
+  lightgbm  vs  naive_m1
+    Tamaño del efecto  r = +0.2199  (pequeño)
+    Rango-biserial       = +0.2539  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 749 de 1,812 (41.3 %)
+    Series en contra     : 1,063   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: +1.2116
+    Estadístico W        = 1,029,815.0   ·  Z = +9.3612
+    p                    = 1.0000   ->  no significativo al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2323, p = < 1e-16  (n = 1,812)
+
+  Lectura del Shapiro-Wilk: se aplica a las DIFERENCIAS PAREADAS entre los
+  errores de dos modelos, no a las ventas, y aquí es un diagnóstico, no una
+  puerta de decisión. Con n de miles la prueba rechaza la normalidad casi
+  siempre; el uso de pruebas no paramétricas se justifica a priori por la
+  asimetría y los valores extremos propios de los errores de pronóstico.
+
+
+------------------------------------------------------------------------------
+2. FRIEDMAN OMNIBUS + POST HOC DE NEMENYI
+------------------------------------------------------------------------------
+
+  Modelos comparados (k)  : 11
+  Bloques completos (N)   : 1,812
+  Chi-cuadrado de Friedman: 2,044.9636
+  p                       : < 1e-16   ->  SE RECHAZA la igualdad de los modelos
+  Kendall W               : 0.1129  (concordancia débil)
+  Nota: Kendall W no es comparable entre análisis con distinto k.
+
+  Rangos medios (1 = mejor):
+    motor                 4.507
+    ma_2                  4.533
+    naive_m1              4.560
+    exp_smooth_opt        5.438
+    ma_12                 5.919
+    lightgbm              5.974
+    holt_winters          6.601
+    ma_12_gf              6.987
+    naive_m1_gf           7.111
+    ma_2_gf               7.171
+    croston               7.199
+
+  Diferencia crítica de Nemenyi (α = 0.05): 0.3547
+  Dos modelos cuyos rangos medios difieren menos que la CD no son
+  distinguibles entre sí.
+
+  Matriz de p-valores de Nemenyi:
+
+                    naive_m1  naive_m1_gf  ma_2  ma_2_gf   ma_12  ma_12_gf  exp_smooth_opt  holt_winters  croston  lightgbm  motor
+naive_m1             1.0       0.0000   1.0   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000    1.0
+naive_m1_gf          0.0       1.0000   0.0   1.0000  0.0000    0.9898          0.0000        0.0002   0.9994    0.0000    0.0
+ma_2                 1.0       0.0000   1.0   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000    1.0
+ma_2_gf              0.0       1.0000   0.0   1.0000  0.0000    0.8521          0.0000        0.0000   1.0000    0.0000    0.0
+ma_12                0.0       0.0000   0.0   0.0000  1.0000    0.0000          0.0007        0.0000   0.0000    1.0000    0.0
+ma_12_gf             0.0       0.9898   0.0   0.8521  0.0000    1.0000          0.0000        0.0195   0.7037    0.0000    0.0
+exp_smooth_opt       0.0       0.0000   0.0   0.0000  0.0007    0.0000          1.0000        0.0000   0.0000    0.0001    0.0
+holt_winters         0.0       0.0002   0.0   0.0000  0.0000    0.0195          0.0000        1.0000   0.0000    0.0000    0.0
+croston              0.0       0.9994   0.0   1.0000  0.0000    0.7037          0.0000        0.0000   1.0000    0.0000    0.0
+lightgbm             0.0       0.0000   0.0   0.0000  1.0000    0.0000          0.0001        0.0000   0.0000    1.0000    0.0
+motor                1.0       0.0000   1.0   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000    1.0
+
+  Contraste cruzado con scikit-posthocs: coincide
+
+  No se aplica corrección de Holm sobre Nemenyi: el rango studentizado ya
+  controla la tasa de error por familia de las k(k−1)/2 comparaciones, y
+  corregir dos veces sería innecesariamente conservador.
+
+
+------------------------------------------------------------------------------
+3. PORCENTAJE DE SERIES EN QUE GANA CADA MODELO
+------------------------------------------------------------------------------
+
+          modelo  victorias  porcentaje  victorias_sin_empate
+      naive_m1      296.3       16.35                   208
+      lightgbm      288.0       15.89                   222
+  holt_winters      230.5       12.72                   200
+         motor      197.5       10.90                     0
+          ma_2      197.4       10.89                   145
+exp_smooth_opt      142.8        7.88                   132
+         ma_12      132.9        7.34                   125
+       croston       97.5        5.38                    89
+      ma_12_gf       94.8        5.23                    66
+       ma_2_gf       68.9        3.81                    35
+   naive_m1_gf       65.3        3.61                    32
+
+  Los empates se reparten proporcionalmente entre los modelos empatados;
+  adjudicárselos al primero por orden de columna sería un artefacto.
+
+  CÓMO NO LEER ESTA TABLA. El motor no compite en igualdad de condiciones
+  aquí: su pronóstico ES, por construcción, el de uno de los candidatos, de
+  modo que cada vez que acierta EMPATA con el modelo que eligió y nunca gana
+  en solitario. Por eso su columna de victorias sin empate es cero y su
+  porcentaje sale diluido por el reparto. Esta tabla describe el reparto
+  entre los modelos BASE; el desempeño del motor se lee en la Tabla 8, en
+  los contrastes de Wilcoxon y en su tasa de acierto.
+
+
+------------------------------------------------------------------------------
+4. TASA DE ACIERTO DEL MOTOR
+------------------------------------------------------------------------------
+
+  ¿Cuántas veces el modelo elegido mirando VALIDACIÓN resultó ser
+  efectivamente el mejor en PRUEBA?
+
+  Series comparadas        : 1,812
+  Aciertos                 : 377
+  Tasa de acierto          : 20.81 %
+  Acierto esperado al azar : 10.00 %
+  Exceso de MAE por no elegir el óptimo de prueba:
+     media   16.8845
+     mediana 1.0337
+
+  Interpretación: elegir el mínimo entre varios candidatos sobre una
+  ventana corta sobreestima siempre lo bien que le irá al ganador fuera
+  de la muestra (winner's curse). La brecha entre la tasa de acierto y
+  el 100 % es la magnitud de ese efecto, y es un resultado por sí sola.
+
+  Asimetría declarada: LightGBM fija su número de árboles por parada
+  temprana contra validación, que es la misma ventana en que el motor
+  decide; los demás candidatos llegan a validación completamente a
+  ciegas. El motor lo elegirá algo más a menudo de lo que merecería con
+  un protocolo simétrico. La ventaja desaparece en prueba, que es donde
+  se mide la tasa de acierto de arriba.
+
+
+------------------------------------------------------------------------------
+5. LIMITACIONES DEL CONTRASTE (declaradas, no descubiertas después)
+------------------------------------------------------------------------------
+
+  a) Un solo corte, no origen móvil. El desempeño reportado corresponde a
+     UNA gestión de prueba. Un año atípico movería los números; con orígenes
+     móviles el resultado sería más estable, a costa de un diseño que ya no
+     sería el declarado en la metodología del documento.
+
+  b) El contraste es unilateral en la dirección de la hipótesis. Está fijado
+     antes de ver resultados, y la contrapartida es que NO puede detectar
+     que un modelo propuesto sea peor: en ese caso el p-valor simplemente no
+     resulta significativo. El porcentaje de series a favor y en contra, que
+     aparece arriba, sí muestra la dirección real.
+
+  c) Las series del mismo SKU en distintas regionales y canales NO son
+     independientes entre sí. Las pruebas las tratan como bloques separados,
+     lo que hace los p-valores algo optimistas. Con n de miles el efecto
+     sobre la conclusión es menor que el del tamaño del efecto, que es lo
+     que se reporta primero.
+
+  d) Evaluación a un paso. Los resultados no se extrapolan a horizontes
+     mayores; ahí el promedio móvil recursivo y LightGBM se comportan de
+     forma distinta y haría falta un experimento aparte.
+
+  e) Con n de miles, cualquier diferencia sale significativa. La lectura
+     válida es el tamaño del efecto y la diferencia mediana en unidades, no
+     el p-valor.
+
+
+==============================================================================
+Fin del contraste.
+==============================================================================

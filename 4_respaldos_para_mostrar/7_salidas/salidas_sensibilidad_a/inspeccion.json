@@ -1,0 +1,366 @@
+{
+  "rango_fechas": [
+    "2017-04-01",
+    "2026-03-01"
+  ],
+  "meses_con_registro": 108,
+  "meses_esperados": 108,
+  "n_sku": 684,
+  "n_canales": 2,
+  "n_regionales": 5,
+  "n_combinaciones": 4406,
+  "registros_duplicados": 572,
+  "nulos_por_columna": {
+    "fecha": 0,
+    "sku": 0,
+    "canal": 0,
+    "regional": 0,
+    "cantidad": 0,
+    "categoria": 0,
+    "precio": 0,
+    "perdidas": 0
+  },
+  "registros_negativos": 0,
+  "unidades_negativas": 0.0,
+  "registros_en_cero": 0,
+  "volumen_por_gestion": [
+    {
+      "gestion": 2018,
+      "registros": 10825,
+      "unidades": 1018470.0,
+      "skus": 260,
+      "combinaciones": 1456
+    },
+    {
+      "gestion": 2019,
+      "registros": 11733,
+      "unidades": 1306764.0,
+      "skus": 267,
+      "combinaciones": 1553
+    },
+    {
+      "gestion": 2020,
+      "registros": 16146,
+      "unidades": 2581799.0,
+      "skus": 505,
+      "combinaciones": 2443
+    },
+    {
+      "gestion": 2021,
+      "registros": 16498,
+      "unidades": 1591081.0,
+      "skus": 491,
+      "combinaciones": 2766
+    },
+    {
+      "gestion": 2022,
+      "registros": 19725,
+      "unidades": 2778921.0,
+      "skus": 502,
+      "combinaciones": 2892
+    },
+    {
+      "gestion": 2023,
+      "registros": 19460,
+      "unidades": 3520810.0,
+      "skus": 514,
+      "combinaciones": 2963
+    },
+    {
+      "gestion": 2024,
+      "registros": 18966,
+      "unidades": 3577015.0,
+      "skus": 534,
+      "combinaciones": 2893
+    },
+    {
+      "gestion": 2025,
+      "registros": 17484,
+      "unidades": 2402742.0,
+      "skus": 524,
+      "combinaciones": 2641
+    },
+    {
+      "gestion": 2026,
+      "registros": 16864,
+      "unidades": 2566185.0,
+      "skus": 515,
+      "combinaciones": 2681
+    }
+  ],
+  "volumen_por_anio": [
+    {
+      "anio": 2017,
+      "registros": 7935,
+      "unidades": 588199.0
+    },
+    {
+      "anio": 2018,
+      "registros": 11623,
+      "unidades": 1151433.0
+    },
+    {
+      "anio": 2019,
+      "registros": 14641,
+      "unidades": 1971226.0
+    },
+    {
+      "anio": 2020,
+      "registros": 15809,
+      "unidades": 2049873.0
+    },
+    {
+      "anio": 2021,
+      "registros": 19371,
+      "unidades": 2367482.0
+    },
+    {
+      "anio": 2022,
+      "registros": 19805,
+      "unidades": 3163799.0
+    },
+    {
+      "anio": 2023,
+      "registros": 19125,
+      "unidades": 3617404.0
+    },
+    {
+      "anio": 2024,
+      "registros": 18028,
+      "unidades": 2905337.0
+    },
+    {
+      "anio": 2025,
+      "registros": 16659,
+      "unidades": 2465755.0
+    },
+    {
+      "anio": 2026,
+      "registros": 4705,
+      "unidades": 1063280.0
+    }
+  ],
+  "estacionalidad_mensual": [
+    {
+      "mes": 1,
+      "cantidad": 5383338.0,
+      "porcentaje": 25.22
+    },
+    {
+      "mes": 2,
+      "cantidad": 2777690.0,
+      "porcentaje": 13.01
+    },
+    {
+      "mes": 3,
+      "cantidad": 934639.0,
+      "porcentaje": 4.38
+    },
+    {
+      "mes": 4,
+      "cantidad": 586148.0,
+      "porcentaje": 2.75
+    },
+    {
+      "mes": 5,
+      "cantidad": 728181.0,
+      "porcentaje": 3.41
+    },
+    {
+      "mes": 6,
+      "cantidad": 706266.0,
+      "porcentaje": 3.31
+    },
+    {
+      "mes": 7,
+      "cantidad": 846503.0,
+      "porcentaje": 3.97
+    },
+    {
+      "mes": 8,
+      "cantidad": 967745.0,
+      "porcentaje": 4.53
+    },
+    {
+      "mes": 9,
+      "cantidad": 1091885.0,
+      "porcentaje": 5.12
+    },
+    {
+      "mes": 10,
+      "cantidad": 1165650.0,
+      "porcentaje": 5.46
+    },
+    {
+      "mes": 11,
+      "cantidad": 1940158.0,
+      "porcentaje": 9.09
+    },
+    {
+      "mes": 12,
+      "cantidad": 4215582.0,
+      "porcentaje": 19.75
+    }
+  ],
+  "reparto_canal_regional": [
+    {
+      "regional": "COCHABAMBA",
+      "canal": "X",
+      "registros": 2739,
+      "unidades": 132088.0,
+      "skus": 319,
+      "combinaciones": 319
+    },
+    {
+      "regional": "COCHABAMBA",
+      "canal": "Z",
+      "registros": 25887,
+      "unidades": 3122928.0,
+      "skus": 553,
+      "combinaciones": 553
+    },
+    {
+      "regional": "LA PAZ",
+      "canal": "X",
+      "registros": 4082,
+      "unidades": 168319.0,
+      "skus": 421,
+      "combinaciones": 421
+    },
+    {
+      "regional": "LA PAZ",
+      "canal": "Z",
+      "registros": 29496,
+      "unidades": 6799450.0,
+      "skus": 662,
+      "combinaciones": 662
+    },
+    {
+      "regional": "SANTA CRUZ",
+      "canal": "X",
+      "registros": 6348,
+      "unidades": 392045.0,
+      "skus": 474,
+      "combinaciones": 474
+    },
+    {
+      "regional": "SANTA CRUZ",
+      "canal": "Z",
+      "registros": 28053,
+      "unidades": 6748987.0,
+      "skus": 638,
+      "combinaciones": 638
+    },
+    {
+      "regional": "SUCRE",
+      "canal": "X",
+      "registros": 365,
+      "unidades": 9863.0,
+      "skus": 138,
+      "combinaciones": 138
+    },
+    {
+      "regional": "SUCRE",
+      "canal": "Z",
+      "registros": 26471,
+      "unidades": 2467289.0,
+      "skus": 598,
+      "combinaciones": 598
+    },
+    {
+      "regional": "TARIJA",
+      "canal": "X",
+      "registros": 157,
+      "unidades": 1729.0,
+      "skus": 60,
+      "combinaciones": 60
+    },
+    {
+      "regional": "TARIJA",
+      "canal": "Z",
+      "registros": 24103,
+      "unidades": 1501088.0,
+      "skus": 543,
+      "combinaciones": 543
+    }
+  ],
+  "registros_por_combinacion": {
+    "p0": 1,
+    "p5": 1,
+    "p10": 1,
+    "p25": 3,
+    "p50": 15,
+    "p75": 62,
+    "p90": 96,
+    "p95": 104,
+    "p100": 108
+  },
+  "supervivencia_historial": [
+    {
+      "meses_con_venta_>=": 12,
+      "combinaciones": 2399,
+      "porcentaje": 54.4
+    },
+    {
+      "meses_con_venta_>=": 24,
+      "combinaciones": 1899,
+      "porcentaje": 43.1
+    },
+    {
+      "meses_con_venta_>=": 36,
+      "combinaciones": 1609,
+      "porcentaje": 36.5
+    },
+    {
+      "meses_con_venta_>=": 48,
+      "combinaciones": 1390,
+      "porcentaje": 31.5
+    },
+    {
+      "meses_con_venta_>=": 60,
+      "combinaciones": 1149,
+      "porcentaje": 26.1
+    },
+    {
+      "meses_con_venta_>=": 72,
+      "combinaciones": 920,
+      "porcentaje": 20.9
+    },
+    {
+      "meses_con_venta_>=": 84,
+      "combinaciones": 719,
+      "porcentaje": 16.3
+    },
+    {
+      "meses_con_venta_>=": 96,
+      "combinaciones": 472,
+      "porcentaje": 10.7
+    },
+    {
+      "meses_con_venta_>=": 108,
+      "combinaciones": 38,
+      "porcentaje": 0.9
+    }
+  ],
+  "volumen_por_combinacion": {
+    "p0": 0.1,
+    "p5": 1.0,
+    "p25": 19.0,
+    "p50": 252.7,
+    "p75": 1852.4,
+    "p95": 14404.0,
+    "p100": 890852.0
+  },
+  "panel_series": 4406,
+  "panel_filas": 324101,
+  "proporcion_ceros": {
+    "p0": 0.0,
+    "p25": 0.25,
+    "p50": 0.667,
+    "p75": 0.926,
+    "p90": 0.972,
+    "p95": 0.981,
+    "p100": 0.99
+  },
+  "series_intermitentes_adi_1_32": 3326
+}

@@ -1,0 +1,1090 @@
+{
+ "fuentes": 62,
+ "campos_citation": 183,
+ "citas_sin_fuente": [],
+ "fuentes_no_citadas": [
+  "Bgb12",
+  "BoT75",
+  "Chl18",
+  "Com00",
+  "Has09",
+  "Ley92",
+  "Lun20",
+  "Org13",
+  "Tay18"
+ ],
+ "enlaces_probados": 110,
+ "enlaces_con_problema": [
+  {
+   "fuente": "Aki19",
+   "titulo": "Optuna: A next-generation hyperparameter optimization framework",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/3292500.3330701",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/3292500.3330701"
+  },
+  {
+   "fuente": "Bat69",
+   "titulo": "The combination of forecasts",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/jors.1969.103",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1969.103"
+  },
+  {
+   "fuente": "BoT75",
+   "titulo": "Intervention analysis with applications to economic and environmental ",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1080/01621459.1975.10480264",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/01621459.1975.10480264"
+  },
+  {
+   "fuente": "Boy21",
+   "titulo": "Intermittent demand forecasting: Context, methods and applications",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1002/9781119135289",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119135289"
+  },
+  {
+   "fuente": "Che16",
+   "titulo": "XGBoost: A scalable tree boosting system",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/2939672.2939785",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2939672.2939785"
+  },
+  {
+   "fuente": "Cro72",
+   "titulo": "Forecasting and stock control for intermittent demands",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/jors.1972.50",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1972.50"
+  },
+  {
+   "fuente": "Gam14",
+   "titulo": "A survey on concept drift adaptation",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/2523813",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2523813"
+  },
+  {
+   "fuente": "Gil10",
+   "titulo": "The business forecasting deal: Exposing myths, eliminating bad practic",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1002/9781119199885",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119199885"
+  },
+  {
+   "fuente": "SBC05",
+   "titulo": "On the categorization of demand patterns",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/palgrave.jors.2601841",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/palgrave.jors.2601841"
+  },
+  {
+   "fuente": "Tay18",
+   "titulo": "Forecasting at scale",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1080/00031305.2017.1380080",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/00031305.2017.1380080"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1002/9781119135289",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119135289"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1002/9781119199885",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119199885"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/jors.1969.103",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1969.103"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/jors.1972.50",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1972.50"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/palgrave.jors.2601841",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/palgrave.jors.2601841"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1080/00031305.2017.1380080",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/00031305.2017.1380080"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1080/01621459.1975.10480264",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/01621459.1975.10480264"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/2523813",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2523813"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/2939672.2939785",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2939672.2939785"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/3292500.3330701",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/3292500.3330701"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1201/9781003399599",
+   "codigo": 503,
+   "destino": "https://doi.org/10.1201/9781003399599"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1201/9781315374406",
+   "codigo": 503,
+   "destino": "https://doi.org/10.1201/9781315374406"
+  }
+ ],
+ "fuentes_sin_doi_ni_url": [
+  "Chl18",
+  "Cho19",
+  "DAM17",
+  "Est09",
+  "Her14",
+  "Hur10",
+  "Ley11",
+  "Ley92",
+  "New21",
+  "Org13",
+  "Pow02"
+ ],
+ "detalle": [
+  {
+   "fuente": "Aki19",
+   "titulo": "Optuna: A next-generation hyperparameter optimization framework",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/3292500.3330701",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/3292500.3330701"
+  },
+  {
+   "fuente": "Ans24",
+   "titulo": "Chronos: Learning the language of time series",
+   "tipo": "url",
+   "enlace": "https://openreview.net/forum?id=gerNCVqqtR",
+   "codigo": 200,
+   "destino": "https://openreview.net/challenge?redirect=%2Fforum%3Fid%3DgerNCVqqtR"
+  },
+  {
+   "fuente": "Bat69",
+   "titulo": "The combination of forecasts",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/jors.1969.103",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1969.103"
+  },
+  {
+   "fuente": "Bba11",
+   "titulo": "Algorithms for hyper-parameter optimization",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2011/hash/86e8f7ab32cfd12577bc2619bc635690-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2011/hash/86e8f7ab32cfd12577bc2619bc635690-Abstract.html"
+  },
+  {
+   "fuente": "Ber12",
+   "titulo": "On the use of cross-validation for time series predictor evaluation",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ins.2011.12.028",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0020025511006773"
+  },
+  {
+   "fuente": "Bgb12",
+   "titulo": "Random search for hyper-parameter optimization",
+   "tipo": "url",
+   "enlace": "https://www.jmlr.org/papers/v13/bergstra12a.html",
+   "codigo": 200,
+   "destino": "https://www.jmlr.org/papers/v13/bergstra12a.html"
+  },
+  {
+   "fuente": "BoT75",
+   "titulo": "Intervention analysis with applications to economic and environmental ",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1080/01621459.1975.10480264",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/01621459.1975.10480264"
+  },
+  {
+   "fuente": "Boy21",
+   "titulo": "Intermittent demand forecasting: Context, methods and applications",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1002/9781119135289",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119135289"
+  },
+  {
+   "fuente": "Cas24",
+   "titulo": "Pronóstico de ventas a corto plazo en el sector de consumo masivo a tr",
+   "tipo": "url",
+   "enlace": "https://hdl.handle.net/1992/73287",
+   "codigo": 200,
+   "destino": "https://repositorio.uniandes.edu.co/challenge?next=%2Fhandle%2F1992%2F73287"
+  },
+  {
+   "fuente": "Cha23",
+   "titulo": "NHITS: Neural hierarchical interpolation for time series forecasting",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1609/aaai.v37i6.25854",
+   "codigo": 200,
+   "destino": "https://ojs.aaai.org/index.php/AAAI/article/view/25854"
+  },
+  {
+   "fuente": "Che16",
+   "titulo": "XGBoost: A scalable tree boosting system",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/2939672.2939785",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2939672.2939785"
+  },
+  {
+   "fuente": "Cle89",
+   "titulo": "Combining forecasts: A review and annotated bibliography",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/0169-2070(89)90012-5",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/0169207089900125"
+  },
+  {
+   "fuente": "Com00",
+   "titulo": "Decisión 486: Régimen común sobre propiedad industrial",
+   "tipo": "url",
+   "enlace": "https://www.wipo.int/wipolex/es/legislation/details/9451",
+   "codigo": 200,
+   "destino": "https://www.wipo.int/wipolex/es/legislation/details/9451"
+  },
+  {
+   "fuente": "Cro72",
+   "titulo": "Forecasting and stock control for intermittent demands",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/jors.1972.50",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1972.50"
+  },
+  {
+   "fuente": "Dav13",
+   "titulo": "Measuring forecasting accuracy: The case of judgmental adjustments to ",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2012.09.002",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207012001161"
+  },
+  {
+   "fuente": "Dem06",
+   "titulo": "Statistical comparisons of classifiers over multiple data sets",
+   "tipo": "url",
+   "enlace": "https://www.jmlr.org/papers/v7/demsar06a.html",
+   "codigo": 200,
+   "destino": "https://www.jmlr.org/papers/v7/demsar06a.html"
+  },
+  {
+   "fuente": "Fil09",
+   "titulo": "Effective forecasting and judgmental adjustments: An empirical evaluat",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2008.11.010",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207008001362"
+  },
+  {
+   "fuente": "Gam14",
+   "titulo": "A survey on concept drift adaptation",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1145/2523813",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2523813"
+  },
+  {
+   "fuente": "Gil10",
+   "titulo": "The business forecasting deal: Exposing myths, eliminating bad practic",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1002/9781119199885",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119199885"
+  },
+  {
+   "fuente": "Has09",
+   "titulo": "The elements of statistical learning: Data mining, inference, and pred",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1007/978-0-387-84858-7",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-0-387-84858-7?error=cookies_not_supported&code=4ae5ba0a-5e62-4a19-a0a2-cdbc6d"
+  },
+  {
+   "fuente": "Hub20",
+   "titulo": "Daily retail demand forecasting using machine learning with emphasis o",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2020.02.005",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207020300224"
+  },
+  {
+   "fuente": "HyA18",
+   "titulo": "Forecasting: Principles and practice",
+   "tipo": "url",
+   "enlace": "https://otexts.com/fpp2/",
+   "codigo": 200,
+   "destino": "https://otexts.com/fpp2/"
+  },
+  {
+   "fuente": "HyK06",
+   "titulo": "Another look at measures of forecast accuracy",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2006.03.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207006000239"
+  },
+  {
+   "fuente": "Hyn02",
+   "titulo": "A state space framework for automatic forecasting using exponential sm",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/S0169-2070(01)00110-8",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207001001108"
+  },
+  {
+   "fuente": "Hyn08",
+   "titulo": "Forecasting with exponential smoothing: The state space approach",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1007/978-3-540-71918-2",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-3-540-71918-2?error=cookies_not_supported&code=1a5213d8-5fac-46e0-9e56-185288"
+  },
+  {
+   "fuente": "ISO22",
+   "titulo": "Information security, cybersecurity and privacy protection: Informatio",
+   "tipo": "url",
+   "enlace": "https://www.iso.org/standard/27001",
+   "codigo": 200,
+   "destino": "https://www.iso.org/standard/27001"
+  },
+  {
+   "fuente": "Ke17",
+   "titulo": "LightGBM: A highly efficient gradient boosting decision tree",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html"
+  },
+  {
+   "fuente": "Kol16",
+   "titulo": "Evaluating predictive count data distributions in retail sales forecas",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2015.12.004",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207016000315"
+  },
+  {
+   "fuente": "Kre23",
+   "titulo": "Machine learning operations (MLOps): Overview, definition, and archite",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1109/ACCESS.2023.3262138",
+   "codigo": 202,
+   "destino": "https://ieeexplore.ieee.org/document/10081336/"
+  },
+  {
+   "fuente": "Kru95",
+   "titulo": "The 4+1 view model of architecture",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1109/52.469759",
+   "codigo": 202,
+   "destino": "https://ieeexplore.ieee.org/document/469759/"
+  },
+  {
+   "fuente": "Kuh13",
+   "titulo": "Applied predictive modeling",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1007/978-1-4614-6849-3",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-1-4614-6849-3?error=cookies_not_supported&code=55cbd6db-c13b-45a4-a9b7-55d67b"
+  },
+  {
+   "fuente": "Lim21",
+   "titulo": "Temporal Fusion Transformers for interpretable multi-horizon time seri",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.03.012",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021000637"
+  },
+  {
+   "fuente": "Lun20",
+   "titulo": "From local explanations to global understanding with explainable AI fo",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1038/s42256-019-0138-9",
+   "codigo": 200,
+   "destino": "https://www.nature.com/articles/s42256-019-0138-9?error=cookies_not_supported&code=9b033ea2-aac5-49ff-8bba-e577d5350e8b"
+  },
+  {
+   "fuente": "Mac23",
+   "titulo": "Aplicación de modelos de Machine Learning para la planificación de la ",
+   "tipo": "url",
+   "enlace": "https://hdl.handle.net/20.500.12640/3891",
+   "codigo": 200,
+   "destino": "https://repositorio.esan.edu.pe/handle/20.500.12640/3891"
+  },
+  {
+   "fuente": "Mak18",
+   "titulo": "Statistical and machine learning forecasting methods: Concerns and way",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1371/journal.pone.0194889",
+   "codigo": 200,
+   "destino": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0194889"
+  },
+  {
+   "fuente": "Mak20",
+   "titulo": "The M4 Competition: 100,000 time series and 61 forecasting methods",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2019.04.014",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207019301128"
+  },
+  {
+   "fuente": "Mak22",
+   "titulo": "M5 accuracy competition: Results, findings, and conclusions",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.11.013",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021001874"
+  },
+  {
+   "fuente": "Mon21",
+   "titulo": "Principles and algorithms for forecasting groups of time series: Local",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.03.004",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021000558"
+  },
+  {
+   "fuente": "Pet22",
+   "titulo": "Forecasting: Theory and practice",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.11.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021001758"
+  },
+  {
+   "fuente": "SBC05",
+   "titulo": "On the categorization of demand patterns",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1057/palgrave.jors.2601841",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/palgrave.jors.2601841"
+  },
+  {
+   "fuente": "Sal20",
+   "titulo": "DeepAR: Probabilistic forecasting with autoregressive recurrent networ",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2019.07.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207019301888"
+  },
+  {
+   "fuente": "Scu15",
+   "titulo": "Hidden technical debt in machine learning systems",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+  },
+  {
+   "fuente": "Spi22",
+   "titulo": "Comparison of statistical and machine learning methods for daily SKU d",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1007/s12351-020-00605-2",
+   "codigo": 200,
+   "destino": "https://link.springer.com/article/10.1007/s12351-020-00605-2?error=cookies_not_supported&code=9b7f69f4-7040-4aa6-a16b-8a"
+  },
+  {
+   "fuente": "Syn01",
+   "titulo": "On the bias of intermittent demand estimates",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/S0925-5273(00)00143-2",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0925527300001432"
+  },
+  {
+   "fuente": "Syn05",
+   "titulo": "The accuracy of intermittent demand estimates",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2004.10.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207004000792"
+  },
+  {
+   "fuente": "Tas00",
+   "titulo": "Out-of-sample tests of forecasting accuracy: An analysis and review",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/S0169-2070(00)00065-0",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207000000650"
+  },
+  {
+   "fuente": "Tay18",
+   "titulo": "Forecasting at scale",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1080/00031305.2017.1380080",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/00031305.2017.1380080"
+  },
+  {
+   "fuente": "Teu11",
+   "titulo": "Intermittent demand: Linking forecasting to inventory obsolescence",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/j.ejor.2011.05.018",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0377221711004437"
+  },
+  {
+   "fuente": "Tim06",
+   "titulo": "Forecast combinations",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1016/S1574-0706(05)01004-9",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S1574070605010049"
+  },
+  {
+   "fuente": "Val19",
+   "titulo": "Estimación de la demanda de productos perecibles en un supermercado [M",
+   "tipo": "url",
+   "enlace": "https://repositorio.uchile.cl/handle/2250/173464",
+   "codigo": 200,
+   "destino": "https://repositorio.uchile.cl/handle/2250/173464"
+  },
+  {
+   "fuente": "Zen23",
+   "titulo": "Are transformers effective for time series forecasting?",
+   "tipo": "doi",
+   "enlace": "https://doi.org/10.1609/aaai.v37i9.26317",
+   "codigo": 200,
+   "destino": "https://ojs.aaai.org/index.php/AAAI/article/view/26317"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1002/9781119135289",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119135289"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1002/9781119199885",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1002/9781119199885"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1007/978-0-387-84858-7",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-0-387-84858-7?error=cookies_not_supported&code=cf0fbe4d-606a-431d-ba65-afd31d"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1007/978-1-4614-6849-3",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-1-4614-6849-3?error=cookies_not_supported&code=47fd6bec-c44d-49bc-847f-801063"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1007/978-3-540-71918-2",
+   "codigo": 200,
+   "destino": "https://link.springer.com/book/10.1007/978-3-540-71918-2?error=cookies_not_supported&code=4fbd2791-c54a-4abe-9f8c-eb86e2"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1007/s12351-020-00605-2",
+   "codigo": 200,
+   "destino": "https://link.springer.com/article/10.1007/s12351-020-00605-2?error=cookies_not_supported&code=7d853514-23c1-4345-98ba-d1"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/0169-2070(89)90012-5",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/0169207089900125"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/S0169-2070(00)00057-1",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207000000571"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/S0169-2070(00)00065-0",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207000000650"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/S0169-2070(01)00110-8",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207001001108"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/S0925-5273(00)00143-2",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0925527300001432"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/S1574-0706(05)01004-9",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S1574070605010049"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ejor.2011.05.018",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0377221711004437"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2004.10.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207004000792"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2006.03.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207006000239"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2008.11.010",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207008001362"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2012.09.002",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207012001161"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2015.12.004",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207016000315"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2019.04.014",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207019301128"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2019.07.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207019301888"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2020.02.005",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207020300224"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.03.004",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021000558"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.03.012",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021000637"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.11.001",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021001758"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ijforecast.2021.11.013",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0169207021001874"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1016/j.ins.2011.12.028",
+   "codigo": 200,
+   "destino": "https://linkinghub.elsevier.com/retrieve/pii/S0020025511006773"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1038/s42256-019-0138-9",
+   "codigo": 200,
+   "destino": "https://www.nature.com/articles/s42256-019-0138-9?error=cookies_not_supported&code=e7223113-87eb-4017-8125-aaa5ecc92f07"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/jors.1969.103",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1969.103"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/jors.1972.50",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/jors.1972.50"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1057/palgrave.jors.2601841",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1057/palgrave.jors.2601841"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1080/00031305.2017.1380080",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/00031305.2017.1380080"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1080/01621459.1975.10480264",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1080/01621459.1975.10480264"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1109/52.469759",
+   "codigo": 202,
+   "destino": "https://ieeexplore.ieee.org/document/469759/"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1109/ACCESS.2023.3262138",
+   "codigo": 202,
+   "destino": "https://ieeexplore.ieee.org/document/10081336/"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/2523813",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2523813"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/2939672.2939785",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/2939672.2939785"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1145/3292500.3330701",
+   "codigo": 403,
+   "destino": "https://doi.org/10.1145/3292500.3330701"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1201/9781003399599",
+   "codigo": 503,
+   "destino": "https://doi.org/10.1201/9781003399599"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1201/9781315374406",
+   "codigo": 503,
+   "destino": "https://doi.org/10.1201/9781315374406"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1371/journal.pone.0194889",
+   "codigo": 200,
+   "destino": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0194889"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1515/9783110671124",
+   "codigo": 202,
+   "destino": "https://www.degruyterbrill.com:443/document/doi/10.1515/9783110671124/html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1609/aaai.v37i6.25854",
+   "codigo": 200,
+   "destino": "https://ojs.aaai.org/index.php/AAAI/article/view/25854"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.1609/aaai.v37i9.26317",
+   "codigo": 200,
+   "destino": "https://ojs.aaai.org/index.php/AAAI/article/view/26317"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://doi.org/10.18637/jss.v027.i03",
+   "codigo": 200,
+   "destino": "https://www.jstatsoft.org/article/view/v027i03"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://hdl.handle.net/1992/73287",
+   "codigo": 200,
+   "destino": "https://repositorio.uniandes.edu.co/challenge?next=%2Fhandle%2F1992%2F73287"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://hdl.handle.net/20.500.12640/3891",
+   "codigo": 200,
+   "destino": "https://repositorio.esan.edu.pe/handle/20.500.12640/3891"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://learn.mit.edu/courses/course-v1:MITxT+CTL.SC1x",
+   "codigo": 200,
+   "destino": "https://learn.mit.edu/courses/course-v1:MITxT+CTL.SC1x"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://openreview.net/forum?id=gerNCVqqtR",
+   "codigo": 200,
+   "destino": "https://openreview.net/challenge?redirect=%2Fforum%3Fid%3DgerNCVqqtR"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://otexts.com/fpp2/",
+   "codigo": 200,
+   "destino": "https://otexts.com/fpp2/"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://otexts.com/fpp3/",
+   "codigo": 200,
+   "destino": "https://otexts.com/fpp3/"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2011/hash/86e8f7ab32cfd12577bc2619bc635690-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2011/hash/86e8f7ab32cfd12577bc2619bc635690-Abstract.html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+   "codigo": 200,
+   "destino": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://public.dhe.ibm.com/software/analytics/spss/documentation/modeler/14.2/es/CRISP-DM.pdf",
+   "codigo": 200,
+   "destino": "https://public.dhe.ibm.com/software/analytics/spss/documentation/modeler/14.2/es/CRISP-DM.pdf"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://repositorio.uchile.cl/handle/2250/173464",
+   "codigo": 200,
+   "destino": "https://repositorio.uchile.cl/handle/2250/173464"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://www.iso.org/standard/27001",
+   "codigo": 200,
+   "destino": "https://www.iso.org/standard/27001"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://www.jmlr.org/papers/v13/bergstra12a.html",
+   "codigo": 200,
+   "destino": "https://www.jmlr.org/papers/v13/bergstra12a.html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://www.jmlr.org/papers/v7/demsar06a.html",
+   "codigo": 200,
+   "destino": "https://www.jmlr.org/papers/v7/demsar06a.html"
+  },
+  {
+   "fuente": "(bibliografía de apoyo)",
+   "titulo": "",
+   "tipo": "url",
+   "enlace": "https://www.wipo.int/wipolex/es/legislation/details/9451",
+   "codigo": 200,
+   "destino": "https://www.wipo.int/wipolex/es/legislation/details/9451"
+  }
+ ]
+}

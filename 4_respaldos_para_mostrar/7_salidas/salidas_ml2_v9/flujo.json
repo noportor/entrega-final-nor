@@ -1,0 +1,874 @@
+{
+  "version": 1,
+  "corrida": {
+    "directorio": "salidas_ml2_v9",
+    "generado_en": "2026-10-19T21:31:35+00:00",
+    "config_sha256": "2550c63bf5634b30f580c47ca8d29ca7ed06f990fb6c8898a3366d91177ddec1",
+    "datos_sha256": "5d1190ff295e769374ae6cbb51a3f300eddd31e62834789ffd099ad70d2f83aa",
+    "commit": "472b891eca2998e3ec55a8a49511032be388bf96",
+    "anulaciones": []
+  },
+  "etapas": [
+    {
+      "id": "carga",
+      "titulo": "Carga del archivo crudo",
+      "rf": "RF-1",
+      "entrada": {
+        "filas_leidas": 204096
+      },
+      "salida": {
+        "filas_validas": 204096
+      },
+      "decisiones": {
+        "mapeo_columnas": {
+          "fecha": "fecha",
+          "sku": "sku",
+          "canal": "canal",
+          "regional": "regional",
+          "cantidad": "cantidad",
+          "categoria": "categoria",
+          "precio": "precio",
+          "perdidas": "perdidas"
+        },
+        "separador": ",",
+        "codificacion": "utf-8",
+        "mapeo_categoria": {
+          "archivo": "mapeo_categoria.csv",
+          "sha256": "8ce2a16f975cfb4a01687fb42a4a7548f8c90fbd6c7f44b90a7a675d328fa294"
+        }
+      },
+      "conteos": {
+        "fechas_no_convertidas": 0,
+        "cantidades_no_convertidas": 0,
+        "filas_con_clave_nula": 0,
+        "filas_descartadas": 0
+      },
+      "artefactos": [],
+      "notas": [
+        "SHA-256 del archivo crudo: 5d1190ff295e769374ae6cbb51a3f300eddd31e62834789ffd099ad70d2f83aa"
+      ],
+      "duracion_s": 1.2
+    },
+    {
+      "id": "poblacion",
+      "titulo": "Población objetivo del estudio",
+      "rf": null,
+      "entrada": {
+        "filas_validas": 204096
+      },
+      "salida": {
+        "filas_en_poblacion": 147701
+      },
+      "decisiones": {
+        "categorias": [
+          "Categoría K",
+          "Categoría J",
+          "Categoría I",
+          "Categoría E",
+          "Categoría D"
+        ]
+      },
+      "conteos": {
+        "filas_fuera": 56395,
+        "series_fuera": 1524,
+        "skus_fuera": 286,
+        "filas_por_categoria_excluida": {
+          "Categoría A": 13733,
+          "Categoría G": 11753,
+          "Categoría H": 9964,
+          "Categoría C": 9008,
+          "Categoría F": 4793,
+          "Categoría L": 4708,
+          "Categoría B": 2436
+        }
+      },
+      "artefactos": [],
+      "notas": [
+        "Decisión de DISEÑO, no criterio de inclusión: el estudio se acota a un grupo representativo de categorías con comportamiento comercial conocido (dos regímenes verificados: recurrente y estacional de campaña). Analizar el portafolio completo agrega ruido de series sin patrón interpretable. La ablación poblacion.categorias=[] vuelve al portafolio completo."
+      ],
+      "duracion_s": 0.07
+    },
+    {
+      "id": "series",
+      "titulo": "Construcción de las series mensuales",
+      "rf": "RF-3",
+      "entrada": {
+        "filas_validas": 204096
+      },
+      "salida": {
+        "series": 4406,
+        "filas_panel": 255418
+      },
+      "decisiones": {
+        "devoluciones": "descartar",
+        "rellenar_ceros_intermedios": true,
+        "extender_vida_hasta_fin_periodo": false
+      },
+      "conteos": {
+        "filas_negativas": 0,
+        "unidades_negativas": 0.0,
+        "filas_fuera_de_periodo": 0,
+        "combinaciones_totales": 4406,
+        "sin_venta_positiva": 0,
+        "meses_rellenados_con_cero": 108003,
+        "meses_extendidos_con_cero": 0
+      },
+      "artefactos": [],
+      "notas": [
+        "Rango del panel: 2017-04 .. 2026-03"
+      ],
+      "duracion_s": 0.67
+    },
+    {
+      "id": "inspeccion",
+      "titulo": "Inspección de los datos (CRISP-DM)",
+      "rf": "RF-2",
+      "entrada": {},
+      "salida": {},
+      "decisiones": {},
+      "conteos": {
+        "skus": 684,
+        "canales": 2,
+        "regionales": 5,
+        "combinaciones": 4406,
+        "duplicados": 572,
+        "series_intermitentes_adi_1_32": 2599
+      },
+      "artefactos": [
+        "inspeccion_datos.txt",
+        "inspeccion.json"
+      ],
+      "notas": [],
+      "duracion_s": 0.92
+    },
+    {
+      "id": "evento_exogeno",
+      "titulo": "Tratamiento del evento exógeno (ajuste)",
+      "rf": null,
+      "entrada": {
+        "observaciones_en_ventana": 32229
+      },
+      "salida": {
+        "observaciones_reemplazadas": 24194
+      },
+      "decisiones": {
+        "evento": "covid19",
+        "ventana": "2020-03..2021-02",
+        "tratamiento": "copiar_gestion_previa"
+      },
+      "conteos": {
+        "series_afectadas": 2486,
+        "sin_historia_previa": 8035
+      },
+      "artefactos": [],
+      "notas": [
+        "El tratamiento reproduce la práctica documentada de la empresa durante el evento (copiar la historia de la gestión pasada). La serie corregida existe SOLO para el ajuste: la evaluación compara siempre contra la serie observada, y la ventana cae íntegra en entrenamiento (lo valida la configuración)."
+      ],
+      "duracion_s": 0.11
+    },
+    {
+      "id": "particion_cohorte",
+      "titulo": "Partición temporal y criterios de inclusión",
+      "rf": "RF-4",
+      "entrada": {
+        "series": 4406
+      },
+      "salida": {
+        "series_muestra_N": 1668
+      },
+      "decisiones": {
+        "fin_entrenamiento": "2024-03",
+        "fin_validacion": "2025-03",
+        "fin_prueba": "2026-03",
+        "umbrales_inclusion": {
+          "historial_minimo_meses": 36,
+          "proporcion_maxima_ceros": 0.7,
+          "volumen_minimo_unidades": 50.0
+        },
+        "interruptores_cohorte": {
+          "inclusion.exigir_presencia_prueba": true,
+          "series.extender_vida_hasta_fin_periodo": false,
+          "inclusion.estado_al_origen": "todas"
+        }
+      },
+      "conteos": {
+        "cascada": [
+          {
+            "paso": "0. series construidas",
+            "series": 4406,
+            "excluidas": 0
+          },
+          {
+            "paso": "1. con historia en entrenamiento",
+            "series": 3937,
+            "excluidas": 469
+          },
+          {
+            "paso": "2. historial >= 36 meses",
+            "series": 2774,
+            "excluidas": 1163
+          },
+          {
+            "paso": "3. proporción de meses en cero <= 0.70",
+            "series": 1978,
+            "excluidas": 796
+          },
+          {
+            "paso": "4. volumen acumulado >= 50 unidades",
+            "series": 1963,
+            "excluidas": 15
+          },
+          {
+            "paso": "5. presente en validación",
+            "series": 1812,
+            "excluidas": 151
+          },
+          {
+            "paso": "6. presente en prueba",
+            "series": 1668,
+            "excluidas": 144
+          }
+        ],
+        "excluidas_aislado": {
+          "historial < 36 meses": 1632,
+          "ceros > 0.70": 1672,
+          "volumen < 50 unidades": 1767
+        },
+        "estados_por_inclusion": [
+          {
+            "estado": "activa",
+            "incluida": false,
+            "series": 860
+          },
+          {
+            "estado": "activa",
+            "incluida": true,
+            "series": 1633
+          },
+          {
+            "estado": "descontinuada",
+            "incluida": false,
+            "series": 1026
+          },
+          {
+            "estado": "descontinuada",
+            "incluida": true,
+            "series": 18
+          },
+          {
+            "estado": "dormida",
+            "incluida": false,
+            "series": 210
+          },
+          {
+            "estado": "dormida",
+            "incluida": true,
+            "series": 17
+          },
+          {
+            "estado": "insuficiente",
+            "incluida": false,
+            "series": 469
+          },
+          {
+            "estado": "nueva",
+            "incluida": false,
+            "series": 81
+          },
+          {
+            "estado": "reciente",
+            "incluida": false,
+            "series": 92
+          }
+        ]
+      },
+      "artefactos": [
+        "cohorte_flujo.csv",
+        "particion.csv",
+        "fuera_de_muestra.csv",
+        "sensibilidad_umbrales.csv"
+      ],
+      "notas": [
+        "Los criterios se miden SOLO sobre el bloque de entrenamiento.",
+        "Interruptores de cohorte: inclusion.exigir_presencia_prueba = True, series.extender_vida_hasta_fin_periodo = False, inclusion.estado_al_origen = todas (los de la corrida publicada).",
+        "fuera_de_muestra.csv clasifica TODAS las series (estado de actividad al cierre de entrenamiento, molde del sistema en producción) con el criterio que las excluyó y su peso valorizado: ninguna serie sale del estudio en silencio.",
+        "sensibilidad_umbrales.csv: el N y la cobertura valorizada bajo umbrales alternativos — la muestra declarada no es un punto arbitrario."
+      ],
+      "duracion_s": 1.3
+    },
+    {
+      "id": "features",
+      "titulo": "Variables derivadas, sin fuga temporal",
+      "rf": "RF-5",
+      "entrada": {
+        "filas_panel": 159023
+      },
+      "salida": {
+        "filas": 159023,
+        "features": 33
+      },
+      "decisiones": {
+        "rezagos": [
+          1,
+          2,
+          3,
+          6,
+          12
+        ],
+        "ventanas_moviles": [
+          3,
+          6,
+          12
+        ],
+        "calendario": {
+          "mes": true,
+          "anio": true,
+          "tendencia": true
+        },
+        "categoricas": [
+          "sku",
+          "canal",
+          "regional",
+          "categoria"
+        ],
+        "v2": {
+          "categoria": true,
+          "precio": true,
+          "perdidas": true,
+          "quiebres": true,
+          "tipo_cambio": true,
+          "derivadas": true
+        },
+        "tc_regimen_fijo": 6.96
+      },
+      "conteos": {
+        "series_con_precio": 4406,
+        "celdas_con_perdidas": 52357,
+        "filas_quiebres": 220889,
+        "meses_tc_fuente": 48,
+        "meses_tc_regimen_fijo": 60,
+        "meses_tc_cola_arrastrada": 0
+      },
+      "artefactos": [],
+      "notas": [
+        "Toda feature usa solo información ANTERIOR al mes que predice (RN-3); la garantía es tests/test_features.py. Las exógenas ausentes producen columnas NaN («sin dato» declarado), nunca ceros. En el multihorizonte, las exógenas futuras valen su último valor conocido al origen (persistencia declarada)."
+      ],
+      "duracion_s": 37.85
+    },
+    {
+      "id": "modelos",
+      "titulo": "Ajuste y optimización de los modelos",
+      "rf": "RF-6",
+      "entrada": {
+        "series": 1668,
+        "meses": 108
+      },
+      "salida": {
+        "modelos_ajustados": 15
+      },
+      "decisiones": {
+        "modelos_activos": [
+          "naive_m1",
+          "naive_m1_gf",
+          "ma_2",
+          "ma_2_gf",
+          "ma_12",
+          "ma_12_gf",
+          "exp_smooth_opt",
+          "holt_winters",
+          "croston",
+          "lightgbm",
+          "lightgbm_directo",
+          "dlinear",
+          "nhits",
+          "tft",
+          "chronos",
+          "mezcla_prom",
+          "mezcla_pond",
+          "mezcla_h",
+          "mezcla_conmutada"
+        ],
+        "exp_smooth": {
+          "alfa_min": 0.05,
+          "alfa_max": 0.95,
+          "alfa_paso": 0.05
+        },
+        "holt_winters": {
+          "periodo_estacional": 12,
+          "alfa_rejilla": [
+            0.1,
+            0.2,
+            0.3,
+            0.5,
+            0.7,
+            0.9
+          ],
+          "beta_rejilla": [
+            0.0,
+            0.05,
+            0.1,
+            0.2
+          ],
+          "gamma_rejilla": [
+            0.0,
+            0.05,
+            0.1,
+            0.2
+          ]
+        },
+        "croston": {
+          "alfa_rejilla": [
+            0.05,
+            0.1,
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.35,
+            0.4
+          ]
+        },
+        "lightgbm": {
+          "objective": "tweedie",
+          "tweedie_variance_power": 1.464977652919245,
+          "metric": "tweedie",
+          "learning_rate": 0.05310654167584386,
+          "num_leaves": 137,
+          "min_data_in_leaf": 61,
+          "feature_fraction": 0.5778124801487501,
+          "bagging_fraction": 0.870285300844084,
+          "bagging_freq": 1,
+          "lambda_l2": 24.468189902436567,
+          "num_boost_round": 3000,
+          "early_stopping_rounds": 100,
+          "seed": 20260406,
+          "num_threads": 1,
+          "deterministic": true,
+          "force_row_wise": true,
+          "verbosity": -1
+        }
+      },
+      "conteos": {
+        "duracion_por_modelo_s": {
+          "naive_m1": 0.02,
+          "naive_m1_gf": 0.11,
+          "ma_2": 0.11,
+          "ma_2_gf": 0.19,
+          "ma_12": 0.09,
+          "ma_12_gf": 0.19,
+          "exp_smooth_opt": 0.17,
+          "holt_winters": 1.02,
+          "croston": 0.11,
+          "lightgbm": 10.62,
+          "lightgbm_directo": 102.58,
+          "dlinear": 66.02,
+          "nhits": 37.02,
+          "tft": 146.07,
+          "chronos": 29.09
+        },
+        "respaldos_en_validacion_y_prueba": {
+          "naive_m1": 0,
+          "naive_m1_gf": 0,
+          "ma_2": 0,
+          "ma_2_gf": 0,
+          "ma_12": 0,
+          "ma_12_gf": 0,
+          "exp_smooth_opt": 0,
+          "holt_winters": 0,
+          "croston": 0,
+          "lightgbm": 0,
+          "lightgbm_directo": 0,
+          "dlinear": 0,
+          "nhits": 0,
+          "tft": 0,
+          "chronos": 0
+        }
+      },
+      "artefactos": [
+        "parametros_por_serie.csv",
+        "lightgbm_importancias.csv"
+      ],
+      "notas": [
+        "Los parámetros se estiman SOLO con entrenamiento; validación la usa únicamente la parada temprana de LightGBM (RN-2)."
+      ],
+      "duracion_s": 393.48
+    },
+    {
+      "id": "mezclador",
+      "titulo": "Mezcladores: combinación con pesos de validación",
+      "rf": null,
+      "entrada": {},
+      "salida": {},
+      "decisiones": {
+        "candidatos": [
+          "lightgbm",
+          "chronos",
+          "exp_smooth_opt",
+          "holt_winters",
+          "tft"
+        ],
+        "mezcla_prom": "promedio simple del conjunto",
+        "mezcla_pond": "inverso del error compuesto (mae+|bias|) de validación, por serie; piso numérico relativo a la mediana de la serie",
+        "mezcla_h": "inverso de la D valorizada del abanico de validación, por candidato × horizonte; a un paso aplican los pesos de h=1 (cada mes evaluado es un pronóstico h=1)",
+        "mezcla_conmutada": "conmutación por régimen: (1−λ)·prom del conjunto curado + λ·prom del conjunto diverso; λ = rampa declarada sobre el sesgo valorizado móvil YA OBSERVADO del sistema base (causal por construcción)",
+        "congelados": "los pesos no se re-estiman en prueba ni en el multihorizonte (RN-2)"
+      },
+      "conteos": {},
+      "artefactos": [],
+      "notas": [],
+      "duracion_s": null
+    },
+    {
+      "id": "motor",
+      "titulo": "Motor de selección por serie",
+      "rf": "RF-6",
+      "entrada": {
+        "candidatos": 19
+      },
+      "salida": {
+        "series_con_eleccion": 1668
+      },
+      "decisiones": {
+        "regla": "mae_mas_bias (ventana multihorizonte)",
+        "ventana_de_decision": "validación multihorizonte h=1..12 desde el cierre de entrenamiento (RN-2; ablación pre-registrada)",
+        "seleccion": "multihorizonte"
+      },
+      "conteos": {
+        "reparto_de_elegidos": {
+          "chronos": 225,
+          "nhits": 196,
+          "lightgbm": 161,
+          "lightgbm_directo": 149,
+          "tft": 145,
+          "holt_winters": 131,
+          "dlinear": 119,
+          "ma_12_gf": 109,
+          "ma_2": 109,
+          "naive_m1": 85,
+          "ma_12": 67,
+          "exp_smooth_opt": 62,
+          "croston": 53,
+          "ma_2_gf": 29,
+          "naive_m1_gf": 28
+        },
+        "empates": 73,
+        "sin_candidato_valido": 0
+      },
+      "artefactos": [
+        "seleccion_motor.csv",
+        "series_y_predicciones.csv"
+      ],
+      "notas": [
+        "series_y_predicciones.csv: la realidad y los doce pronósticos a un paso, por serie y mes — toda la evidencia del protocolo principal, inspeccionable serie por serie (vista «Series» del visor y figura de casos)."
+      ],
+      "duracion_s": 483.98
+    },
+    {
+      "id": "unidad_analisis",
+      "titulo": "Unidad de análisis: evidencia de la serie elegida",
+      "rf": null,
+      "entrada": {
+        "skus": 610
+      },
+      "salida": {
+        "skus_multicombo": 570
+      },
+      "decisiones": {
+        "unidad": "SKU-canal-regional",
+        "estructura_medida_sobre": "bloque de entrenamiento, panel de ajuste",
+        "ventana_evento_excluida_de": "deriva y correlaciones — con la copia de gestión previa el interanual daba 0 exacto (pares fabricados); el régimen ADI-CV² sí usa el entrenamiento completo (la copia es demanda real del año previo)",
+        "contrafactual_evaluado_sobre": "validación, un paso, valorizado, máscara COMÚN a ambos enfoques (comparación pareada; exclusiones contadas) — prueba jamás",
+        "solape_minimo_correlacion_meses": 24,
+        "umbrales_adi_cv2": [
+          1.32,
+          0.49
+        ]
+      },
+      "conteos": {
+        "skus_totales": 610,
+        "skus_multicombo": 570,
+        "proporcion_multicombo": 0.9344262295081968,
+        "mediana_combos_en_multi": 7.0,
+        "deriva_participacion_pp_media": 17.657947906523095,
+        "pares_correlacion": 8358,
+        "correlacion_mediana": 0.23617147113944253,
+        "correlacion_yoy_mediana": 0.13176818492808573,
+        "proporcion_pares_bajo_05": 0.7493419478344101,
+        "skus_con_regimenes_mixtos": 375,
+        "skus_multi_clasificables": 509,
+        "skus_cohorte_multi": 335,
+        "skus_multiganador": 332,
+        "proporcion_multiganador": 0.991044776119403
+      },
+      "artefactos": [
+        "unidad_estructura_sku.csv",
+        "unidad_contrafactual.csv"
+      ],
+      "notas": [
+        "Tres patas: (1) la unidad la impone la decisión — demanda independiente por combinación y unidades NO agregables entre SKUs; (2) independencia estadística dentro del SKU (deriva, correlación, regímenes, ganadores distintos); (3) el mismo modelo repartiendo desde el SKU agregado no domina (contrafactual con participaciones rezagadas: sin fuga).",
+        "Declarables del contrafactual: las participaciones de meses tardíos de validación usan reales de meses de validación ANTERIORES — es el protocolo a un paso (solo información previa al mes predicho), no fuga. El costo unitario es el del último corte (posterior a validación); al aplicarse idéntico a ambos enfoques no puede favorecer a ninguno."
+      ],
+      "duracion_s": 3.37
+    },
+    {
+      "id": "metricas",
+      "titulo": "Métricas por serie y suite valorizada",
+      "rf": "RF-7",
+      "entrada": {
+        "modelos": 20
+      },
+      "salida": {
+        "series_evaluadas": 1668
+      },
+      "decisiones": {
+        "metricas_por_serie": [
+          "MAE",
+          "RMSE",
+          "MAPE",
+          "Bias",
+          "MASE",
+          "error compuesto (mae+|bias|)"
+        ],
+        "metrica_de_decision": "D = WMAPE_val + |Bias_val| (valorizada por costo)",
+        "resumen": "media y mediana, sobre la intersección de series"
+      },
+      "conteos": {
+        "series_sin_mape": {
+          "naive_m1": 0,
+          "naive_m1_gf": 0,
+          "ma_2": 0,
+          "ma_2_gf": 0,
+          "ma_12": 0,
+          "ma_12_gf": 0,
+          "exp_smooth_opt": 0,
+          "holt_winters": 0,
+          "croston": 0,
+          "lightgbm": 0,
+          "lightgbm_directo": 0,
+          "dlinear": 0,
+          "nhits": 0,
+          "tft": 0,
+          "chronos": 0,
+          "mezcla_prom": 0,
+          "mezcla_pond": 0,
+          "mezcla_h": 0,
+          "mezcla_conmutada": 0,
+          "motor": 0
+        },
+        "cobertura_de_costo": 0.9071,
+        "D_por_modelo_pct": {
+          "mezcla_pond": 74.0,
+          "chronos": 74.3,
+          "mezcla_h": 74.6,
+          "mezcla_prom": 74.9,
+          "mezcla_conmutada": 75.3,
+          "lightgbm_directo": 77.0,
+          "lightgbm": 77.0,
+          "exp_smooth_opt": 79.5,
+          "motor": 79.9,
+          "dlinear": 80.4,
+          "holt_winters": 83.5,
+          "ma_2": 84.9,
+          "ma_12": 85.4,
+          "naive_m1": 85.6,
+          "croston": 86.1,
+          "nhits": 92.3,
+          "naive_m1_gf": 96.4,
+          "ma_2_gf": 98.0,
+          "ma_12_gf": 100.0,
+          "tft": 106.1
+        }
+      },
+      "artefactos": [
+        "errores_por_serie.csv",
+        "resumen_metricas.csv",
+        "tabla8_resultados.csv",
+        "tabla_valorizada.csv",
+        "estratos_valorizados.csv"
+      ],
+      "notas": [
+        "estratos_valorizados.csv repite la suite D dentro de cada régimen ADI-CV² y de cada tipo de categoría (estacional = >50 % del valor de entrenamiento en nov-feb, regla derivada de los datos): la misma vara, partida donde la lectura importa.",
+        "Las unidades difieren entre SKUs: la única agregación con sentido físico entre productos es la valorizada (|error| × costo unitario). Los promedios en 'unidades' de la Tabla 8 son referenciales."
+      ],
+      "duracion_s": 2.6
+    },
+    {
+      "id": "explicacion",
+      "titulo": "Contribuciones TreeSHAP del modelo global y Pareto del valor",
+      "rf": "RF-7",
+      "entrada": {
+        "predicciones_explicadas": 18502,
+        "skus_en_pareto": 338
+      },
+      "salida": {
+        "features_explicadas": 33
+      },
+      "decisiones": {
+        "metodo": "TreeSHAP nativo de LightGBM (pred_contrib=True): descomposición aditiva EXACTA del puntaje crudo de cada predicción, sin dependencias nuevas",
+        "escala": "cruda del modelo; con objective=tweedie (tweedie: enlace logarítmico) valor base + suma de contribuciones = log(predicción); cada contribución c es un factor multiplicativo exp(c) sobre la predicción, no unidades",
+        "bloque_explicado": "prueba",
+        "umbral_pico": "participación mensual > 1.25/12 de la demanda valorizada de entrenamiento",
+        "meses_pico": [
+          1,
+          2,
+          12
+        ]
+      },
+      "conteos": {},
+      "artefactos": [
+        "contribuciones_shap.csv",
+        "pareto_valorizado.csv",
+        "error_por_mes.csv",
+        "error_por_temporada.csv"
+      ],
+      "notas": [
+        "La contribución media CON SIGNO en los meses de pico dice hacia dónde empuja cada variable cuando el pico ocurre; la absoluta, cuánto pesa. El Pareto por SKU es el fundamento empírico de la ponderación por costo de la métrica D."
+      ],
+      "duracion_s": 4.5
+    },
+    {
+      "id": "contraste",
+      "titulo": "Contraste estadístico de la hipótesis",
+      "rf": "RF-8",
+      "entrada": {
+        "bloques_completos": 1668
+      },
+      "salida": {},
+      "decisiones": {
+        "metrica_contraste": "error_compuesto_unidades",
+        "alfa": 0.05,
+        "alternativa": "less",
+        "esquema": "Wilcoxon pareado + Friedman con post hoc de Nemenyi (Demšar 2006)"
+      },
+      "conteos": {
+        "friedman_chi2": 3465.4424900423364,
+        "friedman_p": 0.0,
+        "kendall_w": 0.10934754796296657,
+        "comparaciones_wilcoxon": 12,
+        "tasa_acierto_motor": 0.09352517985611511
+      },
+      "artefactos": [
+        "pruebas_estadisticas.txt",
+        "matriz_contraste.csv",
+        "victorias_por_modelo.csv",
+        "rangos_friedman.csv",
+        "nemenyi.csv"
+      ],
+      "notas": [],
+      "duracion_s": 0.73
+    },
+    {
+      "id": "evaluacion_multihorizonte",
+      "titulo": "Evaluación multihorizonte (orígenes rodantes)",
+      "rf": "RF-7",
+      "entrada": {
+        "origenes": 12,
+        "modelos": 20
+      },
+      "salida": {
+        "observaciones": 2295420
+      },
+      "decisiones": {
+        "origenes": "rodantes",
+        "horizonte_maximo": 12,
+        "reentrenar_lightgbm": true,
+        "reentrenar_directo": true,
+        "reestimar_estadisticos": false,
+        "seleccion_motor": "congelada de validación (RN-2)",
+        "proyeccion": "recursiva, la mecánica de la operación mensual; Croston constante (sus estados solo se actualizan con demanda observada)"
+      },
+      "conteos": {
+        "respaldos_por_modelo": {
+          "chronos": 0,
+          "croston": 0,
+          "dlinear": 0,
+          "exp_smooth_opt": 0,
+          "holt_winters": 0,
+          "lightgbm": 0,
+          "lightgbm_directo": 0,
+          "ma_12": 0,
+          "ma_12_gf": 0,
+          "ma_2": 0,
+          "ma_2_gf": 0,
+          "naive_m1": 0,
+          "naive_m1_gf": 0,
+          "nhits": 0,
+          "tft": 0,
+          "motor": 0,
+          "mezcla_conmutada": 0,
+          "mezcla_h": 0,
+          "mezcla_pond": 0,
+          "mezcla_prom": 0
+        },
+        "reentrenos_lightgbm": 12,
+        "reestimaciones_estadisticas": 0,
+        "sin_pronostico": 0,
+        "D_global_pct": {
+          "chronos": 81.6,
+          "croston": 93.5,
+          "dlinear": 94.8,
+          "exp_smooth_opt": 103.8,
+          "holt_winters": 81.2,
+          "lightgbm": 71.9,
+          "lightgbm_directo": 84.0,
+          "ma_12": 94.6,
+          "ma_12_gf": 113.2,
+          "ma_2": 116.6,
+          "ma_2_gf": 134.3,
+          "mezcla_conmutada": 83.0,
+          "mezcla_h": 81.8,
+          "mezcla_pond": 82.6,
+          "mezcla_prom": 82.3,
+          "motor": 87.4,
+          "naive_m1": 120.5,
+          "naive_m1_gf": 158.0,
+          "nhits": 93.9,
+          "tft": 114.1
+        }
+      },
+      "artefactos": [
+        "multihorizonte_horizonte.csv",
+        "multihorizonte_origen.csv",
+        "multihorizonte_estratos.csv"
+      ],
+      "notas": [
+        "Protocolo SEPARADO del principal (RN-4): la Tabla 8 y el contraste siguen siendo a un paso; esta etapa mide quién sostiene el horizonte de planificación. El objetivo operativo supera el año; el histórico permite medir hasta h=12."
+      ],
+      "duracion_s": 3892.8
+    },
+    {
+      "id": "figuras",
+      "titulo": "Figuras del documento (catálogo F1..F12)",
+      "rf": "RF-9",
+      "entrada": {},
+      "salida": {},
+      "decisiones": {
+        "dpi": 300,
+        "escala_grises": true,
+        "catalogo": "F9 en scripts/figura_antes_despues.py; F10 en salidas_tuning/"
+      },
+      "conteos": {},
+      "artefactos": [
+        "figura01_perfil_categorias.png",
+        "figura02_volumen_gestiones.png",
+        "figura03_unidad_analisis.png",
+        "figura04_muestra_sensibilidad.png",
+        "figura05_linea_de_tiempo.png",
+        "figura06_origenes_rodantes.png",
+        "figura07_d_descompuesta.png",
+        "figura08_dispersion.png",
+        "figura11_horizonte.png",
+        "figura13_casos.png",
+        "figura12_diferencia_critica.png",
+        "figura14_contribuciones.png",
+        "figura15_pareto.png",
+        "figura16_error_por_mes.png",
+        "insumos_figuras.pkl"
+      ],
+      "notas": [
+        "insumos_figuras.pkl persiste los insumos del catálogo: `python main.py figuras` redibuja estos PNG en segundos sin re-correr el pipeline y re-sella sus hashes en el manifiesto."
+      ],
+      "duracion_s": 7.65
+    }
+  ]
+}

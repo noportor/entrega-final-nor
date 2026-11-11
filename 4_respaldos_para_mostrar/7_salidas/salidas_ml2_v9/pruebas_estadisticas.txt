@@ -1,0 +1,313 @@
+==============================================================================
+CONTRASTE ESTADÍSTICO DE LA HIPÓTESIS
+==============================================================================
+
+Métrica de contraste     : ERROR_COMPUESTO_UNIDADES por serie, bloque de prueba
+Unidad de análisis       : la serie SKU–canal–regional
+Bloques completos        : 1,668
+Nivel de significación   : 0.05
+Hipótesis alternativa    : el modelo propuesto tiene MENOS error (unilateral, 'less')
+
+
+------------------------------------------------------------------------------
+1. WILCOXON DE RANGOS CON SIGNO (pareado, unilateral)
+------------------------------------------------------------------------------
+
+Referencia metodológica: Demšar (2006) recomienda Wilcoxon para comparar
+dos modelos sobre múltiples conjuntos, por no asumir normalidad ni
+homogeneidad de varianzas.
+
+  mezcla_conmutada  vs  ma_12
+    Tamaño del efecto  r = -0.4057  (mediano)
+    Rango-biserial       = -0.4684  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,120 de 1,668 (67.1 %)
+    Series en contra     : 548   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -1.2587
+    Estadístico W        = 370,004.0   ·  Z = -16.5683
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1862, p = < 1e-16  (n = 1,668)
+
+  mezcla_conmutada  vs  naive_m1
+    Tamaño del efecto  r = -0.1690  (pequeño)
+    Rango-biserial       = -0.1951  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 999 de 1,668 (59.9 %)
+    Series en contra     : 669   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.7561
+    Estadístico W        = 560,214.0   ·  Z = -6.9003
+    p                    = 2.594e-12   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2128, p = < 1e-16  (n = 1,668)
+
+  mezcla_h  vs  ma_12
+    Tamaño del efecto  r = -0.3429  (mediano)
+    Rango-biserial       = -0.3959  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,078 de 1,668 (64.6 %)
+    Series en contra     : 590   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -1.0162
+    Estadístico W        = 420,465.0   ·  Z = -14.0035
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1967, p = < 1e-16  (n = 1,668)
+
+  mezcla_h  vs  naive_m1
+    Tamaño del efecto  r = -0.1312  (pequeño)
+    Rango-biserial       = -0.1515  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 973 de 1,668 (58.3 %)
+    Series en contra     : 695   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.6989
+    Estadístico W        = 590,563.0   ·  Z = -5.3578
+    p                    = 4.213e-08   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2032, p = < 1e-16  (n = 1,668)
+
+  mezcla_pond  vs  ma_12
+    Tamaño del efecto  r = -0.4847  (mediano)
+    Rango-biserial       = -0.5596  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,186 de 1,668 (71.1 %)
+    Series en contra     : 482   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -1.2476
+    Estadístico W        = 306,492.0   ·  Z = -19.7965
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1815, p = < 1e-16  (n = 1,668)
+
+  mezcla_pond  vs  naive_m1
+    Tamaño del efecto  r = -0.1998  (pequeño)
+    Rango-biserial       = -0.2307  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,010 de 1,668 (60.6 %)
+    Series en contra     : 658   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.6862
+    Estadístico W        = 535,407.0   ·  Z = -8.1612
+    p                    = 1.658e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1913, p = < 1e-16  (n = 1,668)
+
+  mezcla_prom  vs  ma_12
+    Tamaño del efecto  r = -0.3691  (mediano)
+    Rango-biserial       = -0.4262  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 1,107 de 1,668 (66.4 %)
+    Series en contra     : 561   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -1.0685
+    Estadístico W        = 399,380.0   ·  Z = -15.0752
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1884, p = < 1e-16  (n = 1,668)
+
+  mezcla_prom  vs  naive_m1
+    Tamaño del efecto  r = -0.1268  (pequeño)
+    Rango-biserial       = -0.1464  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 972 de 1,668 (58.3 %)
+    Series en contra     : 696   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.6648
+    Estadístico W        = 594,078.0   ·  Z = -5.1791
+    p                    = 1.115e-07   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2072, p = < 1e-16  (n = 1,668)
+
+  motor  vs  ma_12
+    Tamaño del efecto  r = -0.2134  (pequeño)
+    Rango-biserial       = -0.2532  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 902 de 1,668 (54.1 %)
+    Series en contra     : 677   ·  empates exactos: 89
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.2039
+    Estadístico W        = 465,754.5   ·  Z = -8.7163
+    p                    = < 1e-16   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1972, p = < 1e-16  (n = 1,668)
+
+  motor  vs  naive_m1
+    Tamaño del efecto  r = -0.0085  (insignificante)
+    Rango-biserial       = -0.0103  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 793 de 1,668 (47.5 %)
+    Series en contra     : 735   ·  empates exactos: 140
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: +0.0000
+    Estadístico W        = 578,090.5   ·  Z = -0.3471
+    p                    = 0.3643   ->  no significativo al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.1907, p = < 1e-16  (n = 1,668)
+
+  lightgbm  vs  ma_12
+    Tamaño del efecto  r = -0.0934  (insignificante)
+    Rango-biserial       = -0.1078  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 847 de 1,668 (50.8 %)
+    Series en contra     : 821   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: -0.0667
+    Estadístico W        = 620,964.0   ·  Z = -3.8125
+    p                    = 6.877e-05   ->  SIGNIFICATIVO al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2228, p = < 1e-16  (n = 1,668)
+
+  lightgbm  vs  naive_m1
+    Tamaño del efecto  r = +0.0867  (insignificante)
+    Rango-biserial       = +0.1001  (Kerby: proporción neta de series a favor del propuesto)
+    Series a favor       : 780 de 1,668 (46.8 %)
+    Series en contra     : 888   ·  empates exactos: 0
+    Mediana de la diferencia de ERROR_COMPUESTO_UNIDADES: +0.3620
+    Estadístico W        = 765,625.0   ·  Z = +3.5403
+    p                    = 0.9998   ->  no significativo al 0.05
+    Shapiro-Wilk de las diferencias: W = 0.2002, p = < 1e-16  (n = 1,668)
+
+  Lectura del Shapiro-Wilk: se aplica a las DIFERENCIAS PAREADAS entre los
+  errores de dos modelos, no a las ventas, y aquí es un diagnóstico, no una
+  puerta de decisión. Con n de miles la prueba rechaza la normalidad casi
+  siempre; el uso de pruebas no paramétricas se justifica a priori por la
+  asimetría y los valores extremos propios de los errores de pronóstico.
+
+
+------------------------------------------------------------------------------
+2. FRIEDMAN OMNIBUS + POST HOC DE NEMENYI
+------------------------------------------------------------------------------
+
+  Modelos comparados (k)  : 20
+  Bloques completos (N)   : 1,668
+  Chi-cuadrado de Friedman: 3,465.4425
+  p                       : < 1e-16   ->  SE RECHAZA la igualdad de los modelos
+  Kendall W               : 0.1093  (concordancia débil)
+  Nota: Kendall W no es comparable entre análisis con distinto k.
+
+  Rangos medios (1 = mejor):
+    mezcla_pond           7.246
+    mezcla_conmutada      7.831
+    mezcla_h              8.138
+    mezcla_prom           8.139
+    ma_2                  8.939
+    nhits                 9.532
+    motor                 9.619
+    naive_m1              9.680
+    exp_smooth_opt       10.153
+    chronos              10.452
+    lightgbm             10.627
+    lightgbm_directo     10.627
+    ma_12                10.844
+    dlinear              11.240
+    tft                  11.569
+    holt_winters         11.626
+    croston              12.593
+    ma_12_gf             13.505
+    ma_2_gf              13.793
+    naive_m1_gf          13.848
+
+  Diferencia crítica de Nemenyi (α = 0.05): 0.7260
+  Dos modelos cuyos rangos medios difieren menos que la CD no son
+  distinguibles entre sí.
+
+  Matriz de p-valores de Nemenyi:
+
+                      naive_m1  naive_m1_gf    ma_2  ma_2_gf   ma_12  ma_12_gf  exp_smooth_opt  holt_winters  croston  lightgbm  lightgbm_directo  dlinear   nhits     tft  chronos  mezcla_prom  mezcla_pond  mezcla_h  mezcla_conmutada   motor
+naive_m1            1.0000       0.0000  0.0388   0.0000  0.0000    0.0000          0.7275        0.0000   0.0000    0.0007            0.0007   0.0000  1.0000  0.0000   0.0233       0.0000       0.0000    0.0000            0.0000  1.0000
+naive_m1_gf         0.0000       1.0000  0.0000   1.0000  0.0000    0.9827          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+ma_2                0.0388       0.0000  1.0000   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.2912  0.0000   0.0000       0.0140       0.0000    0.0138            0.0000  0.0997
+ma_2_gf             0.0000       1.0000  0.0000   1.0000  0.0000    0.9978          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+ma_12               0.0000       0.0000  0.0000   0.0000  1.0000    0.0000          0.0861        0.0192   0.0000    1.0000            1.0000   0.9282  0.0000  0.0509   0.9338       0.0000       0.0000    0.0000            0.0000  0.0000
+ma_12_gf            0.0000       0.9827  0.0000   0.9978  0.0000    1.0000          0.0000        0.0000   0.0015    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+exp_smooth_opt      0.7275       0.0000  0.0000   0.0000  0.0861    0.0000          1.0000        0.0000   0.0000    0.7264            0.7264   0.0000  0.2137  0.0000   0.9966       0.0000       0.0000    0.0000            0.0000  0.4968
+holt_winters        0.0000       0.0000  0.0000   0.0000  0.0192    0.0000          0.0000        1.0000   0.0004    0.0002            0.0002   0.9417  0.0000  1.0000   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+croston             0.0000       0.0000  0.0000   0.0000  0.0000    0.0015          0.0000        0.0004   1.0000    0.0000            0.0000   0.0000  0.0000  0.0001   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+lightgbm            0.0007       0.0000  0.0000   0.0000  1.0000    0.0000          0.7264        0.0002   0.0000    1.0000            1.0000   0.2371  0.0000  0.0007   1.0000       0.0000       0.0000    0.0000            0.0000  0.0002
+lightgbm_directo    0.0007       0.0000  0.0000   0.0000  1.0000    0.0000          0.7264        0.0002   0.0000    1.0000            1.0000   0.2371  0.0000  0.0007   1.0000       0.0000       0.0000    0.0000            0.0000  0.0002
+dlinear             0.0000       0.0000  0.0000   0.0000  0.9282    0.0000          0.0000        0.9417   0.0000    0.2371            0.2371   1.0000  0.0000  0.9890   0.0175       0.0000       0.0000    0.0000            0.0000  0.0000
+nhits               1.0000       0.0000  0.2912   0.0000  0.0000    0.0000          0.2137        0.0000   0.0000    0.0000            0.0000   0.0000  1.0000  0.0000   0.0012       0.0000       0.0000    0.0000            0.0000  1.0000
+tft                 0.0000       0.0000  0.0000   0.0000  0.0509    0.0000          0.0000        1.0000   0.0001    0.0007            0.0007   0.9890  0.0000  1.0000   0.0000       0.0000       0.0000    0.0000            0.0000  0.0000
+chronos             0.0233       0.0000  0.0000   0.0000  0.9338    0.0000          0.9966        0.0000   0.0000    1.0000            1.0000   0.0175  0.0012  0.0000   1.0000       0.0000       0.0000    0.0000            0.0000  0.0074
+mezcla_prom         0.0000       0.0000  0.0140   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       1.0000       0.0022    1.0000            0.9951  0.0000
+mezcla_pond         0.0000       0.0000  0.0000   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       0.0022       1.0000    0.0022            0.3165  0.0000
+mezcla_h            0.0000       0.0000  0.0138   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       1.0000       0.0022    1.0000            0.9952  0.0000
+mezcla_conmutada    0.0000       0.0000  0.0000   0.0000  0.0000    0.0000          0.0000        0.0000   0.0000    0.0000            0.0000   0.0000  0.0000  0.0000   0.0000       0.9951       0.3165    0.9952            1.0000  0.0000
+motor               1.0000       0.0000  0.0997   0.0000  0.0000    0.0000          0.4968        0.0000   0.0000    0.0002            0.0002   0.0000  1.0000  0.0000   0.0074       0.0000       0.0000    0.0000            0.0000  1.0000
+
+  Contraste cruzado con scikit-posthocs: coincide
+
+  No se aplica corrección de Holm sobre Nemenyi: el rango studentizado ya
+  controla la tasa de error por familia de las k(k−1)/2 comparaciones, y
+  corregir dos veces sería innecesariamente conservador.
+
+
+------------------------------------------------------------------------------
+3. PORCENTAJE DE SERIES EN QUE GANA CADA MODELO
+------------------------------------------------------------------------------
+
+            modelo  victorias  porcentaje  victorias_sin_empate
+    holt_winters      158.0        9.47                   146
+           nhits      142.0        8.52                   129
+        naive_m1      134.4        8.05                   122
+         chronos      128.1        7.68                   121
+            ma_2      104.8        6.28                    94
+     mezcla_pond       99.0        5.94                    99
+             tft       97.0        5.82                    96
+         dlinear       94.0        5.64                    88
+        lightgbm       85.8        5.15                     0
+lightgbm_directo       85.8        5.15                     0
+        mezcla_h       85.0        5.10                    85
+           motor       66.3        3.97                     0
+           ma_12       65.6        3.93                    63
+     mezcla_prom       62.0        3.72                    62
+  exp_smooth_opt       61.3        3.67                    58
+mezcla_conmutada       57.0        3.42                    57
+         croston       53.8        3.23                    51
+        ma_12_gf       41.6        2.50                    37
+     naive_m1_gf       24.3        1.46                    17
+         ma_2_gf       22.2        1.33                    16
+
+  Los empates se reparten proporcionalmente entre los modelos empatados;
+  adjudicárselos al primero por orden de columna sería un artefacto.
+
+  CÓMO NO LEER ESTA TABLA. El motor no compite en igualdad de condiciones
+  aquí: su pronóstico ES, por construcción, el de uno de los candidatos, de
+  modo que cada vez que acierta EMPATA con el modelo que eligió y nunca gana
+  en solitario. Por eso su columna de victorias sin empate es cero y su
+  porcentaje sale diluido por el reparto. Esta tabla describe el reparto
+  entre los modelos BASE; el desempeño del motor se lee en la Tabla 8, en
+  los contrastes de Wilcoxon y en su tasa de acierto.
+
+
+------------------------------------------------------------------------------
+4. TASA DE ACIERTO DEL MOTOR
+------------------------------------------------------------------------------
+
+  ¿Cuántas veces el modelo elegido mirando VALIDACIÓN resultó ser
+  efectivamente el mejor en PRUEBA?
+
+  Series comparadas        : 1,668
+  Aciertos                 : 156
+  Tasa de acierto          : 9.35 %
+  Acierto esperado al azar : 6.67 %
+  Exceso de MAE por no elegir el óptimo de prueba:
+     media   32.9900
+     mediana 2.9286
+
+  Interpretación: elegir el mínimo entre varios candidatos sobre una
+  ventana corta sobreestima siempre lo bien que le irá al ganador fuera
+  de la muestra (winner's curse). La brecha entre la tasa de acierto y
+  el 100 % es la magnitud de ese efecto, y es un resultado por sí sola.
+
+  Asimetría declarada: LightGBM fija su número de árboles por parada
+  temprana contra validación, que es la misma ventana en que el motor
+  decide; los demás candidatos llegan a validación completamente a
+  ciegas. El motor lo elegirá algo más a menudo de lo que merecería con
+  un protocolo simétrico. La ventaja desaparece en prueba, que es donde
+  se mide la tasa de acierto de arriba.
+
+
+------------------------------------------------------------------------------
+5. LIMITACIONES DEL CONTRASTE (declaradas, no descubiertas después)
+------------------------------------------------------------------------------
+
+  a) Un solo corte, no origen móvil. El desempeño reportado corresponde a
+     UNA gestión de prueba. Un año atípico movería los números; con orígenes
+     móviles el resultado sería más estable, a costa de un diseño que ya no
+     sería el declarado en la metodología del documento.
+
+  b) El contraste es unilateral en la dirección de la hipótesis. Está fijado
+     antes de ver resultados, y la contrapartida es que NO puede detectar
+     que un modelo propuesto sea peor: en ese caso el p-valor simplemente no
+     resulta significativo. El porcentaje de series a favor y en contra, que
+     aparece arriba, sí muestra la dirección real.
+
+  c) Las series del mismo SKU en distintas regionales y canales NO son
+     independientes entre sí. Las pruebas las tratan como bloques separados,
+     lo que hace los p-valores algo optimistas. Con n de miles el efecto
+     sobre la conclusión es menor que el del tamaño del efecto, que es lo
+     que se reporta primero.
+
+  d) Evaluación a un paso. Los resultados no se extrapolan a horizontes
+     mayores; ahí el promedio móvil recursivo y LightGBM se comportan de
+     forma distinta y haría falta un experimento aparte.
+
+  e) Con n de miles, cualquier diferencia sale significativa. La lectura
+     válida es el tamaño del efecto y la diferencia mediana en unidades, no
+     el p-valor.
+
+
+==============================================================================
+Fin del contraste.
+==============================================================================

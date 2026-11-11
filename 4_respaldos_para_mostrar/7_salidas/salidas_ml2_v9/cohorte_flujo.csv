@@ -1,0 +1,8 @@
+paso,series,excluidas
+0. series construidas,4406,0
+1. con historia en entrenamiento,3937,469
+2. historial >= 36 meses,2774,1163
+3. proporción de meses en cero <= 0.70,1978,796
+4. volumen acumulado >= 50 unidades,1963,15
+5. presente en validación,1812,151
+6. presente en prueba,1668,144

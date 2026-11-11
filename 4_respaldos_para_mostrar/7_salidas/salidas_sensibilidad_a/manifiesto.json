@@ -1,0 +1,1141 @@
+{
+  "generado_en": "2026-10-19T19:32:59+00:00",
+  "duracion_segundos": 2587.6,
+  "datos": {
+    "archivo": "/repo/motor-pronostico/datos/crudo/ventas_novapack.csv",
+    "sha256": "5d1190ff295e769374ae6cbb51a3f300eddd31e62834789ffd099ad70d2f83aa",
+    "bytes": 11430061,
+    "auxiliares": [
+      {
+        "archivo": "costos.csv",
+        "bytes": 152700,
+        "sha256": "6dc7e86c94bbd4d0781d3dc0c694d06b2c94524f0d6229f3a9d4631b0e7c1f0e",
+        "leido_por_la_corrida": true
+      },
+      {
+        "archivo": "manifiesto_extraccion.json",
+        "bytes": 1503,
+        "sha256": "262f4d366c756086f5a72d594a374958cc6064da737a136841f9e9fceb885238",
+        "leido_por_la_corrida": false
+      },
+      {
+        "archivo": "mapeo_categoria.csv",
+        "bytes": 364,
+        "sha256": "8ce2a16f975cfb4a01687fb42a4a7548f8c90fbd6c7f44b90a7a675d328fa294",
+        "leido_por_la_corrida": true
+      },
+      {
+        "archivo": "mapeo_sku.csv",
+        "bytes": 17483,
+        "sha256": "86e633a356a6047a009c0fd5da11af0be5af20b4d2ba51197838d4189e5aaba1",
+        "leido_por_la_corrida": false
+      },
+      {
+        "archivo": "quiebres.csv",
+        "bytes": 7355431,
+        "sha256": "0d51d4ef35399b135a7d42c66597ad062aa08295637027b2b60413d7b5215d95",
+        "leido_por_la_corrida": true
+      },
+      {
+        "archivo": "tipo_cambio.csv",
+        "bytes": 790,
+        "sha256": "354c695488f5f2ec885a0cca764737bcc6d02fe7c1abf4a5387aca5e14f009a8",
+        "leido_por_la_corrida": true
+      }
+    ]
+  },
+  "codigo": {
+    "commit": "472b891eca2998e3ec55a8a49511032be388bf96",
+    "arbol_limpio": true,
+    "archivos_modificados": [],
+    "origen": "git"
+  },
+  "dependencias": {
+    "python": "3.13.16",
+    "plataforma": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "lightgbm": "4.7.0",
+    "scikit_posthocs": "0.14.0",
+    "yaml": "6.0.2"
+  },
+  "configuracion": {
+    "archivo": "/repo/motor-pronostico/config/config_sensibilidad_a.yaml",
+    "sha256": "9cdab9ba10916b29fccd32ff56ee0830745643acf999d4ea8997a0c10f69b705",
+    "contenido": {
+      "datos": {
+        "archivo": "datos/crudo/ventas_novapack.csv",
+        "codificacion": "utf-8",
+        "columnas": {
+          "canal": "canal",
+          "cantidad": "cantidad",
+          "categoria": "categoria",
+          "fecha": "fecha",
+          "perdidas": "perdidas",
+          "precio": "precio",
+          "regional": "regional",
+          "sku": "sku"
+        },
+        "separador": ","
+      },
+      "evento_exogeno": {
+        "desde": "2020-03",
+        "hasta": "2021-02",
+        "nombre": "covid19",
+        "tratamiento": "copiar_gestion_previa"
+      },
+      "features": {
+        "archivo_quiebres": "datos/crudo/quiebres.csv",
+        "archivo_tipo_cambio": "datos/crudo/tipo_cambio.csv",
+        "categoricas": [
+          "sku",
+          "canal",
+          "regional"
+        ],
+        "incluir_anio": true,
+        "incluir_mes": true,
+        "incluir_tendencia": true,
+        "rezagos": [
+          1,
+          2,
+          3,
+          6,
+          12
+        ],
+        "tc_regimen_fijo": 6.96,
+        "v2": {
+          "categoria": true,
+          "derivadas": true,
+          "perdidas": true,
+          "precio": true,
+          "quiebres": true,
+          "tipo_cambio": true
+        },
+        "ventanas_moviles": [
+          3,
+          6,
+          12
+        ]
+      },
+      "figuras": {
+        "dpi": 300,
+        "escala_grises": true,
+        "formato": "png"
+      },
+      "inclusion": {
+        "estado_al_origen": "todas",
+        "exigir_presencia_prueba": false,
+        "historial_minimo_meses": 36,
+        "proporcion_maxima_ceros": 0.7,
+        "volumen_minimo_unidades": 50
+      },
+      "lightgbm_tuning": {
+        "early_stopping_rounds": 100,
+        "espacio": {
+          "bagging_fraction": [
+            0.5,
+            1.0
+          ],
+          "feature_fraction": [
+            0.5,
+            1.0
+          ],
+          "lambda_l2": [
+            0.0,
+            30.0
+          ],
+          "learning_rate": [
+            0.02,
+            0.12
+          ],
+          "min_data_in_leaf": [
+            10,
+            200
+          ],
+          "num_leaves": [
+            15,
+            255
+          ],
+          "objective": [
+            "regression_l1",
+            "regression_l2",
+            "tweedie"
+          ],
+          "tweedie_variance_power": [
+            1.1,
+            1.6
+          ]
+        },
+        "fold_desde": "2023-04",
+        "fold_hasta": "2024-03",
+        "n_trials": 60,
+        "num_boost_round": 3000,
+        "semilla": 20260408
+      },
+      "modelos": {
+        "activos": [
+          "naive_m1",
+          "naive_m1_gf",
+          "ma_2",
+          "ma_2_gf",
+          "ma_12",
+          "ma_12_gf",
+          "exp_smooth_opt",
+          "holt_winters",
+          "croston",
+          "lightgbm",
+          "motor"
+        ],
+        "benchmark_naive": "naive_m1",
+        "benchmark_promedio_movil": "ma_12",
+        "croston": {
+          "alfa_rejilla": [
+            0.05,
+            0.1,
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.35,
+            0.4
+          ]
+        },
+        "exp_smooth": {
+          "alfa_max": 0.95,
+          "alfa_min": 0.05,
+          "alfa_paso": 0.05
+        },
+        "holt_winters": {
+          "alfa_rejilla": [
+            0.1,
+            0.2,
+            0.3,
+            0.5,
+            0.7,
+            0.9
+          ],
+          "beta_rejilla": [
+            0.0,
+            0.05,
+            0.1,
+            0.2
+          ],
+          "gamma_rejilla": [
+            0.0,
+            0.05,
+            0.1,
+            0.2
+          ],
+          "periodo_estacional": 12
+        },
+        "lightgbm": {
+          "bagging_fraction": 0.870285300844084,
+          "bagging_freq": 1,
+          "deterministic": true,
+          "early_stopping_rounds": 100,
+          "feature_fraction": 0.5778124801487501,
+          "force_row_wise": true,
+          "lambda_l2": 24.468189902436567,
+          "learning_rate": 0.05310654167584386,
+          "metric": "tweedie",
+          "min_data_in_leaf": 61,
+          "num_boost_round": 3000,
+          "num_leaves": 137,
+          "num_threads": 1,
+          "objective": "tweedie",
+          "seed": 20260406,
+          "tweedie_variance_power": 1.464977652919245,
+          "verbosity": -1
+        },
+        "motor_regla": "mae_mas_bias",
+        "motor_seleccion": "un_paso"
+      },
+      "multihorizonte": {
+        "activo": true,
+        "horizonte_maximo": 12,
+        "origenes": "rodantes",
+        "reentrenar_lightgbm": true,
+        "reestimar_estadisticos": false
+      },
+      "particion": {
+        "fin_entrenamiento": "2024-03",
+        "fin_validacion": "2025-03"
+      },
+      "periodo": {
+        "fin": "2026-03",
+        "inicio": "2017-04",
+        "mes_inicio_gestion": 4
+      },
+      "poblacion": {
+        "categorias": [
+          "Categoría K",
+          "Categoría J",
+          "Categoría I",
+          "Categoría E",
+          "Categoría D"
+        ]
+      },
+      "pruebas": {
+        "alfa": 0.05,
+        "alternativa": "less",
+        "metrica_contraste": "error_compuesto_unidades",
+        "semilla": 20260406,
+        "shapiro_n_maximo": 5000
+      },
+      "salidas": {
+        "directorio": "salidas_sensibilidad_a"
+      },
+      "series": {
+        "devoluciones": "descartar",
+        "extender_vida_hasta_fin_periodo": true,
+        "rellenar_ceros_intermedios": true
+      },
+      "_hereda_de": "config.yaml"
+    }
+  },
+  "resultados": {
+    "lightgbm_mejor_iteracion": 75,
+    "unidad_analisis": {
+      "skus_totales": 610,
+      "skus_multicombo": 570,
+      "proporcion_multicombo": 0.9344262295081968,
+      "mediana_combos_en_multi": 7.0,
+      "deriva_participacion_pp_media": 16.040128709483703,
+      "pares_correlacion": 10385,
+      "correlacion_mediana": 0.18525771750789877,
+      "correlacion_yoy_mediana": 0.09552120956751678,
+      "proporcion_pares_bajo_05": 0.7792970630717381,
+      "skus_con_regimenes_mixtos": 365,
+      "skus_multi_clasificables": 509,
+      "skus_cohorte_multi": 366,
+      "skus_multiganador": 347,
+      "proporcion_multiganador": 0.9480874316939891,
+      "contrafactual": [
+        {
+          "modelo": "ma_12",
+          "enfoque": "bottom_up",
+          "wmape_val": 95.02783941979456,
+          "bias_val": 22.69799044530312,
+          "D": 117.72582986509768,
+          "series": 1627,
+          "skus": 366,
+          "observaciones": 19495,
+          "observaciones_excluidas_del_pareo": 29,
+          "delta_D_topdown": 0.0
+        },
+        {
+          "modelo": "ma_12",
+          "enfoque": "top_down",
+          "wmape_val": 95.02783941979456,
+          "bias_val": 22.69799044530312,
+          "D": 117.72582986509768,
+          "series": 1627,
+          "skus": 366,
+          "observaciones": 19495,
+          "observaciones_excluidas_del_pareo": 29,
+          "delta_D_topdown": 0.0
+        },
+        {
+          "modelo": "naive_m1",
+          "enfoque": "bottom_up",
+          "wmape_val": 78.82966641981677,
+          "bias_val": -0.016256936964633144,
+          "D": 78.84592335678141,
+          "series": 1627,
+          "skus": 366,
+          "observaciones": 19495,
+          "observaciones_excluidas_del_pareo": 29,
+          "delta_D_topdown": -3.83380298457962
+        },
+        {
+          "modelo": "naive_m1",
+          "enfoque": "top_down",
+          "wmape_val": 74.99586343523715,
+          "bias_val": -0.016256936964633144,
+          "D": 75.01212037220179,
+          "series": 1627,
+          "skus": 366,
+          "observaciones": 19495,
+          "observaciones_excluidas_del_pareo": 29,
+          "delta_D_topdown": -3.83380298457962
+        }
+      ]
+    },
+    "valorizado": [
+      {
+        "modelo": "motor",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 87982675.45750624,
+        "wmape_val": 71.83129350447366,
+        "bias_val": -3.231005466678393,
+        "rmse_val": 21001.021065016736,
+        "D": 75.06229897115206
+      },
+      {
+        "modelo": "lightgbm",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 79681039.82999606,
+        "wmape_val": 65.05362708064585,
+        "bias_val": -12.054055373384633,
+        "rmse_val": 19068.462260009128,
+        "D": 77.10768245403048
+      },
+      {
+        "modelo": "exp_smooth_opt",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 98123932.6940798,
+        "wmape_val": 80.11087378862305,
+        "bias_val": 0.6146342407238528,
+        "rmse_val": 23146.706780264754,
+        "D": 80.72550802934691
+      },
+      {
+        "modelo": "ma_2",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 101467280.11114818,
+        "wmape_val": 82.84046763598057,
+        "bias_val": -2.095305755632322,
+        "rmse_val": 24073.754634442692,
+        "D": 84.9357733916129
+      },
+      {
+        "modelo": "ma_12",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 101832947.55873765,
+        "wmape_val": 83.13900783854031,
+        "bias_val": -2.2208313647842326,
+        "rmse_val": 21501.67518436368,
+        "D": 85.35983920332454
+      },
+      {
+        "modelo": "naive_m1",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 102231321.56091285,
+        "wmape_val": 83.46425050394004,
+        "bias_val": -2.1046097367403607,
+        "rmse_val": 25618.1201280816,
+        "D": 85.5688602406804
+      },
+      {
+        "modelo": "holt_winters",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 100803304.96660563,
+        "wmape_val": 82.2983814441331,
+        "bias_val": 10.23892919309995,
+        "rmse_val": 23162.747227511976,
+        "D": 92.53731063723305
+      },
+      {
+        "modelo": "croston",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 107675330.61172496,
+        "wmape_val": 87.90887792560515,
+        "bias_val": 5.84417849572483,
+        "rmse_val": 21722.18691877559,
+        "D": 93.75305642132999
+      },
+      {
+        "modelo": "naive_m1_gf",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 111128936.9319584,
+        "wmape_val": 90.72848994521702,
+        "bias_val": -5.689842831041247,
+        "rmse_val": 26455.384901040597,
+        "D": 96.41833277625827
+      },
+      {
+        "modelo": "ma_2_gf",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 111354271.78007218,
+        "wmape_val": 90.91245904512765,
+        "bias_val": -7.126731522941739,
+        "rmse_val": 25001.126295015983,
+        "D": 98.03919056806939
+      },
+      {
+        "modelo": "ma_12_gf",
+        "series_con_costo": 1657,
+        "cobertura_series": 0.9144591611479028,
+        "demanda_valorizada": 122485160.94454943,
+        "error_valorizado": 105242403.22870737,
+        "wmape_val": 85.9225741445953,
+        "bias_val": -14.04242812080998,
+        "rmse_val": 22657.89948667983,
+        "D": 99.96500226540527
+      }
+    ],
+    "multihorizonte": {
+      "origenes": [
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02"
+      ],
+      "horizonte_maximo": 12,
+      "reentrenos_lightgbm": 12,
+      "reentrenos_directo": 0,
+      "reestimaciones_estadisticas": 0,
+      "respaldos": {
+        "croston": 0,
+        "exp_smooth_opt": 0,
+        "holt_winters": 0,
+        "lightgbm": 0,
+        "ma_12": 0,
+        "ma_12_gf": 0,
+        "ma_2": 0,
+        "ma_2_gf": 0,
+        "naive_m1": 0,
+        "naive_m1_gf": 0,
+        "motor": 0
+      },
+      "observaciones": 1554696,
+      "observaciones_con_costo": 1421706,
+      "D_global_pct": {
+        "croston": 93.47338672096494,
+        "exp_smooth_opt": 103.83093505715993,
+        "holt_winters": 96.19539805481918,
+        "lightgbm": 72.91214859834098,
+        "ma_12": 94.55563740704541,
+        "ma_12_gf": 113.17246102694966,
+        "ma_2": 116.57392852584223,
+        "ma_2_gf": 134.32651904237497,
+        "motor": 92.10321462749675,
+        "naive_m1": 120.53160304884878,
+        "naive_m1_gf": 173.915485346863
+      }
+    },
+    "particion": [
+      {
+        "bloque": "entrenamiento",
+        "desde": "2017-04",
+        "hasta": "2024-03",
+        "meses": 84,
+        "gestiones": "2018–2024"
+      },
+      {
+        "bloque": "validacion",
+        "desde": "2024-04",
+        "hasta": "2025-03",
+        "meses": 12,
+        "gestiones": "2025–2025"
+      },
+      {
+        "bloque": "prueba",
+        "desde": "2025-04",
+        "hasta": "2026-03",
+        "meses": 12,
+        "gestiones": "2026–2026"
+      }
+    ],
+    "cohorte": {
+      "series_iniciales": 4406,
+      "excluidas_historial": 646,
+      "excluidas_ceros": 1311,
+      "excluidas_volumen": 16,
+      "excluidas_sin_entrenamiento": 469,
+      "excluidas_sin_validacion": 152,
+      "excluidas_sin_prueba": 0,
+      "excluidas_no_activas_al_origen": 0,
+      "series_finales": 1812,
+      "umbrales": {
+        "historial_minimo_meses": 36,
+        "proporcion_maxima_ceros": 0.7,
+        "volumen_minimo_unidades": 50.0
+      },
+      "interruptores": {
+        "inclusion.exigir_presencia_prueba": false,
+        "series.extender_vida_hasta_fin_periodo": true,
+        "inclusion.estado_al_origen": "todas"
+      },
+      "flujo": [
+        {
+          "paso": "0. series construidas",
+          "series": 4406,
+          "excluidas": 0
+        },
+        {
+          "paso": "1. con historia en entrenamiento",
+          "series": 3937,
+          "excluidas": 469
+        },
+        {
+          "paso": "2. historial >= 36 meses",
+          "series": 3291,
+          "excluidas": 646
+        },
+        {
+          "paso": "3. proporción de meses en cero <= 0.70",
+          "series": 1980,
+          "excluidas": 1311
+        },
+        {
+          "paso": "4. volumen acumulado >= 50 unidades",
+          "series": 1964,
+          "excluidas": 16
+        },
+        {
+          "paso": "5. presente en validación (vida observada)",
+          "series": 1812,
+          "excluidas": 152
+        },
+        {
+          "paso": "6. presente en prueba: no se aplica (inclusion.exigir_presencia_prueba = false)",
+          "series": 1812,
+          "excluidas": 0
+        }
+      ],
+      "excluidas_aislado": {
+        "historial < 36 meses": 1115,
+        "ceros > 0.70": 2215,
+        "volumen < 50 unidades": 1766
+      }
+    },
+    "respaldos_por_modelo": {
+      "naive_m1": 0,
+      "naive_m1_gf": 0,
+      "ma_2": 0,
+      "ma_2_gf": 0,
+      "ma_12": 0,
+      "ma_12_gf": 0,
+      "exp_smooth_opt": 0,
+      "holt_winters": 0,
+      "croston": 0,
+      "lightgbm": 0
+    },
+    "motor": {
+      "regla": "mae_mas_bias",
+      "empates": 181,
+      "respaldos": 0,
+      "reparto": {
+        "lightgbm": 390,
+        "naive_m1": 382,
+        "ma_2": 260,
+        "holt_winters": 200,
+        "ma_12": 130,
+        "ma_12_gf": 122,
+        "exp_smooth_opt": 104,
+        "croston": 100,
+        "ma_2_gf": 81,
+        "naive_m1_gf": 43
+      },
+      "acierto": {
+        "series_comparadas": 1812,
+        "aciertos": 377,
+        "tasa_acierto": 0.20805739514348787,
+        "azar_esperado": 0.1,
+        "exceso_mae_medio": 16.884475888869467,
+        "exceso_mae_mediano": 1.0336773132616885
+      }
+    },
+    "tabla8": [
+      {
+        "Modelo": "naive_m1",
+        "Series": 1812,
+        "MAE medio (unidades)": 96.2085276674025,
+        "MAE mediano (unidades)": 11.291666666666668,
+        "MAPE medio (%)": 333.67933354708737,
+        "MAPE mediano (%)": 105.16451730402592,
+        "RMSE medio (unidades)": 162.16346057599463,
+        "RMSE mediano (unidades)": 17.119642878907936,
+        "Bias medio (%)": 9.883903487148496,
+        "Bias mediano (%)": 0.0,
+        "MASE medio": 0.8156936339988141,
+        "MASE mediano": 0.6081131079345454,
+        "Error compuesto medio (MAPE + |Bias|, %)": 350.96131756249423,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "naive_m1_gf",
+        "Series": 1812,
+        "MAE medio (unidades)": 101.25989193225716,
+        "MAE mediano (unidades)": 12.850694444444443,
+        "MAPE medio (%)": 363.22677608118727,
+        "MAPE mediano (%)": 113.29730374640859,
+        "RMSE medio (unidades)": 168.7656893489187,
+        "RMSE mediano (unidades)": 18.05209645135931,
+        "Bias medio (%)": 6.832233507044017,
+        "Bias mediano (%)": -4.487179487179492,
+        "MASE medio": 0.919357030598063,
+        "MASE mediano": 0.6647869273787296,
+        "Error compuesto medio (MAPE + |Bias|, %)": 405.9478435265075,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "ma_2",
+        "Series": 1812,
+        "MAE medio (unidades)": 100.43365871044888,
+        "MAE mediano (unidades)": 11.0,
+        "MAPE medio (%)": 362.7586887386409,
+        "MAPE mediano (%)": 104.29633805267679,
+        "RMSE medio (unidades)": 158.20977623719602,
+        "RMSE mediano (unidades)": 15.921028855496088,
+        "Bias medio (%)": 34.44133447941372,
+        "Bias mediano (%)": 0.12418025792925859,
+        "MASE medio": 0.7863418399741792,
+        "MASE mediano": 0.6068384253007963,
+        "Error compuesto medio (MAPE + |Bias|, %)": 407.56544327286986,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "ma_2_gf",
+        "Series": 1812,
+        "MAE medio (unidades)": 105.72321834835662,
+        "MAE mediano (unidades)": 12.322916666666668,
+        "MAPE medio (%)": 388.1886953312851,
+        "MAPE mediano (%)": 108.16970459563339,
+        "RMSE medio (unidades)": 165.18369888937872,
+        "RMSE mediano (unidades)": 17.220919380561305,
+        "Bias medio (%)": 10.669792693614239,
+        "Bias mediano (%)": -6.516673546224375,
+        "MASE medio": 0.8992622544895081,
+        "MASE mediano": 0.6685056969148289,
+        "Error compuesto medio (MAPE + |Bias|, %)": 440.036089419083,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "ma_12",
+        "Series": 1812,
+        "MAE medio (unidades)": 103.95768511926661,
+        "MAE mediano (unidades)": 11.194444444444445,
+        "MAPE medio (%)": 392.8904436206116,
+        "MAPE mediano (%)": 100.05523612819897,
+        "RMSE medio (unidades)": 142.345032128679,
+        "RMSE mediano (unidades)": 15.100771238564665,
+        "Bias medio (%)": 292.83273813879515,
+        "Bias mediano (%)": 4.504344147267629,
+        "MASE medio": 0.7686804283530334,
+        "MASE mediano": 0.5927677589416069,
+        "Error compuesto medio (MAPE + |Bias|, %)": 708.1803413436285,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "ma_12_gf",
+        "Series": 1812,
+        "MAE medio (unidades)": 96.65323977649007,
+        "MAE mediano (unidades)": 11.677083333333332,
+        "MAPE medio (%)": 340.4152174785197,
+        "MAPE mediano (%)": 100.0,
+        "RMSE medio (unidades)": 146.4454491759789,
+        "RMSE mediano (unidades)": 15.976480043824154,
+        "Bias medio (%)": 50.17218391758533,
+        "Bias mediano (%)": -9.206599111755205,
+        "MASE medio": 0.8565449328365567,
+        "MASE mediano": 0.6157057747598327,
+        "Error compuesto medio (MAPE + |Bias|, %)": 446.24742592797503,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "exp_smooth_opt",
+        "Series": 1812,
+        "MAE medio (unidades)": 103.72660905984092,
+        "MAE mediano (unidades)": 12.141488275897188,
+        "MAPE medio (%)": 399.3975903210019,
+        "MAPE mediano (%)": 106.22175462361045,
+        "RMSE medio (unidades)": 152.69787412571424,
+        "RMSE mediano (unidades)": 15.854134915080289,
+        "Bias medio (%)": 534.1056625933594,
+        "Bias mediano (%)": 3.0466073267016047,
+        "MASE medio": 0.7811888276345659,
+        "MASE mediano": 0.6074391959123913,
+        "Error compuesto medio (MAPE + |Bias|, %)": 945.5608107085247,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "holt_winters",
+        "Series": 1812,
+        "MAE medio (unidades)": 103.16231856082709,
+        "MAE mediano (unidades)": 13.250532850449034,
+        "MAPE medio (%)": 406.4598463776248,
+        "MAPE mediano (%)": 104.69827832955704,
+        "RMSE medio (unidades)": 162.17139792755444,
+        "RMSE mediano (unidades)": 18.840124446306476,
+        "Bias medio (%)": 1107.126091472692,
+        "Bias mediano (%)": 12.386066169718932,
+        "MASE medio": 0.8168553178951687,
+        "MASE mediano": 0.6211328042499529,
+        "Error compuesto medio (MAPE + |Bias|, %)": 1526.1919685631535,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "croston",
+        "Series": 1812,
+        "MAE medio (unidades)": 116.67841266982528,
+        "MAE mediano (unidades)": 14.814281210216272,
+        "MAPE medio (%)": 539.6712297348034,
+        "MAPE mediano (%)": 121.6903313769233,
+        "RMSE medio (unidades)": 153.25935783703554,
+        "RMSE mediano (unidades)": 17.998527903066762,
+        "Bias medio (%)": 1529.8516069812972,
+        "Bias mediano (%)": 14.641276599992871,
+        "MASE medio": 0.8522515553511838,
+        "MASE mediano": 0.6864667347092581,
+        "Error compuesto medio (MAPE + |Bias|, %)": 2081.4905935706715,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "lightgbm",
+        "Series": 1812,
+        "MAE medio (unidades)": 73.24358648957276,
+        "MAE mediano (unidades)": 11.318540580700855,
+        "MAPE medio (%)": 296.1952182410069,
+        "MAPE mediano (%)": 100.43606879048649,
+        "RMSE medio (unidades)": 123.18421385920455,
+        "RMSE mediano (unidades)": 15.544001664354148,
+        "Bias medio (%)": 1072.8232159306397,
+        "Bias mediano (%)": 5.1991502686862665,
+        "MASE medio": 0.7407026641185994,
+        "MASE mediano": 0.586140509462042,
+        "Error compuesto medio (MAPE + |Bias|, %)": 1388.5555783563204,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      },
+      {
+        "Modelo": "motor",
+        "Series": 1812,
+        "MAE medio (unidades)": 78.32087950724264,
+        "MAE mediano (unidades)": 10.02809739238927,
+        "MAPE medio (%)": 317.77789467828813,
+        "MAPE mediano (%)": 100.0,
+        "RMSE medio (unidades)": 130.09403328521796,
+        "RMSE mediano (unidades)": 13.889450064245477,
+        "Bias medio (%)": 98.29467173489745,
+        "Bias mediano (%)": 0.0,
+        "MASE medio": 0.7246184047493965,
+        "MASE mediano": 0.53887749873679,
+        "Error compuesto medio (MAPE + |Bias|, %)": 436.4551970821884,
+        "Observaciones excluidas del MAPE (%)": 35.31089036055924,
+        "Series con MAPE sobre <3 meses": 334
+      }
+    ],
+    "friedman": {
+      "chi2": 2044.963601468747,
+      "p": 0.0,
+      "kendall_w": 0.11285671089783371,
+      "n_bloques": 1812,
+      "k": 11,
+      "diferencia_critica": 0.35465532420736934,
+      "rangos_medios": {
+        "motor": 4.507450331125828,
+        "ma_2": 4.533112582781457,
+        "naive_m1": 4.560154525386314,
+        "exp_smooth_opt": 5.438465783664459,
+        "ma_12": 5.918598233995585,
+        "lightgbm": 5.973509933774834,
+        "holt_winters": 6.600717439293598,
+        "ma_12_gf": 6.987306843267108,
+        "naive_m1_gf": 7.110651214128035,
+        "ma_2_gf": 7.171081677704194,
+        "croston": 7.1989514348785875
+      }
+    },
+    "wilcoxon": [
+      {
+        "propuesto": "motor",
+        "referencia": "ma_12",
+        "r": -0.3464668919619236,
+        "z": -14.748261751578337,
+        "p": 1.5784568074684223e-49,
+        "significativo": true,
+        "gana_propuesto": 1121,
+        "n_pares": 1812
+      },
+      {
+        "propuesto": "motor",
+        "referencia": "naive_m1",
+        "r": -0.0377155663974819,
+        "z": -1.605460891773248,
+        "p": 0.05419620657282362,
+        "significativo": false,
+        "gana_propuesto": 680,
+        "n_pares": 1812
+      },
+      {
+        "propuesto": "lightgbm",
+        "referencia": "ma_12",
+        "r": 0.02486363621160113,
+        "z": 1.0583851544031935,
+        "p": 0.8550600575974772,
+        "significativo": false,
+        "gana_propuesto": 855,
+        "n_pares": 1812
+      },
+      {
+        "propuesto": "lightgbm",
+        "referencia": "naive_m1",
+        "r": 0.21991493911860951,
+        "z": 9.361249690663401,
+        "p": 1.0,
+        "significativo": false,
+        "gana_propuesto": 749,
+        "n_pares": 1812
+      }
+    ]
+  },
+  "salidas": [
+    {
+      "archivo": "cohorte_flujo.csv",
+      "bytes": 361,
+      "sha256": "d8dce2edf8a7179980edaaf0cb046df79e14f9280fffcc57610c017c7887132e"
+    },
+    {
+      "archivo": "contribuciones_shap.csv",
+      "bytes": 4625,
+      "sha256": "1077aa8bccfffcf8311ac27b6c13e46ec4710a267506dfcb7f45f8a4f8cd62c4"
+    },
+    {
+      "archivo": "error_por_mes.csv",
+      "bytes": 3432,
+      "sha256": "5b6b7f3d402bdf1d1e5beb9e48c8c438d6bf1b26a649c3854322873f2804bd24"
+    },
+    {
+      "archivo": "error_por_temporada.csv",
+      "bytes": 618,
+      "sha256": "af8b5f543d0dfc4358130479a4a9a61640d482074ba2286eef3f294f2fdeced7"
+    },
+    {
+      "archivo": "errores_por_serie.csv",
+      "bytes": 4619618,
+      "sha256": "d8de9d0c0594f57b59d2dc97dfc00dd9e800cb039fc118a570a01202be751b9b"
+    },
+    {
+      "archivo": "estratos_valorizados.csv",
+      "bytes": 11037,
+      "sha256": "0bfe51d6276764d71a6d1a8aa05f44272ce3559c5df84332aa3b0f9cc9e945ec"
+    },
+    {
+      "archivo": "figura01_perfil_categorias.png",
+      "bytes": 193153,
+      "sha256": "62e0f21479d6f8edbe1264e99194fdaab638db4941a62600b60ceaf4f0258c1c"
+    },
+    {
+      "archivo": "figura02_volumen_gestiones.png",
+      "bytes": 77109,
+      "sha256": "f1df0f3643ff55f0c244e48eac3e7dec3376928f28eb22da2356a6fbae33699d"
+    },
+    {
+      "archivo": "figura03_unidad_analisis.png",
+      "bytes": 141964,
+      "sha256": "eff1656be277e78b3566eb3c47d571492f3be1aa0f5792259c650076dcd5d362"
+    },
+    {
+      "archivo": "figura04_muestra_sensibilidad.png",
+      "bytes": 232964,
+      "sha256": "ddb6b70b6f761c21aec5d77f8b8631d94b3d59b7ac054fc5608a6f8dbc4b938d"
+    },
+    {
+      "archivo": "figura05_linea_de_tiempo.png",
+      "bytes": 86137,
+      "sha256": "344264d0a56ee07e83ad07ab89e0953a28a7ddae83346e71499e2c91a31e643d"
+    },
+    {
+      "archivo": "figura06_origenes_rodantes.png",
+      "bytes": 63891,
+      "sha256": "0c93ce9e488c19515090849161d28eca7806271aa270d86cbe57eefcb0462732"
+    },
+    {
+      "archivo": "figura07_d_descompuesta.png",
+      "bytes": 175308,
+      "sha256": "366eb0dfcfbf72f0bb0a1f619a949857b168e5b14ef0b27fc1713cd7f5bb2716"
+    },
+    {
+      "archivo": "figura08_dispersion.png",
+      "bytes": 1679058,
+      "sha256": "3ba70513c874855eab07b10826c11bb76094e1ecdd9eff60d69743f30a8bbcd0"
+    },
+    {
+      "archivo": "figura11_horizonte.png",
+      "bytes": 189728,
+      "sha256": "d12880d4bd39ca6b221fe6a8620c1d2a477c9a6dc443d040da0f66c6b1615607"
+    },
+    {
+      "archivo": "figura12_diferencia_critica.png",
+      "bytes": 113667,
+      "sha256": "f0da8af55bf062939c3b4491639b0b6d9f2799462ce99d1b3f46a953f2dcb4c1"
+    },
+    {
+      "archivo": "figura13_casos.png",
+      "bytes": 379585,
+      "sha256": "f19ff0ab519fc3b0c7ce1dc7260b52689d9643b729b34e11653366a6d47bf6fa"
+    },
+    {
+      "archivo": "figura14_contribuciones.png",
+      "bytes": 232153,
+      "sha256": "dd0b8b6f3aa63c8eda37572ab75f3f052432e1daa9f28d89de272b47caed98b4"
+    },
+    {
+      "archivo": "figura15_pareto.png",
+      "bytes": 167540,
+      "sha256": "a411ea706e6c5614633abf4e9322a32446d987614dbc223fc45f1589a6955b21"
+    },
+    {
+      "archivo": "figura16_error_por_mes.png",
+      "bytes": 163386,
+      "sha256": "a2b57dd106713dbd6e99695f67f8b8c0d3a42cc2247aecb986917762d064b46f"
+    },
+    {
+      "archivo": "flujo.json",
+      "bytes": 24497,
+      "sha256": "318e4ad6466f2f20a0fc4a27ac0c7f0d0e9387af4e079884286cd0e440b012a8"
+    },
+    {
+      "archivo": "fuera_de_muestra.csv",
+      "bytes": 351146,
+      "sha256": "189dc93d830a4197c4e4f275b564a97d45bac8620911e10c007846644389a7db"
+    },
+    {
+      "archivo": "inspeccion.json",
+      "bytes": 6821,
+      "sha256": "dd1217e2e5867e5cd21af022d9f32092e6e98b6d6f0163e49a154011b93be96d"
+    },
+    {
+      "archivo": "inspeccion_datos.txt",
+      "bytes": 7806,
+      "sha256": "0113092cd772bd60731fe30026cac49c691200e36fc9b585c5e7c56c646aaad8"
+    },
+    {
+      "archivo": "insumos_figuras.pkl",
+      "bytes": 2556009,
+      "sha256": "68d45b35b79ac655aacec883c9829c4c5b853c7ffc32ee2f844972af880ee524"
+    },
+    {
+      "archivo": "lightgbm_importancias.csv",
+      "bytes": 1187,
+      "sha256": "96bd0d4786e68cd59fdc477fc39b0d2c008dd72986e3519b108981008d7ef224"
+    },
+    {
+      "archivo": "matriz_contraste.csv",
+      "bytes": 377312,
+      "sha256": "f866a1499f75ac305ec70e8a669e7aacf65d09826bc0c5f9289ff247e833bbe9"
+    },
+    {
+      "archivo": "multihorizonte_estratos.csv",
+      "bytes": 9328,
+      "sha256": "beafe4b00e7e80532c3e813abd5811812eeade94dca3896519725ef61abcd3a5"
+    },
+    {
+      "archivo": "multihorizonte_horizonte.csv",
+      "bytes": 15334,
+      "sha256": "0a0c794e2201ec8f8878e941e6da241f94c9e65632185d9abb1700ae8a447858"
+    },
+    {
+      "archivo": "multihorizonte_origen.csv",
+      "bytes": 16085,
+      "sha256": "53e25a67873d484916141ba5092880b333aad9c3d5408b4f634351b84644c1db"
+    },
+    {
+      "archivo": "nemenyi.csv",
+      "bytes": 2677,
+      "sha256": "18adfe110b15f986f7d056a583a57d3019d9f88451560fa87526a6f524e5b40b"
+    },
+    {
+      "archivo": "parametros_por_serie.csv",
+      "bytes": 375141,
+      "sha256": "8bad8167c0344f9639b94b11125968212bf360fb77380098a2627163dd3bc4ef"
+    },
+    {
+      "archivo": "pareto_valorizado.csv",
+      "bytes": 29623,
+      "sha256": "194081c066386f6f94b725e0689c774575d4aba0c10c5fded4dfffc8bbacc8f3"
+    },
+    {
+      "archivo": "particion.csv",
+      "bytes": 160,
+      "sha256": "7d747faaf73e11fb112cc3a1ed65d85548c9a625f1ae1988ef3477c769b8c081"
+    },
+    {
+      "archivo": "pruebas_estadisticas.txt",
+      "bytes": 10844,
+      "sha256": "4b0efee051524c7a6385a6fb5bc731a6cb15853988d6b98050d5df0a1b564f64"
+    },
+    {
+      "archivo": "rangos_friedman.csv",
+      "bytes": 318,
+      "sha256": "eee1719f1a5b637d79a7e6f5e7ce11e21af11d225099e5bc1a8c40e7a0f729ca"
+    },
+    {
+      "archivo": "resumen_metricas.csv",
+      "bytes": 3727,
+      "sha256": "4ca215a2cc6180ba93ca85ef9e1d42b94d28e2ff49e21f4ea749c4e5ac40cfc8"
+    },
+    {
+      "archivo": "seleccion_motor.csv",
+      "bytes": 410420,
+      "sha256": "55a59e3e75f607c2b120ac15d21a7725f57bcbdc5905f8d65c19af9d35ef47fb"
+    },
+    {
+      "archivo": "sensibilidad_umbrales.csv",
+      "bytes": 935,
+      "sha256": "eb6ddce131bdbfb4fba0669845430653b14fec3a156f2c85bca5c1d0af3b8507"
+    },
+    {
+      "archivo": "series_y_predicciones.csv",
+      "bytes": 22566229,
+      "sha256": "fec0ad780465f2ccfb335ce8fbded81b140fb76df021f083120ff927e505caf2"
+    },
+    {
+      "archivo": "tabla8_resultados.csv",
+      "bytes": 2892,
+      "sha256": "37fbcb02cc9e694f130cb4411d1727cd3e865ef5655289cffee1d0188c28bb6b"
+    },
+    {
+      "archivo": "tabla_valorizada.csv",
+      "bytes": 1293,
+      "sha256": "685f9f8dfd7817698502c7fd1874fe8ec50f8dbcf4bc1d3623fe21c4e4efc267"
+    },
+    {
+      "archivo": "unidad_contrafactual.csv",
+      "bytes": 522,
+      "sha256": "a54ff265d7cd690705e1b53a463c00af67113a1185d705c50b9c4d25b4a120d8"
+    },
+    {
+      "archivo": "unidad_estructura_sku.csv",
+      "bytes": 55984,
+      "sha256": "fc3b1c7d101a0904f9331a5e32f78203895d725481488d7fce50824a5af9c290"
+    },
+    {
+      "archivo": "victorias_por_modelo.csv",
+      "bytes": 553,
+      "sha256": "99a78632dd9232196f7d84ecb211d37518a5cead834586bff4c9029ece9cea92"
+    }
+  ]
+}

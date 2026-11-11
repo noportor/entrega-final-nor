@@ -1,0 +1,200 @@
+INFORME DE CARGA
+------------------------------------------------------------------------------
+Archivo                        : C:\Users\Usuario\Documents\Repositorios\temporal\TFG\motor-pronostico\datos\crudo\ventas_novapack.csv
+SHA-256                        : 5d1190ff295e769374ae6cbb51a3f300eddd31e62834789ffd099ad70d2f83aa
+Columnas en el archivo         : fecha, sku, canal, regional, cantidad, categoria, precio, perdidas
+Mapeo aplicado                 : fecha -> fecha, sku -> sku, canal -> canal, regional -> regional, cantidad -> cantidad, categoria -> categoria, precio -> precio, perdidas -> perdidas
+Categorías seudonimizadas con  : mapeo_categoria.csv (SHA-256 8ce2a16f975cfb4a01687fb42a4a7548f8c90fbd6c7f44b90a7a675d328fa294)
+Filas leídas                   : 204,096
+Fechas no convertibles         : 0
+Cantidades no convertibles     : 0
+Filas con sku/canal/regional nulo: 0
+Filas descartadas              : 0
+Filas válidas                  : 204,096
+
+CONSTRUCCIÓN DE LAS SERIES
+------------------------------------------------------------------------------
+Filas de entrada                 : 147,701
+Tratamiento de devoluciones      : descartar
+Filas con cantidad negativa      : 0 (0 unidades)
+Filas fuera del período declarado: 16,864
+Combinaciones SKU–canal–regional : 4,088
+  sin ninguna venta positiva     : 0 (descartadas: no tienen fecha de nacimiento)
+Series construidas               : 4,088
+Filas del panel mensual          : 221,091
+  de ellas, ceros intercalados   : 90,517
+Rango del panel                  : 2017-04 .. 2025-03
+
+==============================================================================
+INFORME DE INSPECCIÓN DE DATOS — NOVAPACK S.A.
+==============================================================================
+
+1. Cobertura temporal
+---------------------
+Rango de fechas observado        : 2017-04-01 .. 2026-03-01
+Período declarado en config.yaml : 2017-04 .. 2025-03  (96 meses)
+Meses distintos con registro     : 108
+Meses del período sin ningún registro: 0
+
+Gestiones fiscales cubiertas (cierre en mes 3): 2018–2025
+
+2. Dimensiones del portafolio
+-----------------------------
+SKU distintos                    : 684
+Canales distintos                : 2   -> X, Z
+Regionales distintas             : 5   -> COCHABAMBA, LA PAZ, SANTA CRUZ, SUCRE, TARIJA
+Combinaciones SKU–canal–regional : 4,406
+
+Cobertura teórica del cruce: 684 × 2 × 5 = 6,840 combinaciones posibles; con registro hay 4,406 (64.4 %).
+
+3. Calidad de los registros
+---------------------------
+Filas totales                    : 147,701
+Filas duplicadas por (fecha, sku, canal, regional): 572
+   (se agregan por suma en la construcción de series; no se descartan)
+Registros con cantidad negativa  : 0 (0 unidades) — devoluciones
+   Tratamiento configurado       : descartar
+Registros con cantidad exactamente cero: 0
+
+Nulos por columna:
+   fecha        0
+   sku          0
+   canal        0
+   regional     0
+   cantidad     0
+   categoria    0
+   precio       0
+   perdidas     0
+
+4. Volumen por gestión fiscal (abril–marzo)
+-------------------------------------------
+ gestion  registros  unidades  skus  combinaciones
+    2018      10825 1018470.0   260           1456
+    2019      11733 1306764.0   267           1553
+    2020      16146 2581799.0   505           2443
+    2021      16498 1591081.0   491           2766
+    2022      19725 2778921.0   502           2892
+    2023      19460 3520810.0   514           2963
+    2024      18966 3577015.0   534           2893
+    2025      17484 2402742.0   524           2641
+    2026      16864 2566185.0   515           2681
+
+5. Volumen por año calendario
+-----------------------------
+ anio  registros  unidades
+ 2017       7935  588199.0
+ 2018      11623 1151433.0
+ 2019      14641 1971226.0
+ 2020      15809 2049873.0
+ 2021      19371 2367482.0
+ 2022      19805 3163799.0
+ 2023      19125 3617404.0
+ 2024      18028 2905337.0
+ 2025      16659 2465755.0
+ 2026       4705 1063280.0
+
+6. Estacionalidad agregada (participación de cada mes)
+------------------------------------------------------
+ mes  cantidad  porcentaje
+   1 5383338.0       25.22
+   2 2777690.0       13.01
+   3  934639.0        4.38
+   4  586148.0        2.75
+   5  728181.0        3.41
+   6  706266.0        3.31
+   7  846503.0        3.97
+   8  967745.0        4.53
+   9 1091885.0        5.12
+  10 1165650.0        5.46
+  11 1940158.0        9.09
+  12 4215582.0       19.75
+
+Si el reparto fuera plano cada mes tendría 8,33 %. La desviación respecto de ese valor es la estacionalidad del portafolio agregado.
+
+7. Reparto por regional y canal
+-------------------------------
+  regional canal  registros  unidades  skus  combinaciones
+COCHABAMBA     X       2739  132088.0   319            319
+COCHABAMBA     Z      25887 3122928.0   553            553
+    LA PAZ     X       4082  168319.0   421            421
+    LA PAZ     Z      29496 6799450.0   662            662
+SANTA CRUZ     X       6348  392045.0   474            474
+SANTA CRUZ     Z      28053 6748987.0   638            638
+     SUCRE     X        365    9863.0   138            138
+     SUCRE     Z      26471 2467289.0   598            598
+    TARIJA     X        157    1729.0    60             60
+    TARIJA     Z      24103 1501088.0   543            543
+
+8. Meses con venta por combinación (decide el historial mínimo)
+---------------------------------------------------------------
+   p0          1
+   p5          1
+   p10         1
+   p25         3
+   p50        15
+   p75        62
+   p90        96
+   p95       104
+   p100      108
+
+Cuántas combinaciones sobreviven a cada umbral de historial:
+ meses_con_venta_>=  combinaciones  porcentaje
+                 12           2399        54.4
+                 24           1899        43.1
+                 36           1609        36.5
+                 48           1390        31.5
+                 60           1149        26.1
+                 72            920        20.9
+                 84            719        16.3
+                 96            472        10.7
+                108             38         0.9
+
+9. Volumen acumulado por combinación (decide el volumen mínimo)
+---------------------------------------------------------------
+   p0              0.1
+   p5              1.0
+   p25            19.0
+   p50           252.7
+   p75         1,852.4
+   p95        14,404.0
+   p100      890,852.0
+
+Cuántas combinaciones sobreviven a cada umbral de volumen:
+ unidades_>=  combinaciones  porcentaje
+          10           3569        81.0
+          50           2902        65.9
+         100           2607        59.2
+         500           1847        41.9
+        1000           1453        33.0
+        5000            561        12.7
+
+10. Panel mensual reconstruido (con ceros intercalados)
+-------------------------------------------------------
+Series en el panel               : 4,088
+Filas del panel                  : 221,091
+Vida media de una serie          : 54.1 meses (mediana 59)
+
+Proporción de meses en cero dentro de la vida de cada serie
+(decide el umbral proporcion_maxima_ceros):
+   p0        0.000
+   p25       0.062
+   p50       0.380
+   p75       0.750
+   p90       0.892
+   p95       0.922
+   p100      0.976
+
+Cuántas series sobreviven a cada umbral de ceros:
+ ceros_<=  series  porcentaje
+      0.3    1807        44.2
+      0.5    2352        57.5
+      0.6    2639        64.6
+      0.7    2895        70.8
+      0.8    3250        79.5
+      0.9    3742        91.5
+
+Series con ADI >= 1,32 (demanda intermitente, Syntetos–Boylan): 2,453 de 4,088 (60.0 %).
+Es la razón de incorporar Croston al conjunto de modelos comparados.
+
+==============================================================================
+Fin del informe.
