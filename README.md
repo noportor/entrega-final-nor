@@ -19,7 +19,7 @@ Todo lo que hay en esta carpeta son copias. Los archivos de trabajo y los origin
 | `1_enviar_a_Jaldin/` | Lo que se envía al evaluador. `TFG_NICOLAS_OPORTO_2026-11-10.pdf` es el trabajo corregido y el `.docx` del mismo nombre, el mismo trabajo en Word. `Matriz_respuesta_jurado1_Jaldin_2026-11-10.docx` es la matriz de respuesta |
 | `2_llevar_a_la_facultad/` | Lo que se lleva a la sesión de verificación. `Acta_verificacion_documental_para_firma` (`.pdf` y `.docx`) es el acta de cotejo, de una página, en blanco. `lamina_resultado_principal_2026-11-10.pptx` es la lámina de defensa |
 | `3_informe_del_jurado_2026-11-09/` | El informe que se responde, tal como se recibió. Las observaciones están en su Anexo I |
-| `4_respaldos_para_mostrar/` | Los respaldos que la observación S2-06 pide exhibir, en el orden en que los nombra. Es material reservado (sección 8) |
+| `4_respaldos_para_mostrar/` | Los respaldos que la observación S2-06 pide exhibir, en el orden en que los nombra. Trae nombres reales (sección 8) |
 | `5_repositorio_publico/` | Una copia del repositorio público de código, su historia completa y el registro de sus commits |
 
 ### Dentro de `4_respaldos_para_mostrar/`
@@ -116,6 +116,16 @@ El repositorio no se modificó en esta ronda. Por eso conserva, en comentarios, 
 
 Hace falta un intérprete de comandos POSIX (en Windows, Git Bash) con `git`, `sha256sum`, `tar`, `diff` y Python 3. Todo se corre desde la raíz de esta carpeta y nada escribe dentro de ella. Si `python` no abre Python 3, se usa `python3` o la ruta del intérprete.
 
+Si la carpeta se obtiene del repositorio, se clona así:
+
+```bash
+git lfs install
+git clone -c core.longpaths=true https://github.com/noportor/entrega-final-nor
+```
+
+- **Git LFS.** El `.tar` de `8_imagen_de_ejecucion/` pesa 236 MB, más que el límite de 100 MB por archivo de GitHub, y el repositorio lo guarda con Git LFS. `git lfs install` se corre una vez por equipo. Si el clon se hizo sin LFS, `git lfs pull`, dentro del clon, baja el `.tar` después. Sin LFS, en lugar de la imagen queda un archivo de texto de unos 130 bytes que apunta a ella, y los pasos 1, 2 y 8 fallan en ese archivo. Lo mismo vale para el ZIP que se descarga de GitHub: si el `.tar` pesa unos 130 bytes, es el puntero y no la imagen.
+- **Rutas largas en Windows.** La ruta más larga de la carpeta tiene 148 caracteres. Sumada a la de la carpeta donde se clona, puede pasar el límite de 260 de Windows, y el clon termina con «Filename too long» y archivos sin bajar. `-c core.longpaths=true` lo evita. Si ya pasó, se corre `git config core.longpaths true` y después `git restore --source=HEAD --staged --worktree :/` dentro del clon.
+
 **Paso 1. Las copias de respaldo están íntegras.** No tiene que imprimir ningún renglón.
 
 ```bash
@@ -146,7 +156,7 @@ FIN
 **Paso 3. Las salidas de cada corrida son las que sella su manifiesto.** Tiene que decir 45 de 45 en `salidas` y en las dos sensibilidades, 46 de 46 en las dos de la extensión, y en las cinco, commit 472b891 y árbol limpio `True`.
 
 ```bash
-python - <<'FIN'
+python -X utf8 - <<'FIN'
 import hashlib, json, pathlib
 base = pathlib.Path("4_respaldos_para_mostrar/7_salidas")
 for d in sorted(p for p in base.iterdir() if p.is_dir()):
@@ -199,7 +209,7 @@ En cada corrida tiene que imprimir esto:
 **Paso 7. El recuento del registro bibliográfico.** Tiene que decir `110 comprobaciones; 59 enlaces distintos; 44 DOI; 15 URL`, que son las cifras de la fila S2-05d.
 
 ```bash
-python - <<'FIN'
+python -X utf8 - <<'FIN'
 import json
 d = json.load(open("4_respaldos_para_mostrar/2_registro_bibliografico/control_enlaces_2026-11-04.json", encoding="utf-8"))["detalle"]
 e = {x["enlace"] for x in d}
@@ -235,12 +245,10 @@ Al terminar se puede borrar la carpeta temporal: `rm -rf "$TMP"`.
 - **El documento de identidad del autor y un documento del registro académico.** Se exhiben en la sesión, para la fila S2-05f.
 - **El acta completa.** La de esta carpeta está en blanco: la completa y la firma quien verifica, en la sesión.
 
-## 8. Material reservado
+## 8. Nombres reales en `4_respaldos_para_mostrar/`
 
-`4_respaldos_para_mostrar/` se exhibe al tribunal y no se publica ni se entrega en copia: así lo dicen la matriz y el acta. La carpeta trae un `.gitignore` que la excluye entera de cualquier repositorio. Al revisarla:
+`4_respaldos_para_mostrar/` está en este repositorio completa, con sus 264 archivos; el `.tar` de la imagen va con Git LFS (sección 6). Es la única carpeta con nombres reales: el trabajo, la matriz, el informe, el acta, la lámina y el repositorio de código usan el seudónimo. Al revisarla:
 
 - `formatos_impresos_sin_firmar/` trae los nombres reales de la empresa y de los firmantes. No se copian ni se citan en ningún informe: se nombra a cada firmante por su rol, como hace el trabajo.
 - `7_salidas/` trae resultados serie por serie. De esos archivos solo se informan huellas, conteos y agregados, nunca filas.
-- El `.tar` de la imagen incluye archivos locales de configuración que el repositorio no versiona. No se entrega ni se publica.
-
-Las demás carpetas no traen nombres reales: el trabajo, la matriz, el informe, el acta, la lámina y el repositorio usan el seudónimo.
+- El `.tar` de la imagen incluye archivos locales de configuración que el repositorio de código no versiona.
